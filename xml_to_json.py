@@ -126,7 +126,7 @@ xml = parse_dir_xml(xml_path.path)
 for doc in xml:
     print('Parsing ', doc)
     count = 0
-    tree = EleT.parse(doc)
+    tree = EleT.parse(xml_path.path+doc)
     root = tree.getroot()
     for child in root.getchildren():
         json_record = parse_children([child])
