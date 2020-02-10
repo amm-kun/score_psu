@@ -90,7 +90,7 @@ def parse_children(tags):
         if tag in final:
             if isinstance(final[tag], list):
                 final[tag] = [final[tag]]
-            final[tag].append(result)
+                final[tag].append(result)
         else:
             final[tag] = result
     return final
