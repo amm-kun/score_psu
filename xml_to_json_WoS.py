@@ -126,6 +126,8 @@ xml = parse_dir_xml(xml_path.path)
 for doc in xml:
     print('Parsing ', doc)
     count = 0
+    if xml_path.path[-1] != '/':
+        xml_path.path += '/'
     tree = EleT.parse(xml_path.path+doc)
     root = tree.getroot()
     for child in root.getchildren():
