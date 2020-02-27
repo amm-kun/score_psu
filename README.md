@@ -8,7 +8,7 @@
 | pymongo | 3.10.1  |
 
 
-####Running the script: ####
+#### Running the script: ####
 ```
 python xml_to_json.py -p <path-to-XML-dir> / --path <path-to-XML-dir>
 ```
@@ -23,7 +23,7 @@ If the path argument is not supplied, default behavior is to use the local direc
 | pymongo | 3.10.1  |
 | lxml | 4.5.0 |
 
-####Running the script: ####
+#### Running the script: ####
 ```
 python xml_to_json.py -p <path-to-XML-dir> / --path <path-to-XML-dir>
 ```
