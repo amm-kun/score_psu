@@ -9,24 +9,12 @@ and collection. The path to the XML dir can be specified by using the -p
 local directory
 """
 
+from utilities import check_dir, parse_dir_xml, fix_dir_path
+from mongo_conn import connect_db, insert_record
+from os import getcwd, chdir
+from lxml import etree
 import xml.etree.ElementTree as EleT
 import argparse
-from os import path, listdir, getcwd
-from pymongo import MongoClient
-
-
-# Connect to DB Instance
-def connect_db():
-    client = MongoClient('localhost', 27017)
-    db_obj = client['WoS']
-    return db_obj, client
-
-
-# Single insert into collection
-def insert_record(db_obj, record):
-    records = db_obj['records']
-    result = records.insert_one(record)
-    print("Insert successful with ID: ", result.inserted_id)
 
 
 # Splits tag into uri and tag fields in cases where there is a namespace
@@ -88,50 +76,37 @@ def parse_children(tags):
 
         # If tag is a list of elements, append result to the list --make nested
         if tag in final:
-            if isinstance(final[tag], list):
+            if not isinstance(final[tag], list):
                 final[tag] = [final[tag]]
+                final[tag].append(result)
+            else:
                 final[tag].append(result)
         else:
             final[tag] = result
     return final
 
 
-# Generate list of XML files to be ingested from specified dir
-def parse_dir_xml(xml_dir):
-    xml_files = []
-    for filename in listdir(xml_dir):
-        if not filename.endswith('.xml'):
-            continue
-        else:
-            xml_files.append(filename)
-    return xml_files
-
-
-# Validate if user entered valid directory path
-def dir_path(string):
-    if path.isdir(string):
-        return string
-    else:
-        raise NotADirectoryError(string)
-
-
 parser = argparse.ArgumentParser(description='Specify Target XML Directory')
-parser.add_argument('-p', '--path', help='full path to XML directory', type=dir_path, default=getcwd())
+parser.add_argument('-p', '--path', help='full path to XML directory', type=check_dir, default=getcwd())
 xml_path = parser.parse_args()
+xml_path = fix_dir_path(xml_path)
 
 # Connect to DB
-db, session = connect_db()
+db, session = connect_db('dblp')
 xml = parse_dir_xml(xml_path.path)
+chdir(xml_path.path)
+
+# Initializing the Parser Object
+parser = etree.XMLParser(dtd_validation=True)
 
 for doc in xml:
     print('Parsing ', doc)
     count = 0
-    if xml_path.path[-1] != '/':
-        xml_path.path += '/'
-    tree = EleT.parse(xml_path.path+doc)
+    tree = EleT.parse(doc, parser=parser)
     root = tree.getroot()
     for child in root.getchildren():
         json_record = parse_children([child])
-        insert_record(db, json_record['REC'])
+        for key in json_record.keys():
+            insert_record(db, key, json_record[key])
         count += 1
-    print('Completed ingestion for ', doc, '\n Inserted ', count, 'documents')
+    print("Ingestion completed for ", doc)
