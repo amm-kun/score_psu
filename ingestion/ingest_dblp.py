@@ -9,8 +9,8 @@ and collection. The path to the XML dir can be specified by using the -p
 local directory
 """
 
-from utilities import check_dir, parse_dir_xml, fix_dir_path
-from mongo_conn import connect_db, insert_record
+from ingestion.utilities import check_dir, parse_dir_xml, fix_dir_path
+from ingestion.mongo_conn import connect_db, insert_record
 from os import getcwd, chdir
 from lxml import etree
 import xml.etree.ElementTree as EleT
