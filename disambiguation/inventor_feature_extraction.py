@@ -36,14 +36,14 @@ with open(file.file) as inventor_list:
 for inventor in inventor_ids:
     patent_id, sequence = inventor
 
-    inventor_query = ("SELECT inventor_id, rawlocation_id, name_first, and name_last FROM rawinventor WHERE"
+    inventor_query = ("SELECT inventor_id, rawlocation_id, name_first, name_last FROM rawinventor WHERE"
                       " patent_id = {0} and sequence = {1}".format(patent_id, sequence))
     cursor.execute(inventor_query)
-    (inventor_id, rawloc_id, name_first, name_last) = cursor
+    (inventor_id, rawloc_id, name_first, name_last) = cursor.fetchone()
 
     loc_query = "SELECT location_id, city, state from rawlocation where id = %s"
     cursor.execute(loc_query, rawloc_id)
-    (long_lat, city, state) = cursor
+    (long_lat, city, state) = cursor.fetchone()
 
     # Patent may have several classes, for now info for the first primary class is retrieved
     class_query = ("SELECT current.patent_id, current.section_id, cpc_subsection.title as sub_sec, "
@@ -54,12 +54,12 @@ for inventor in inventor_ids:
                    "LEFT JOIN cpc_subgroup on current.subgroup_id = cpc_subgroup.id "
                    "WHERE current.patent_id = %s and current.category='primary' and current.sequence=0")
     cursor.execute(class_query, patent_id)
-    (pat_id, cpc_section_id, cpc_subsec, cpc_group, cpc_subgroup) = cursor
+    (pat_id, cpc_section_id, cpc_subsec, cpc_group, cpc_subgroup) = cursor.fetchone()
     cpc_section = patent_sections[cpc_section_id]
 
     organization_query = "SELECT organization FROM rawassignee where patent_id = %s"
     cursor.execute(organization_query, patent_id)
-    organization = cursor
+    organization = cursor.fetchone()
 
     writer. writerow([patent_id, inventor_id, name_first, name_last, cpc_section, cpc_subsec,
                       cpc_group, cpc_subgroup, city, state, long_lat, organization])
