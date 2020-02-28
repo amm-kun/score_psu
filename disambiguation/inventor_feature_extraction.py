@@ -59,9 +59,9 @@ for inventor in inventor_ids:
 
     organization_query = "SELECT organization FROM rawassignee where patent_id = '{0}'".format(patent_id)
     cursor.execute(organization_query)
-    (organization) = cursor.fetchone()
+    organization = cursor.fetchone()
 
     writer. writerow([patent_id, inventor_id, name_first, name_last, cpc_section, cpc_subsec,
-                      cpc_group, cpc_subgroup, city, state, long_lat, organization])
+                      cpc_group, cpc_subgroup, city, state, long_lat, organization[0]])
 
     print("CSV record for inventor:", inventor, " inserted")
