@@ -10,7 +10,6 @@ Usage: inventor_feature_extraction.py -f <input>
 
 from utilities import mysql_breckenridge, check_file, patent_sections
 from mysql_conn import connect_db
-from os import getcwd
 import argparse
 import csv
 
@@ -41,8 +40,8 @@ for inventor in inventor_ids:
     cursor.execute(inventor_query)
     (inventor_id, rawloc_id, name_first, name_last) = cursor.fetchone()
 
-    loc_query = "SELECT location_id, city, state from rawlocation where id = %s"
-    cursor.execute(loc_query, rawloc_id)
+    loc_query = "SELECT location_id, city, state from rawlocation where id = '{0}'".format(rawloc_id)
+    cursor.execute(loc_query)
     (long_lat, city, state) = cursor.fetchone()
 
     # Patent may have several classes, for now info for the first primary class is retrieved
@@ -52,14 +51,17 @@ for inventor in inventor_ids:
                    "LEFT JOIN cpc_subsection on current.subsection_id = cpc_subsection.id "
                    "LEFT JOIN cpc_group on current.group_id = cpc_group.id "
                    "LEFT JOIN cpc_subgroup on current.subgroup_id = cpc_subgroup.id "
-                   "WHERE current.patent_id = %s and current.category='primary' and current.sequence=0")
-    cursor.execute(class_query, patent_id)
+                   "WHERE current.patent_id = '{0}' AND current.category='primary' "
+                   "AND current.sequence=0".format(patent_id))
+    cursor.execute(class_query)
     (pat_id, cpc_section_id, cpc_subsec, cpc_group, cpc_subgroup) = cursor.fetchone()
     cpc_section = patent_sections[cpc_section_id]
 
-    organization_query = "SELECT organization FROM rawassignee where patent_id = %s"
-    cursor.execute(organization_query, patent_id)
-    organization = cursor.fetchone()
+    organization_query = "SELECT organization FROM rawassignee where patent_id = '{0}'".format(patent_id)
+    cursor.execute(organization_query)
+    (organization) = cursor.fetchone()
 
     writer. writerow([patent_id, inventor_id, name_first, name_last, cpc_section, cpc_subsec,
                       cpc_group, cpc_subgroup, city, state, long_lat, organization])
+
+    print("CSV record for inventor:", inventor, " inserted")
