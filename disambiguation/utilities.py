@@ -26,9 +26,10 @@ patent_sections = {
     'Y': 'General Tagging of New Technological Developments'
 }
 
+
 # Validate if user entered valid file
 def check_file(string):
     if path.isfile(string):
         return string
     else:
-        raise NotADirectoryError(string)
+        raise FileNotFoundError(string)

@@ -11,7 +11,8 @@ from mysql.connector import errorcode
 # Connect to DB Instance
 def connect_db(user, password, database, host='localhost'):
     try:
-        con = connector.connect(user=user, password=password, host=host, database=database)
+        con = connector.connect(user=user, password=password, host=host,
+                                database=database, use_pure=True, charset='utf8')
         return con
     except connector.Error as err:
         if err.errno == errorcode.ER_ACCESS_DENIED_ERROR:

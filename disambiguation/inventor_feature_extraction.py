@@ -24,7 +24,7 @@ writer.writerow(['patent_id', 'inventor_id', 'name_first', 'name_last', 'section
 # Co-authors for patent?
 
 parser = argparse.ArgumentParser(description='Specify target inventor list')
-parser.add_argument('-f', '--file', help='specify the inventor list txt file', type=check_file, default=getcwd())
+parser.add_argument('-f', '--file', help='specify the inventor list txt file', type=check_file)
 file = parser.parse_args()
 
 inventor_ids = []
@@ -37,8 +37,8 @@ for inventor in inventor_ids:
     patent_id, sequence = inventor
 
     inventor_query = ("SELECT inventor_id, rawlocation_id, name_first, and name_last FROM rawinventor WHERE"
-                      "patent_id = %s and sequence = %d")
-    cursor.execute(inventor_query, (patent_id, sequence))
+                      " patent_id = {0} and sequence = {1}".format(patent_id, sequence))
+    cursor.execute(inventor_query)
     (inventor_id, rawloc_id, name_first, name_last) = cursor
 
     loc_query = "SELECT location_id, city, state from rawlocation where id = %s"
