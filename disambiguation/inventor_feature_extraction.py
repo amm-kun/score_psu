@@ -37,12 +37,22 @@ for inventor in inventor_ids:
 
     inventor_query = ("SELECT inventor_id, rawlocation_id, name_first, name_last FROM rawinventor WHERE"
                       " patent_id = {0} and sequence = {1}".format(patent_id, sequence))
-    cursor.execute(inventor_query)
+    try:
+        cursor.execute(inventor_query)
+    except TypeError as e:
+        print(e)
+        print("Couldn't process ", patent_id)
+        continue
     (inventor_id, rawloc_id, name_first, name_last) = cursor.fetchone()
 
     loc_query = "SELECT location_id, city, state from rawlocation where id = '{0}'".format(rawloc_id)
     cursor.execute(loc_query)
-    (long_lat, city, state) = cursor.fetchone()
+    try:
+        (long_lat, city, state) = cursor.fetchone()
+    except TypeError as e:
+        print(e)
+        print("Couldn't process ", patent_id)
+        continue
 
     # Patent may have several classes, for now info for the first primary class is retrieved
     class_query = ("SELECT current.patent_id, current.section_id, cpc_subsection.title as sub_sec, "
@@ -54,12 +64,22 @@ for inventor in inventor_ids:
                    "WHERE current.patent_id = '{0}' AND current.category='primary' "
                    "AND current.sequence=0".format(patent_id))
     cursor.execute(class_query)
-    (pat_id, cpc_section_id, cpc_subsec, cpc_group, cpc_subgroup) = cursor.fetchone()
-    cpc_section = patent_sections[cpc_section_id]
+    try:
+        (pat_id, cpc_section_id, cpc_subsec, cpc_group, cpc_subgroup) = cursor.fetchone()
+        cpc_section = patent_sections[cpc_section_id]
+    except TypeError as e:
+        print(e)
+        print("Couldn't process ", patent_id)
+        continue
 
     organization_query = "SELECT organization FROM rawassignee where patent_id = '{0}'".format(patent_id)
     cursor.execute(organization_query)
-    organization = cursor.fetchone()
+    try:
+        organization = cursor.fetchone()
+    except TypeError as e:
+        print(e)
+        print("Couldn't process ", patent_id)
+        continue
 
     writer. writerow([patent_id, inventor_id, name_first, name_last, cpc_section, cpc_subsec,
                       cpc_group, cpc_subgroup, city, state, long_lat, organization[0]])
