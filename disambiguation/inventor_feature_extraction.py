@@ -10,7 +10,6 @@ Usage: inventor_feature_extraction.py -f <input>
 
 from utilities import mysql_breckenridge, check_file, patent_sections
 from mysql_conn import connect_db
-from mysql.connector.errors import InternalError
 import argparse
 import csv
 
@@ -19,7 +18,7 @@ con = connect_db(**mysql_breckenridge)
 cursor = con.cursor()
 
 writer = csv.writer(open("inventors.csv", 'w'))
-writer.writerow(['patent_id', 'title', 'inventor_id', 'name_first', 'name_last', 'section', 'subsection',
+writer.writerow(['patent_id', 'cluster', 'title', 'inventor_id', 'name_first', 'name_last', 'section', 'subsection',
                  'group', 'sub_group',  'city', 'state', 'long|lat', 'organization'])
 # Co-authors for patent?
 
@@ -30,11 +29,12 @@ file = parser.parse_args()
 inventor_ids = []
 with open(file.file) as inventor_list:
     for inventor in inventor_list:
-        patent_id, sequence = inventor.split()[0].split('-')
-        inventor_ids.append([patent_id, sequence])
+        inventor = inventor.split()
+        patent_id, sequence = inventor[0].split('-')
+        inventor_ids.append([patent_id, sequence, inventor[1]])
 
 for inventor in inventor_ids:
-    patent_id, sequence = inventor
+    patent_id, sequence, cluster = inventor
 
     patent_query = "SELECT title from patent where id = '{0}'".format(patent_id)
     cursor.execute(patent_query)
@@ -80,7 +80,7 @@ for inventor in inventor_ids:
         organization = ['']
 
     try:
-        inventor_features = [patent_id, title[0], inventor_id, name_first, name_last, cpc_section, cpc_subsec,
+        inventor_features = [patent_id, cluster, title[0], inventor_id, name_first, name_last, cpc_section, cpc_subsec,
                              cpc_group, cpc_subgroup, city, state, long_lat, organization[0]]
         writer.writerow(inventor_features)
     except UnicodeEncodeError as e:
