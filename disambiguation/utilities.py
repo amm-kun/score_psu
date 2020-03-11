@@ -26,6 +26,11 @@ patent_sections = {
     'Y': 'General Tagging of New Technological Developments'
 }
 
+token_fields = ['title', 'section', 'subsection', 'group', 'subgroup', 'organization']
+string_fields = ['name_first', 'name_last', 'city', 'state']
+
+fields = ('patent_id', 'cluster', 'title', 'inventor_id', 'name_first', 'name_last', 'section', 'subsection',
+          'group', 'sub_group',  'city', 'state', 'long_lat', 'organization')
 
 # Validate if user entered valid file
 def check_file(string):

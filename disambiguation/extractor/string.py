@@ -1,60 +1,19 @@
 # Author: Arjun Menon <amm8987@psu.edu>
 
 """
-This script generates a feature vector for the classifer.
-For a given pair of strings, the various string features are
-computed and prepared for training/testing
+This script contains the definition for a string based
+similarity scores for a pair of strings
 """
 
 
-from math import radians, sin, cos, asin, sqrt
-from nltk import word_tokenize
-from nltk.stem.snowball import SnowballStemmer
-from collections import Counter
 from six.moves import xrange
-import numpy as np
 import re
-# import nltk
-
-# nltk.download('punkt')
-# nltk.download('stopwords')
 
 
-class SimilarityMeasures:
-    # Class object
-    stemmer = SnowballStemmer("english", ignore_stopwords=True)
-
-    def __init__(self, text1, text2, long_lat1, long_lat2):
+class StringSimilarity:
+    def __init__(self, text1, text2):
         self.text1 = text1
         self.text2 = text2
-        self.cos_sim_score = 0
-        self.prefix_weight = 0.1
-        self.long_lat1 = long_lat1
-        self.long_lat2 = long_lat2
-
-    def sentence_similarity(self):
-        # Tokenize both sentences
-        tokens1 = word_tokenize(self.text1)
-        tokens2 = word_tokenize(self.text2)
-        # Stemming using Porter2 AKA Snowball Stemmer
-        stemmed_token1 = [self.stemmer.stem(token) for token in tokens1]
-        stemmed_token2 = [self.stemmer.stem(token) for token in tokens2]
-        # Create dict with term frequency for each set of tokens
-        count_tokens1 = Counter(stemmed_token1)
-        count_tokens2 = Counter(stemmed_token2)
-        # Inner Product
-        inner_product = 0
-        if len(count_tokens1) < len(count_tokens2):
-            for token, norm_term_freq in count_tokens1.items():
-                if token in count_tokens2:
-                    inner_product += norm_term_freq*count_tokens2[token]
-        else:
-            for token, norm_term_freq in count_tokens2.items():
-                if token in count_tokens1:
-                    inner_product += norm_term_freq*count_tokens1[token]
-        magnitude1 = np.sqrt(np.sum(np.array(list(count_tokens1.values()))**2))
-        magnitude2 = np.sqrt(np.sum(np.array(list(count_tokens2.values()))**2))
-        self.cos_sim_score = round(inner_product/(magnitude1*magnitude2), 4)
 
     def get_raw_jaro(self):
         len_s1 = len(self.text1)
@@ -151,27 +110,3 @@ class SimilarityMeasures:
         string2 = first_letter2 + string2[:3]
 
         return 1 if string1 == string2 else 0
-
-    def jaccard(self):
-        tokens1 = word_tokenize(self.text1)
-        tokens2 = word_tokenize(self.text2)
-        # Stemming using Porter2 AKA Snowball Stemmer
-        stemmed_token1 = [self.stemmer.stem(token) for token in tokens1]
-        stemmed_token2 = [self.stemmer.stem(token) for token in tokens2]
-        # Cast to set
-        set1 = set(stemmed_token1)
-        set2 = set(stemmed_token2)
-
-        if not set1 or not set2:
-            return 0
-
-        return float(len(set1 & set2)) / float(len(set1 | set2))
-
-    def haversine(self):
-        lon1, lat1 = map(float, self.long_lat1.split('|'))
-        lon2, lat2 = map(float, self.long_lat2.split('|'))
-        lon1, lat1, lon2, lat2 = map(radians, [lon1, lat1, lon2, lat2])
-        dlon = lon2 - lon1
-        dlat = lat2 - lat1
-        a = sin(dlat / 2) ** 2 + cos(lat1) * cos(lat2) * sin(dlon / 2) ** 2
-        return 2 * 6371 * asin(sqrt(a))
