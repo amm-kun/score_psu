@@ -12,8 +12,9 @@ import re
 
 class StringSimilarity:
     def __init__(self, text1, text2):
-        self.text1 = text1
-        self.text2 = text2
+        self.text1 = text1.strip()
+        self.text2 = text2.strip()
+        self.prefix_weight = 0.1
 
     def get_raw_jaro(self):
         len_s1 = len(self.text1)

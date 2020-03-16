@@ -17,8 +17,8 @@ class TokenStringSimilarity:
     stemmer = SnowballStemmer("english", ignore_stopwords=True)
 
     def __init__(self, text1, text2):
-        self.text1 = text1
-        self.text2 = text2
+        self.text1 = text1.strip()
+        self.text2 = text2.strip()
 
     def cosine(self):
         # Tokenize both sentences
@@ -30,6 +30,10 @@ class TokenStringSimilarity:
         # Create dict with term frequency for each set of tokens
         count_tokens1 = Counter(stemmed_token1)
         count_tokens2 = Counter(stemmed_token2)
+
+        if not count_tokens1 or count_tokens2:
+            return 0
+
         # Inner Product
         inner_product = 0
         if len(count_tokens1) < len(count_tokens2):
@@ -42,7 +46,7 @@ class TokenStringSimilarity:
                     inner_product += norm_term_freq*count_tokens1[token]
         magnitude1 = np.sqrt(np.sum(np.array(list(count_tokens1.values()))**2))
         magnitude2 = np.sqrt(np.sum(np.array(list(count_tokens2.values()))**2))
-        return round(inner_product/(magnitude1*magnitude2), 4)
+        return round((inner_product/(magnitude1*magnitude2)), 4)
 
     def jaccard(self):
         tokens1 = word_tokenize(self.text1)
@@ -57,4 +61,4 @@ class TokenStringSimilarity:
         if not set1 or not set2:
             return 0
 
-        return float(len(set1 & set2)) / float(len(set1 | set2))
+        return round(float(len(set1 & set2)) / float(len(set1 | set2)), 4)

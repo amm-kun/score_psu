@@ -40,3 +40,4 @@ class Pair:
             features[field] = {'jw': jaro_winkler, 'soundex': soundex}
         features['distance'] = self.get_distance()
         features['truth'] = ground_truth
+        return features
