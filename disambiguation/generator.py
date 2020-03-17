@@ -6,17 +6,20 @@ This script generates pairs from inventors data.
 
 from pair_feature_extraction import Pair
 from collections import namedtuple
-from itertools import combinations
-import math
+from itertools import combinations, product
+from utilities import check_file
+import argparse
 import csv
-import pandas as pd
-import random
 
 fields = ('patent_id', 'cluster', 'title', 'inventor_id', 'name_first', 'name_last', 'section', 'subsection',
           'group', 'sub_group',  'city', 'state', 'long_lat', 'organization')
 inventorRecord = namedtuple('inventor', fields)
 
-inventors = r'C:\Users\Arjun Menon\Desktop\SCORE\test.csv'
+parser = argparse.ArgumentParser(description='Specify target inventor csv')
+parser.add_argument('-f', '--file', help='specify the inventor features csv file', type=check_file)
+file = parser.parse_args()
+
+# inventors = r'C:\Users\Arjun Menon\Desktop\SCORE\test.csv'
 
 
 def read_data(path):
@@ -29,7 +32,8 @@ def read_data(path):
 
 def gen_features_positive():
     cluster = []
-    for inv_id, row in enumerate(read_data(inventors)):
+    inventor_clusters = []
+    for inv_id, row in enumerate(read_data(file.file)):   # Update with inventors for test
         if not cluster:
             cluster.append(row)
         else:
@@ -37,28 +41,31 @@ def gen_features_positive():
                 cluster.append(row)
             else:
                 inventor = InventorCluster(cluster)
-                inventor.generate_pairs()
+                inventor_clusters.append(inventor)
+                inventor.generate_pos_pairs()
                 inventor.pairwise_feature_extraction(1)
                 cluster = [row]
                 print('--------------------NEXT INVENTOR @ ', inv_id, '--------------------')
     inventor = InventorCluster(cluster)
-    inventor.generate_pairs()
+    inventor_clusters.append(inventor)
+    inventor.generate_pos_pairs()
     inventor.pairwise_feature_extraction(1)
+    return inv_clusters
 
 
-def gen_features_random_negative(num_pairs):
-    data_frame = pd.read_csv(inventors)
-    sample = data_frame.sample(round(math.sqrt(num_pairs*2)), replace=False)
-    print(sample)
-
-#
-#     while count < num_pairs:
-#         line_number1 = random.randrange(lines)
-#         line_number2 = random.randrange(lines)
-#         with open(inventors) as f:
-#             reader = csv.reader(f)
-#             chosen_row = next(row for row_number, row in enumerate(reader)
-#                               if row_number == line_number)
+def gen_features_random_negative(inventor_clusters, num_pairs):
+    count = 0
+    for i in range(len(inventor_clusters)):
+        for j in range(i+1, len(inventor_clusters)):
+            pairs = list(product(inventor_clusters[i].cluster, inventor_clusters[j].cluster))
+            for pair in pairs:
+                inventor1, inventor2 = pair
+                pair = Pair(inventor1, inventor2)
+                feature_vector = pair.generate_vector_pair(0)
+                print(feature_vector)
+                count += 1
+                if count == num_pairs:
+                    return
 
 
 class InventorCluster:
@@ -66,7 +73,7 @@ class InventorCluster:
         self.cluster = inventor_cluster
         self.pairs = []
 
-    def generate_pairs(self):
+    def generate_pos_pairs(self):
         self.pairs = list(combinations(self.cluster, 2))
 
     def pairwise_feature_extraction(self, label):
@@ -78,5 +85,8 @@ class InventorCluster:
 
 
 if __name__ == "__main__":
-    # gen_features_positive()
-    gen_features_random_negative(3)
+    inv_clusters = gen_features_positive()
+    print("-----------------Negative Random------------------")
+    gen_features_random_negative(inv_clusters, 20)
+    print('Success')
+

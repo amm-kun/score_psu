@@ -31,7 +31,7 @@ class TokenStringSimilarity:
         count_tokens1 = Counter(stemmed_token1)
         count_tokens2 = Counter(stemmed_token2)
 
-        if not count_tokens1 or count_tokens2:
+        if not stemmed_token1 or not stemmed_token2:
             return 0
 
         # Inner Product
