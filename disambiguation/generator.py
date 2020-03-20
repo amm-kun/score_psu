@@ -68,7 +68,8 @@ def gen_features_positive():
     inventor.generate_pos_pairs()
     count = inventor.pairwise_feature_extraction(writer, 1)
     tot_count += count
-    return inventor_clusters, count
+    print('Total postive pairs are: ', tot_count)
+    return inventor_clusters, tot_count
 
 
 def gen_features_random_negative(inventor_clusters, num_pairs):
@@ -79,7 +80,10 @@ def gen_features_random_negative(inventor_clusters, num_pairs):
             for pair in pairs:
                 inventor1, inventor2 = pair
                 pair = Pair(inventor1, inventor2)
-                feature_vector = pair.generate_vector_pair(0)
+                try:
+                    feature_vector = pair.generate_vector_pair(0)
+                except ValueError:
+                    continue
                 csv_write_record(writer, feature_vector, header)
                 count += 1
                 print('Random Negative Pair :', count, ' processed')
@@ -126,7 +130,10 @@ class InventorCluster:
         for pair in self.pairs:
             inventor1, inventor2 = pair
             pair = Pair(inventor1, inventor2)
-            feature_vector = pair.generate_vector_pair(label)
+            try:
+                feature_vector = pair.generate_vector_pair(label)
+            except ValueError:
+                continue
             csv_write_record(csv_w, feature_vector, header)
             print('Positive Pair :', count, ' processed')
             count += 1
@@ -144,8 +151,8 @@ if __name__ == "__main__":
     print("-----------------Positive------------------")
     inv_clusters, pos_count = gen_features_positive()
     print("-----------------Negative Random------------------")
-    gen_features_random_negative(inv_clusters, pos_count/2)    # Still experimenting with the second parameter
+    gen_features_random_negative(inv_clusters, round((3/4)*pos_count))   # Still experimenting with the second parameter
     print("-----------------Negative Similar------------------")
-    gen_negative_similar_name(inv_clusters, pos_count/2)    # Still experimenting with the second parameter
+    gen_negative_similar_name(inv_clusters, round((1/4)*pos_count))  # Still experimenting with the second parameter
     print('Success')
 
