@@ -66,7 +66,7 @@ def gen_features_positive():
     inventor = InventorCluster(cluster)
     inventor_clusters.append(inventor)
     inventor.generate_pos_pairs()
-    count = inventor.pairwise_feature_extraction(1)
+    count = inventor.pairwise_feature_extraction(writer, 1)
     tot_count += count
     return inventor_clusters, count
 
