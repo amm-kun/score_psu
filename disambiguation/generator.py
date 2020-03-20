@@ -82,6 +82,7 @@ def gen_features_random_negative(inventor_clusters, num_pairs):
                 feature_vector = pair.generate_vector_pair(0)
                 csv_write_record(writer, feature_vector, header)
                 count += 1
+                print('Random Negative Pair :', count, ' processed')
                 if count == num_pairs:
                     return
 
@@ -93,7 +94,10 @@ def gen_negative_similar_name(inventor_clusters, num_pairs):
             patent_ids = get_patents_similar_inventor(cursor, inventor.name_first,
                                                       inventor.name_last, inventor.patent_id)
             for patent in patent_ids:
-                (p_title, p_section, p_subsec, p_group, p_subgroup, p_org) = get_patent_features(cursor, patent)
+                try:
+                    (p_title, p_section, p_subsec, p_group, p_subgroup, p_org) = get_patent_features(cursor, patent)
+                except TypeError:
+                    continue
                 (i_long_lat, i_city, i_state) = get_inventor_features(cursor, patent, inventor.name_first,
                                                                       inventor.name_last)
                 temp_dict = {'title': p_title, 'name_first': inventor.name_first, 'name_last': inventor.name_last,
@@ -104,6 +108,7 @@ def gen_negative_similar_name(inventor_clusters, num_pairs):
                 feature_vector = pair.generate_vector_pair(0)
                 csv_write_record(writer, feature_vector, header)
                 count += 1
+                print('Similar Negative Pair :', count, ' processed')
                 if count == num_pairs:
                     return
 
@@ -123,7 +128,7 @@ class InventorCluster:
             pair = Pair(inventor1, inventor2)
             feature_vector = pair.generate_vector_pair(label)
             csv_write_record(csv_w, feature_vector, header)
-            print(feature_vector)
+            print('Positive Pair :', count, ' processed')
             count += 1
         return count
 
