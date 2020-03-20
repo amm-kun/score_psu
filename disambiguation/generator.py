@@ -4,7 +4,7 @@
 This script generates pairs from inventors data.
 """
 
-from feature_extraction_negative_sim import get_patents_similar_inventor, get_patent_features, get_inventor_features
+from feature_extractor import get_patents_similar_inventor, get_patent_features, get_inventor_features
 from pair_feature_extraction import Pair
 from collections import namedtuple
 from mysql_conn import connect_db
@@ -22,7 +22,7 @@ parser = argparse.ArgumentParser(description='Specify target inventor csv')
 parser.add_argument('-f', '--file', help='specify the inventor features csv file', type=check_file)
 file = parser.parse_args()
 
-inventors = r'C:\Users\Arjun Menon\Desktop\SCORE\test.csv'
+# inventors = r'C:\Users\Arjun Menon\Desktop\SCORE\test.csv'
 
 con = connect_db(**mysql_breckenridge)
 # Get Cursor object
@@ -40,7 +40,7 @@ def read_data(path):
 def gen_features_positive():
     cluster = []
     inventor_clusters = []
-    for inv_id, row in enumerate(read_data(inventors)):   # Update with inventors for test
+    for inv_id, row in enumerate(read_data(file.file)):   # Update with inventors for test
         if not cluster:
             cluster.append(row)
         else:
