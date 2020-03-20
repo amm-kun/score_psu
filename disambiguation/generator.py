@@ -37,10 +37,10 @@ def read_data(path):
 
 
 def get_csv_header():
-    title = [tfield + '.cosine' for tfield in token_fields]
-    title.extend([tfield + '.jaccard' for tfield in token_fields])
-    title.extend([sfield + '.jw' for sfield in string_fields])
-    title.extend([sfield + '.soundex' for sfield in string_fields])
+    title = [tfield + '_cosine' for tfield in token_fields]
+    title.extend([tfield + '_jaccard' for tfield in token_fields])
+    title.extend([sfield + '_jw' for sfield in string_fields])
+    title.extend([sfield + '_soundex' for sfield in string_fields])
     title.extend(['distance', 'truth'])
     return title
 
