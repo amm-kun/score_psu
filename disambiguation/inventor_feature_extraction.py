@@ -33,6 +33,7 @@ with open(file.file) as inventor_list:
         patent_id, sequence = inventor[0].split('-')
         inventor_ids.append([patent_id, sequence, inventor[1]])
 
+
 for inventor in inventor_ids:
     patent_id, sequence, cluster = inventor
 
