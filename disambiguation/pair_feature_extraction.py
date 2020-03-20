@@ -34,10 +34,12 @@ class Pair:
         features = {}
         for field in token_fields:
             cosine, jaccard = self.token_similarity(field)
-            features[field] = {'cosine': cosine, 'jaccard': jaccard}
+            features[field+'.cosine'] = cosine
+            features[field+'.jaccard'] = jaccard
         for field in string_fields:
             jaro_winkler, soundex = self.string_similarity(field)
-            features[field] = {'jw': jaro_winkler, 'soundex': soundex}
+            features[field+'.jw'] = jaro_winkler
+            features[field+'.soundex'] = soundex
         features['distance'] = self.get_distance()
         features['truth'] = ground_truth
         return features

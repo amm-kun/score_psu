@@ -4,7 +4,9 @@
 This file contains utility functions that are commonly used across scripts
 """
 
+from collections import namedtuple
 from os import path
+import csv
 
 # Credentials for USPTO database on Breckenridge
 mysql_breckenridge = {
@@ -39,3 +41,22 @@ def check_file(string):
         return string
     else:
         raise FileNotFoundError(string)
+
+
+# Return CSV writer object
+def csv_writer(filename):
+    writer = csv.writer(open(filename, 'w'))
+    return writer
+
+
+# Write header into CSV
+def csv_write_field_header(writer, header):
+    writer.writerow(header)
+
+
+# Write dict based record into CSV in order
+def csv_write_record(writer, record, header):
+    nt_record = namedtuple('dis_features', header)
+    sim_record = nt_record(**record)
+    writer.writerow(list(sim_record))
+

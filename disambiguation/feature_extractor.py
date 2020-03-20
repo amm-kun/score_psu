@@ -1,3 +1,13 @@
+# Author: Arjun Menon <amm8987@psu.edu>
+
+"""
+This script contains the definition for the following usecases:
+1. Retrieve list of patents assigned to inventors with a first and last name similar
+to a given inventor
+2. Retrieve patent information given patent id
+3. Retrieve inventor information given an inventor name and patent id
+"""
+
 from utilities import patent_sections
 
 

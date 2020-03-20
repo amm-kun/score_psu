@@ -5,6 +5,8 @@ This script generates pairs from inventors data.
 """
 
 from feature_extractor import get_patents_similar_inventor, get_patent_features, get_inventor_features
+from utilities import csv_writer, csv_write_field_header, csv_write_record
+from utilities import token_fields, string_fields
 from pair_feature_extraction import Pair
 from collections import namedtuple
 from mysql_conn import connect_db
@@ -20,26 +22,33 @@ inventorRecord.__new__.__defaults__ = (None,) * len(inventorRecord._fields)
 
 parser = argparse.ArgumentParser(description='Specify target inventor csv')
 parser.add_argument('-f', '--file', help='specify the inventor features csv file', type=check_file)
+parser.add_argument('-o', '--output', help='specify computed pair feature vector output file')
 file = parser.parse_args()
 
 # inventors = r'C:\Users\Arjun Menon\Desktop\SCORE\test.csv'
-
-con = connect_db(**mysql_breckenridge)
-# Get Cursor object
-cursor = con.cursor()
 
 
 def read_data(path):
     with open(path, 'rU') as data:
         reader = csv.reader(data)
-        next(reader)  # Skip first fields line
+        next(reader)  # Skip header field line
         for record in map(inventorRecord._make, reader):
             yield record
+
+
+def get_csv_header():
+    title = [tfield + '.cosine' for tfield in token_fields]
+    title.extend([tfield + '.jaccard' for tfield in token_fields])
+    title.extend([sfield + '.jw' for sfield in string_fields])
+    title.extend([sfield + '.soundex' for sfield in string_fields])
+    title.extend(['distance', 'truth'])
+    return title
 
 
 def gen_features_positive():
     cluster = []
     inventor_clusters = []
+    tot_count = 0
     for inv_id, row in enumerate(read_data(file.file)):   # Update with inventors for test
         if not cluster:
             cluster.append(row)
@@ -50,14 +59,16 @@ def gen_features_positive():
                 inventor = InventorCluster(cluster)
                 inventor_clusters.append(inventor)
                 inventor.generate_pos_pairs()
-                inventor.pairwise_feature_extraction(1)
+                count = inventor.pairwise_feature_extraction(writer, 1)
                 cluster = [row]
                 print('--------------------NEXT INVENTOR @ ', inv_id, '--------------------')
+                tot_count += count
     inventor = InventorCluster(cluster)
     inventor_clusters.append(inventor)
     inventor.generate_pos_pairs()
-    inventor.pairwise_feature_extraction(1)
-    return inventor_clusters
+    count = inventor.pairwise_feature_extraction(1)
+    tot_count += count
+    return inventor_clusters, count
 
 
 def gen_features_random_negative(inventor_clusters, num_pairs):
@@ -69,7 +80,7 @@ def gen_features_random_negative(inventor_clusters, num_pairs):
                 inventor1, inventor2 = pair
                 pair = Pair(inventor1, inventor2)
                 feature_vector = pair.generate_vector_pair(0)
-                print(feature_vector)
+                csv_write_record(writer, feature_vector, header)
                 count += 1
                 if count == num_pairs:
                     return
@@ -91,7 +102,7 @@ def gen_negative_similar_name(inventor_clusters, num_pairs):
                 inventor_sim = inventorRecord(**temp_dict)
                 pair = Pair(inventor, inventor_sim)
                 feature_vector = pair.generate_vector_pair(0)
-                print(feature_vector)
+                csv_write_record(writer, feature_vector, header)
                 count += 1
                 if count == num_pairs:
                     return
@@ -105,19 +116,31 @@ class InventorCluster:
     def generate_pos_pairs(self):
         self.pairs = list(combinations(self.cluster, 2))
 
-    def pairwise_feature_extraction(self, label):
+    def pairwise_feature_extraction(self, csv_w, label):
+        count = 0
         for pair in self.pairs:
             inventor1, inventor2 = pair
             pair = Pair(inventor1, inventor2)
             feature_vector = pair.generate_vector_pair(label)
+            csv_write_record(csv_w, feature_vector, header)
             print(feature_vector)
+            count += 1
+        return count
 
 
 if __name__ == "__main__":
-    inv_clusters = gen_features_positive()
+    con = connect_db(**mysql_breckenridge)
+    # Get Cursor object
+    cursor = con.cursor()
+    # Get CSV writer object
+    writer = csv_writer(file.output)
+    header = get_csv_header()
+    csv_write_field_header(writer, header)
+    print("-----------------Positive------------------")
+    inv_clusters, pos_count = gen_features_positive()
     print("-----------------Negative Random------------------")
-    gen_features_random_negative(inv_clusters, 10)
-    print("----------------------------- Negative SIMILAR -----------------------------")
-    gen_negative_similar_name(inv_clusters, 10)
+    gen_features_random_negative(inv_clusters, pos_count/2)    # Still experimenting with the second parameter
+    print("-----------------Negative Similar------------------")
+    gen_negative_similar_name(inv_clusters, pos_count/2)    # Still experimenting with the second parameter
     print('Success')
 
