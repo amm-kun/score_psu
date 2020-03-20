@@ -109,7 +109,11 @@ def gen_negative_similar_name(inventor_clusters, num_pairs):
                              'city': i_city, 'long_lat': i_long_lat, 'state': i_state, 'organization': p_org}
                 inventor_sim = inventorRecord(**temp_dict)
                 pair = Pair(inventor, inventor_sim)
-                feature_vector = pair.generate_vector_pair(0)
+                try:
+                    feature_vector = pair.generate_vector_pair(0)
+                except AttributeError:
+                    print(inventor, ' Second:', inventor_sim)
+                    continue
                 csv_write_record(writer, feature_vector, header)
                 count += 1
                 print('Similar Negative Pair :', count, ' processed')
