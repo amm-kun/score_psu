@@ -12,6 +12,7 @@ from collections import namedtuple
 from mysql_conn import connect_db
 from itertools import combinations, product
 from utilities import check_file, mysql_breckenridge
+from mysql.connector.errors import Error, InternalError
 import argparse
 import csv
 
@@ -95,15 +96,19 @@ def gen_negative_similar_name(inventor_clusters, num_pairs):
     count = 0
     for cluster in inventor_clusters:
         for inventor in cluster.cluster:
-            patent_ids = get_patents_similar_inventor(cursor, inventor.name_first,
+            try:
+                patent_ids = get_patents_similar_inventor(cursor, inventor.name_first,
                                                       inventor.name_last, inventor.patent_id)
+            except Error:
+                print("Possible SQL query error --- skipping")
+                continue
             for patent in patent_ids:
                 try:
                     (p_title, p_section, p_subsec, p_group, p_subgroup, p_org) = get_patent_features(cursor, patent)
+                    (i_long_lat, i_city, i_state) = get_inventor_features(cursor, patent, inventor.name_first,
+                                                                          inventor.name_last)
                 except TypeError:
                     continue
-                (i_long_lat, i_city, i_state) = get_inventor_features(cursor, patent, inventor.name_first,
-                                                                      inventor.name_last)
                 temp_dict = {'title': p_title, 'name_first': inventor.name_first, 'name_last': inventor.name_last,
                              'section': p_section, 'subsection': p_subsec, 'group': p_group, 'sub_group': p_subgroup,
                              'city': i_city, 'long_lat': i_long_lat, 'state': i_state, 'organization': p_org}
@@ -111,7 +116,7 @@ def gen_negative_similar_name(inventor_clusters, num_pairs):
                 pair = Pair(inventor, inventor_sim)
                 try:
                     feature_vector = pair.generate_vector_pair(0)
-                except AttributeError:
+                except (AttributeError, ValueError, InternalError):
                     print(inventor, ' Second:', inventor_sim)
                     continue
                 csv_write_record(writer, feature_vector, header)

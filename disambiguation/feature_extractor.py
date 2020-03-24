@@ -53,7 +53,11 @@ def get_inventor_features(con_cursor, pid, first_name, last_name):
             "WHERE patent_id = '{0}' AND name_first='{1}' AND name_last = '{2}'" \
             " AND inv.rawlocation_id=loc.id".format(pid, first_name, last_name)
     con_cursor.execute(loc_q)
-    (inv_long_lat, inv_city, inv_state) = con_cursor.fetchone()
+    try:
+        (inv_long_lat, inv_city, inv_state) = con_cursor.fetchone()
+    except TypeError:
+        return None
+
     return inv_long_lat, inv_city, inv_state
 
 
