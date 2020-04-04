@@ -32,6 +32,8 @@ class Pair:
 
     def generate_vector_pair(self, ground_truth):
         features = {}
+        features['inventor_1_pat_id'] = self.inventor1.__getattribute__('patent_id')
+        features['inventor_2_pat_id'] = self.inventor2.__getattribute__('patent_id')
         for field in token_fields:
             cosine, jaccard = self.token_similarity(field)
             features[field+'_cosine'] = cosine
