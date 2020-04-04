@@ -42,7 +42,7 @@ def get_csv_header():
     title.extend([tfield + '_jaccard' for tfield in token_fields])
     title.extend([sfield + '_jw' for sfield in string_fields])
     title.extend([sfield + '_soundex' for sfield in string_fields])
-    title.extend(['distance', 'truth'])
+    title.extend(['distance', 'truth', 'inventor_1_pat_id', 'inventor_2_pat_id'])
     return title
 
 
