@@ -32,3 +32,14 @@ def parse_dir_xml(xml_dir):
     return xml_files
 
 
+# Generate list files to be ingested from specified dir
+def parse_dir_pdf(pdf_dir):
+    pdf_files = []
+    for filename in listdir(pdf_dir):
+        if not filename.endswith('.pdf'):
+            continue
+        else:
+            pdf_files.append(filename)
+    return pdf_files
+
+
