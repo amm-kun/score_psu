@@ -45,7 +45,7 @@ def check_file(string):
 
 # Return CSV writer object
 def csv_writer(filename):
-    writer = csv.writer(open(filename, 'w'))
+    writer = csv.writer(open(filename, 'w', newline=''))
     return writer
 
 

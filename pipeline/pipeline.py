@@ -1,14 +1,17 @@
 from xml.etree import ElementTree as ET
 from bs4 import BeautifulSoup
 from ingestion.utilities import parse_dir_xml, parse_dir_pdf
+from utilities import p_val_sign
 from elsevier_api import getelsevier
+import math
+import random
 from collections import namedtuple
 from disambiguation.utilities import csv_writer, csv_write_field_header, csv_write_record
 import argparse
 import re
 import spacy
 from spacy.lang.en import English
-# from ack_pairs import *
+from ack_pairs import *
 import os
 import pickle
 from fuzzywuzzy import fuzz, process
@@ -46,13 +49,15 @@ def extract_p_values(file):
     num_hypo_test = 0
     real_p_value = 1
     number_significant = 0
+    extended_p_val = 0
 
     text = open(file, "r", encoding="utf8")
     try:
         text1 = text.read()
     except UnicodeDecodeError:
         return {"num_hypo_tested": num_hypo_test, "real_p": real_p_value, "real_p_sign": real_p_sign,
-                "p_val_range": range_p_values, "num_significant": number_significant, "sample_size": max_sample_size}
+                "p_val_range": range_p_values, "num_significant": number_significant, "sample_size": max_sample_size,
+                "extend_p": extended_p_val}
 
     #  "nlp" Object is used to create documents with linguistic annotations.
     doc = nlp(text1)
@@ -242,10 +247,34 @@ def extract_p_values(file):
                     df2 = s[1]
                     df1 = s[0]
 
+    just_pvalues_list = []
+    if len(p_val_list) == 0:
+        extended_p_val = 1
+        for i in range(0, len(sentences) - 1):
 
+            # *****************REGEX FOR P VALUE EXP from sentences **************
+            # expression for p value expression
+            pattern_p_list = re.finditer("p\\s?[<>=]\\s?\\d?\\.\\d+e?[-–]?\\d*", sentences[i])
+
+            # --------------------------------------T-DISTRIBUTION---------------------------------------------
+
+            for pattern_p in pattern_p_list:
+                if pattern_p:
+                    # expression = pattern_t.group()
+                    reported_pval = pattern_p.group()
+                    just_pvalues_list.append(reported_pval)
+        print("statistical p-values not found, all p-values of pdf", just_pvalues_list)
+        p_val_list = just_pvalues_list
 
     try:
-        p_val_num_list = [float(string.split()[2]) for string in p_val_list]
+        # p_val_num_list = [float(string.split()[2]) for string in p_val_list]
+        p_val_num_list = []
+        for string in p_val_list:
+            try:
+                p_val_num_list.append(float(string.split()[2]))
+            except ValueError:
+                string = string.replace('–', '-')
+                p_val_num_list.append(float(string.split()[2]))
     except IndexError:
         print("Index error in P-Val script")
         p_val_num_list = []
@@ -259,8 +288,13 @@ def extract_p_values(file):
         number_significant = 0
         for string in p_val_list:
             if string.split()[1] == '<' or string.split()[1] == '=':
-                if float(string.split()[2]) <= 0.05:
-                    number_significant += 1
+                try:
+                    if float(string.split()[2]) <= 0.05:
+                        number_significant += 1
+                except ValueError:
+                    string = string.replace('–', '-')
+                    if float(string.split()[2]) <= 0.05:
+                        number_significant += 1
         print("Number Significant:", number_significant)
 
         print("vector of p-values", p_val_list)
@@ -269,13 +303,18 @@ def extract_p_values(file):
             max_sample_size = max(sample_list)
             range_p_values = max(p_val_num_list) - min(p_val_num_list)
             real_p_sign = p_val_list[p_val_num_list.index(min(p_val_num_list))].split()[1]
+            try:
+                real_p_sign = p_val_sign[real_p_sign]
+            except KeyError:
+                real_p_sign = 0
         print("Max Sample size: ", max_sample_size)
         print("Range of p-values: ", range_p_values)
         print("Real p-value sign: ", real_p_sign)
     else:
         no_p_values.append(txt_file)
     return {"num_hypo_tested": num_hypo_test, "real_p": real_p_value, "real_p_sign": real_p_sign,
-            "p_val_range": range_p_values, "num_significant": number_significant, "sample_size": max_sample_size}
+            "p_val_range": range_p_values, "num_significant": number_significant, "sample_size": max_sample_size,
+            "extend_p": extended_p_val}
 
 
 def parse_xml(directory, xml_file):
@@ -353,6 +392,17 @@ def parse_xml(directory, xml_file):
             except KeyError:
                 print("Missing SJR")
                 sjr = 0
+            try:
+                if uni_rank == 2:
+                    print(api.affilname_0[0])
+                    if math.isnan(api.affilname_0[0]):
+                        pass
+                    else:
+                        uni_rank = c.getrank(api.affilname_0[0])
+            except AttributeError:
+                pass
+            except TypeError:
+                pass
 
     return {"num_citations": cited_by, "author_count": len(author_set), "sjr": sjr, "doi": doi,
             "u_rank": uni_rank}
@@ -376,7 +426,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     fields = ('doi', 'num_citations', 'author_count', 'sjr', 'u_rank', 'num_hypo_tested', 'real_p',
-              'real_p_sign', 'p_val_range', 'num_significant', 'sample_size')
+              'real_p_sign', 'p_val_range', 'num_significant', 'sample_size',  "extend_p", "funded", "y")
     record = namedtuple('record', fields)
     record.__new__.__defaults__ = (None,) * len(record._fields)
 
@@ -408,6 +458,14 @@ if __name__ == "__main__":
         filename = txt_dir+'/'+txt_file
         stage_2 = extract_p_values(filename)
         features = dict(**stage_1, **stage_2)
+        xml_path = xml_dir + "/" + tei
+        stage_3 = NER(XML2ack(xml_path))
+        er_list = [org for (entity, org) in stage_3]
+        if 'ORG' in er_list:
+            features["funded"] = 1
+        else:
+            features["funded"] = 0
+        features["y"] = random.uniform(0.7, 1)
         csv_write_record(writer, features, header)
     print("API errors", api_doi_errors)
     print("No P-Vals", no_p_values)
