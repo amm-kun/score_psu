@@ -51,10 +51,14 @@ def extract_p_values(file):
     number_significant = 0
     extended_p_val = 0
 
-    text = open(file, "r", encoding="utf8")
     try:
+        text = open(file, "r", encoding="utf8")
         text1 = text.read()
     except UnicodeDecodeError:
+        return {"num_hypo_tested": num_hypo_test, "real_p": real_p_value, "real_p_sign": real_p_sign,
+                "p_val_range": range_p_values, "num_significant": number_significant, "sample_size": max_sample_size,
+                "extend_p": extended_p_val}
+    except FileNotFoundError:
         return {"num_hypo_tested": num_hypo_test, "real_p": real_p_value, "real_p_sign": real_p_sign,
                 "p_val_range": range_p_values, "num_significant": number_significant, "sample_size": max_sample_size,
                 "extend_p": extended_p_val}
@@ -311,7 +315,7 @@ def extract_p_values(file):
         print("Range of p-values: ", range_p_values)
         print("Real p-value sign: ", real_p_sign)
     else:
-        no_p_values.append(txt_file)
+        no_p_values.append(file)
     return {"num_hypo_tested": num_hypo_test, "real_p": real_p_value, "real_p_sign": real_p_sign,
             "p_val_range": range_p_values, "num_significant": number_significant, "sample_size": max_sample_size,
             "extend_p": extended_p_val}
@@ -416,6 +420,40 @@ def parse_xml(directory, xml_file):
 # University Rankings
 
 
+def process_directory(xml_dir, txt_dir, label=None):
+    xmls = parse_dir_xml(xml_dir)
+    for tei in xmls:
+        print("Processing File: ", tei)
+        stage_1 = parse_xml(xml_dir, tei)
+        txt_file = tei.strip("tei.xml") + ".txt"
+        filename = txt_dir + '/' + txt_file
+        stage_2 = extract_p_values(filename)
+        features = dict(**stage_1, **stage_2)
+        xml_path = xml_dir + "/" + tei
+        stage_3 = NER(XML2ack(xml_path))
+        er_list = [org for (entity, org) in stage_3]
+        if 'ORG' in er_list:
+            features["funded"] = 1
+        else:
+            features["funded"] = 0
+        if not label:
+            pass
+        elif label == -1:
+            features["y"] = random.uniform(0.7, 1) # For PrePub
+        elif label == -2:
+            features["y"] = random.uniform(0, 0.3)
+        else:
+            features["y"] = label
+        try:
+            csv_write_record(writer, features, header)
+        except UnicodeDecodeError:
+            print("CSV WRITE ERROR", features["doi"])
+        except UnicodeEncodeError:
+            print("CSV WRITE ERROR", features["doi"])
+    print("API errors", api_doi_errors)
+    print("No P-Vals", no_p_values)
+
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Pipeline - Process PDFS - Market Pre-processing")
     parser.add_argument("--path", default=os.getcwd(), help="set grobid-client execution path")
@@ -426,7 +464,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     fields = ('doi', 'num_citations', 'author_count', 'sjr', 'u_rank', 'num_hypo_tested', 'real_p',
-              'real_p_sign', 'p_val_range', 'num_significant', 'sample_size',  "extend_p", "funded", "y")
+              'real_p_sign', 'p_val_range', 'num_significant', 'sample_size',  "extend_p", "funded")
     record = namedtuple('record', fields)
     record.__new__.__defaults__ = (None,) * len(record._fields)
 
@@ -446,29 +484,59 @@ if __name__ == "__main__":
 
     api_doi_errors = []
     no_p_values = []
-    xml_dir = r"C:\Users\arjun\dev\GROBID_processed\PublishPre"
-    txt_dir = r"C:\Users\arjun\dev\text_files\publishPre"
+
+    # xml_dir1 = [r"C:\Users\arjun\dev\GROBID_processed\PublishPre", r"C:\Users\arjun\dev\GROBID_processed\RetractedErrorData",
+    #            r"C:\Users\arjun\dev\GROBID_processed\ReplicationProject\TRUE", r"C:\Users\arjun\dev\GROBID_processed\ReplicationProject\FALSE"]
+    # txt_dir1 = [r"C:\Users\arjun\dev\text_files\publishPre", r"C:\Users\arjun\dev\text_files\retractedErrorData",
+    #            r"C:\Users\arjun\dev\text_files\replicationProject\TRUE", r"C:\Users\arjun\dev\text_files\replicationProject\FALSE"]
+
     c = UniRank('uni_rank.pickle')
 
-    xmls = parse_dir_xml(xml_dir)
-    for tei in xmls:
-        print("Processing File: ", tei)
-        stage_1 = parse_xml(xml_dir, tei)
-        txt_file = tei.strip("tei.xml")+".txt"
-        filename = txt_dir+'/'+txt_file
-        stage_2 = extract_p_values(filename)
-        features = dict(**stage_1, **stage_2)
-        xml_path = xml_dir + "/" + tei
-        stage_3 = NER(XML2ack(xml_path))
-        er_list = [org for (entity, org) in stage_3]
-        if 'ORG' in er_list:
-            features["funded"] = 1
-        else:
-            features["funded"] = 0
-        features["y"] = random.uniform(0.7, 1)
-        csv_write_record(writer, features, header)
-    print("API errors", api_doi_errors)
-    print("No P-Vals", no_p_values)
+    # for i in range(len(xml_dir1)):
+    #     if i == 0:
+    #         process_directory(xml_dir1[i], txt_dir1[i], -1)
+    #     elif i == 1:
+    #         process_directory(xml_dir1[i], txt_dir1[i], 0)
+    #     elif i == 2:
+    #         process_directory(xml_dir1[i], txt_dir1[i], 1)
+    #     elif i == 3:
+    #         process_directory(xml_dir1[i], txt_dir1[i], -2)
+
+    xml_dir1 = r"C:\Users\arjun\dev\GROBID_processed\test"
+    txt_dir1 = r"C:\Users\arjun\dev\text_files\test"
+
+    process_directory(xml_dir1, txt_dir1)
+
+
+
+
+
+    # xmls = parse_dir_xml(xml_dir)
+    # for tei in xmls:
+    #     print("Processing File: ", tei)
+    #     stage_1 = parse_xml(xml_dir, tei)
+    #     txt_file = tei.strip("tei.xml")+".txt"
+    #     filename = txt_dir+'/'+txt_file
+    #     stage_2 = extract_p_values(filename)
+    #     features = dict(**stage_1, **stage_2)
+    #     xml_path = xml_dir + "/" + tei
+    #     stage_3 = NER(XML2ack(xml_path))
+    #     er_list = [org for (entity, org) in stage_3]
+    #     if 'ORG' in er_list:
+    #         features["funded"] = 1
+    #     else:
+    #         features["funded"] = 0
+    #     # features["y"] = random.uniform(0.7, 1) # For PrePub
+    #     features["y"] = 0
+    #     try:
+    #         csv_write_record(writer, features, header)
+    #     except UnicodeDecodeError:
+    #         print("CSV WRITE ERROR", features["doi"])
+    #     except UnicodeEncodeError:
+    #         print("CSV WRITE ERROR", features["doi"])
+    # print("API errors", api_doi_errors)
+    # print("No P-Vals", no_p_values)
+    # ------END
 
     # python pipeline/pipeline.py --path C:\Users\arjun\repos\grobid-client-python\ --input C:\Users\arjun\dev\pdfs --grobid_out C:\Users\arjun\dev\xmls
     # os.chdir(args.path)
@@ -477,16 +545,18 @@ if __name__ == "__main__":
     # command = r"grobid-client.py --input C:\Users\arjun\dev\pdfs --output  C:\Users\arjun\dev\xmls processFulltextDocument"
     # os.system(command)
 
-    # # Generate text files from PDF
-    # pdfs = parse_dir_pdf(r"C:\Users\arjun\dev\GroundTruth-KnownReplicationStudies\PublishedPreprints\pre_pubPDF")
+    # # # # Generate text files from PDF
+    # pdfs = parse_dir_pdf(r"C:\Users\arjun\dev\test\pdfs")
+    # count = 0
     # for pdf in pdfs:
-    #     command = r"C:\Users\arjun\dev\xpdf-tools-win-4.02\bin64\pdftotext -enc UTF-8 C:\Users\arjun\dev\GroundTruth-KnownReplicationStudies\PublishedPreprints\pre_pubPDF/" + pdf
+    #     print(count)
+    #     command = r"C:\Users\arjun\dev\xpdf-tools-win-4.02\bin64\pdftotext C:\Users\arjun\dev\test\pdfs/" + pdf
     #     os.system(command)
-
+    #     count += 1
 
     # print("Coverting PDF to TXT")
-    # os.system(r"C:\Users\arjun\dev\xpdf-tools-win-4.02\bin64\pdftotext C:\Users\arjun\dev\pdfs\*")
-    # # xml = parse_dir_xml(args.grobid_out)
+    # # os.system(r"C:\Users\arjun\dev\xpdf-tools-win-4.02\bin64\pdftotext C:\Users\arjun\dev\pdfs\*")
+    # xml = parse_dir_xml(args.grobid_out)
     # xml = parse_dir_xml(r"C:\Users\arjun\dev\xmls")
     # for file in xml:
     #     parse_xml(file)

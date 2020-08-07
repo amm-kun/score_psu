@@ -13,7 +13,7 @@ import os
     # os.chdir(args.path)
 os.chdir(r"C:\Users\arjun\repos\grobid-client-python")
 # command = "grobid-client.py --input {0} --output {1} {2}".format(args.input, args.grobid_out, args.mode)
-command = r"grobid-client.py --input C:\Users\arjun\dev\GroundTruth-KnownReplicationStudies\PublishedPreprints\pre_pubPDF --output C:\Users\arjun\dev\GROBID_processed\PublishPre --n 4 processFulltextDocument"
+command = r"grobid-client.py --input C:\Users\arjun\dev\test\pdfs --output C:\Users\arjun\dev\GROBID_processed\test --n 1 processFulltextDocument"
 os.system(command)
     # print("Coverting PDF to TXT")
     # os.system(r"C:\Users\arjun\dev\xpdf-tools-win-4.02\bin64\pdftotext C:\Users\arjun\dev\pdfs\*")
