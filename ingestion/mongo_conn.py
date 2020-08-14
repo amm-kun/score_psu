@@ -9,7 +9,7 @@ from pymongo import errors
 
 
 # Connect to DB Instance
-def connect_db(db, host='localhost', port='27017'):
+def connect_db(db, host='localhost', port=27017):
     client = MongoClient(host, port)
     try:
         db_obj = client[db]

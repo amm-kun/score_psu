@@ -1,6 +1,48 @@
+from pandas import DataFrame
+import re
+import string
+
 p_val_sign = {
     '<': -1,
     '=': 0,
     '>': 1
 }
 
+
+def remove_accents(text: str):
+    text = re.sub('[âàäáãå]', 'a', text)
+    text = re.sub('[êèëé]', 'e', text)
+    text = re.sub('[îìïí]', 'i', text)
+    text = re.sub('[ôòöóõø]', 'o', text)
+    text = re.sub('[ûùüú]', 'u', text)
+    text = re.sub('[ç]', 'c', text)
+    text = re.sub('[ñ]', 'n', text)
+    text = re.sub('[ÂÀÄÁÃ]', 'A', text)
+    text = re.sub('[ÊÈËÉ]', 'E', text)
+    text = re.sub('[ÎÌÏÍ]', 'I', text)
+    text = re.sub('[ÔÒÖÓÕØ]', 'O', text)
+    text = re.sub('[ÛÙÜÚ]', 'U', text)
+    text = re.sub('[Ç]', 'C', text)
+    text = re.sub('[Ñ]', 'N', text)
+    return text
+
+
+def strip_punctuation(text: str):
+    regex = re.compile('[%s]' % re.escape(string.punctuation))
+    text = re.sub(regex, "", text)
+    text = text.strip()
+    return text
+
+
+def read_darpa_tsv(file):
+    df = DataFrame.from_csv(file, sep="\t")
+    for index, row in df.iterrows():
+        yield {"title": row['title_CR'], "pub_year": row['pub_year_CR'], "doi": row['DOI_CR'],
+               "ta3_pid": row['ta3_pid'], "pdf_filename": row['pdf_filename'], "claim4": row['claim4_inftest']}
+
+
+def elem_to_text(elem, default=''):
+    if elem:
+        return elem.getText()
+    else:
+        return default
