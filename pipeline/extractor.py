@@ -2,7 +2,8 @@ from models import Paper, Author, Organization, Address, Citation
 from fuzzywuzzy import process
 from utilities import elem_to_text
 from bs4 import BeautifulSoup
-from utilities import read_darpa_tsv
+from ack_pairs import *
+from elsevier_api import get_elsevier
 import pickle
 
 """
@@ -38,6 +39,9 @@ class ReadPickle:
 
 class TEIExtractor:
     def __init__(self, file):
+        self.file = file
+        self.uni_rank = ReadPickle('uni_rank.pickle')
+        self.sjr = ReadPickle('journal_dictionary.pkl')
         with open(file, 'rb') as tei:
             self.soup = BeautifulSoup(tei, features="lxml")
 
@@ -74,11 +78,11 @@ class TEIExtractor:
         # University Ranking
         if paper.affiliations:
             if paper.affiliations[0] != '':
-                paper.uni_rank = uni_rank.get_rank(paper.affiliations[0].name)
+                paper.uni_rank = self.uni_rank.get_rank(paper.affiliations[0].name)
             elif len(paper.affiliations) > 1:
-                paper.uni_rank = uni_rank.get_rank(paper.affiliations[1].name)
+                paper.uni_rank = self.uni_rank.get_rank(paper.affiliations[1].name)
         else:
-            paper.uni_rank = uni_rank.get_rank('Random')
+            paper.uni_rank = self.uni_rank.get_rank('Random')
         # Citations
         bibliography = self.soup.listbibl.find_all('biblstruct')
         for bibl in bibliography:
@@ -88,8 +92,8 @@ class TEIExtractor:
                 citation.title = elem_to_text(cited_paper.find("title", type="main"))
                 citation_authors = self.get_authors(cited_paper.find_all("author"))
                 citation.doi = elem_to_text(cited_paper.find("idno", type="DOI"))
-            if citation_authors:
-                citation.authors = citation_authors
+                if citation_authors:
+                    citation.authors = citation_authors
             cited_journal = bibl.monogr
             if cited_journal:
                 citation.source = elem_to_text(cited_journal.find("title"))
@@ -98,7 +102,21 @@ class TEIExtractor:
                 except TypeError:
                     pass
             paper.citations.append(citation)
-        return paper
+        # NER - Ack pairs - Funding status
+        paper.ack_pairs = self.get_funding_status()
+        er_list = [org for (entity, org) in paper.ack_pairs]
+        if 'ORG' in er_list:
+            paper.funded = 1
+        else:
+            paper.funded = 0
+        # SJR
+        api_resp = self.get_sjr(paper)
+        if api_resp:
+            paper.cited_by_count = api_resp["cited_by"]
+            paper.sjr = api_resp["sjr"]
+        # return paper
+        return {"title": paper.title, "num_citations": paper.cited_by_count, "author_count": len(paper.authors),
+                "sjr": paper.sjr, "u_rank": paper.uni_rank, "funded": paper.funded}
 
     @staticmethod
     def get_authors(authors):
@@ -116,13 +134,36 @@ class TEIExtractor:
                 authors_list.append(person)
         return authors_list
 
+    def get_funding_status(self):
+        pairs = NER(XML2ack(self.file))
+        return pairs
+
+    @staticmethod
+    def get_sjr(paper):
+        if not paper.doi:
+            return None
+        else:
+            api = get_elsevier(paper.doi)
+            if api.empty:
+                return None
+            else:
+                try:
+                    cited_by = api['citedby-count'][0]
+                except KeyError:
+                    cited_by = 0
+                try:
+                    sjr_score = api['SJR'][0]
+                except KeyError:
+                    sjr_score = 0
+        return {"sjr": sjr_score, "cited_by": cited_by}
+
 
 if __name__ == "__main__":
 
     uni_rank = ReadPickle('uni_rank.pickle')
     sjr = ReadPickle('journal_dictionary.pkl')
 
-    test = r"C:\Users\arjun\dev\GROBID_processed\PublishPre\24.tei.xml"
+    test = r"C:\Users\arjun\dev\GROBID_processed\PublishPre\19.tei.xml"
     extractor = TEIExtractor(test)
     test_paper = extractor.extract_paper_info()
     print(test_paper)

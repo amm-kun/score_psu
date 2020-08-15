@@ -19,6 +19,8 @@ class Paper:
         self.sjr = 0
         self.uni_rank = 0
         self.year = 0
+        self.funded = 0
+        self.cited_by_count = 0
         self.citations = []
         self.authors = []
         self.affiliations = []

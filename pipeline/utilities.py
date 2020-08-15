@@ -1,4 +1,6 @@
-from pandas import DataFrame
+from collections import namedtuple
+import pandas as pd
+import csv
 import re
 import string
 
@@ -35,7 +37,7 @@ def strip_punctuation(text: str):
 
 
 def read_darpa_tsv(file):
-    df = DataFrame.from_csv(file, sep="\t")
+    df = pd.read_csv(file, sep="\t")
     for index, row in df.iterrows():
         yield {"title": row['title_CR'], "pub_year": row['pub_year_CR'], "doi": row['DOI_CR'],
                "ta3_pid": row['ta3_pid'], "pdf_filename": row['pdf_filename'], "claim4": row['claim4_inftest']}
@@ -46,3 +48,21 @@ def elem_to_text(elem, default=''):
         return elem.getText()
     else:
         return default
+
+
+# Return CSV writer object
+def csv_writer(filename):
+    writer = csv.writer(open(filename, 'w', newline=''))
+    return writer
+
+
+# Write header into CSV
+def csv_write_field_header(writer, header):
+    writer.writerow(header)
+
+
+# Write dict based record into CSV in order
+def csv_write_record(writer, record, header):
+    nt_record = namedtuple('dis_features', header)
+    sim_record = nt_record(**record)
+    writer.writerow(list(sim_record))

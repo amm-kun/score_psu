@@ -418,6 +418,3 @@ def filter1(sentencelist):  # sentence filter inside acknowledgement
                 text2.append(sentencelist[i])
 
     return text2
-
-# print(perNER(XML2ack(r'C:\Users\arjun\dev\GROBID_processed\PublishPre\45.tei.xml')))
-# print(NER(XML2ack(r'C:\Users\arjun\dev\GROBID_processed\PublishPre\45.tei.xml')))

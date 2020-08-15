@@ -1,14 +1,12 @@
 # -*- coding: utf-8 -*-
 """
 Created on Wed Jun 24 17:04:38 2020
-
 @author: weixi
 """
 
 # -*- coding: utf-8 -*-
 """
 Created on Thu Jun 18 00:06:09 2020
-
 @author: weixi
 """
 
