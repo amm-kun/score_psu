@@ -51,8 +51,11 @@ def elem_to_text(elem, default=''):
 
 
 # Return CSV writer object
-def csv_writer(filename):
-    writer = csv.writer(open(filename, 'w', newline=''))
+def csv_writer(filename, append=False):
+    if append:
+        writer = csv.writer(open(filename, 'a', newline=''))
+    else:
+        writer = csv.writer(open(filename, 'w', newline=''))
     return writer
 
 

@@ -258,8 +258,10 @@ def extract_p_values(file, tsv_claim=None):
         print("statistical p-values not found, all p-values of pdf", just_pvalues_list)
         p_val_list = just_pvalues_list
 
-    if len(p_val_list) == 0:
-        p_val_list.append(get_p_val_darpa_tsv(tsv_claim))
+    if len(p_val_list) == 0 and tsv_claim:
+        from_claim = get_p_val_darpa_tsv(tsv_claim)
+        if from_claim:
+            p_val_list.append(get_p_val_darpa_tsv(tsv_claim))
 
     try:
         # p_val_num_list = [float(string.split()[2]) for string in p_val_list]

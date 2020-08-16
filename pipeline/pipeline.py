@@ -1,8 +1,8 @@
-from xml.etree import ElementTree as ET
+from utilities import read_darpa_tsv, p_val_sign, elem_to_text
 from bs4 import BeautifulSoup
 from ingestion.utilities import parse_dir_xml, parse_dir_pdf
-from utilities import p_val_sign
-from elsevier_api import getelsevier
+from elsevier_api import get_elsevier
+from grobid_client.grobid_client import run_grobid
 import math
 import random
 from collections import namedtuple
@@ -17,28 +17,33 @@ import pickle
 from fuzzywuzzy import fuzz, process
 
 
-class UniRank():
+class ReadPickle:
     def __init__(self, filename):
         with open(filename, 'rb') as handle:
             self.d = pickle.load(handle)
-    def getrank(self, university):
+
+    def get_rank(self, university):
         t = process.extractOne(university, self.d.keys())
-        if t[1]> 95:
-            return 1- (self.d[t[0]]/101)
+        if t[1] > 95:
+            return 1 - (self.d[t[0]]/101)
         else:
             return 2
 
-# TODO:
-# Set PDF directory
+    def get_sjr(self, journal):
+        t = process.extractOne(journal, self.d['dc:title'].to_list())
+        if t[1] > 95:
+            return self.d.loc[self.d['dc:title'] == t[0]]['SJR'][0]
 
-# Grobid client interface to process PDFs
-def elem_to_text(elem, default=''):
-    if elem:
-        return elem.getText()
+
+def get_p_val_darpa_tsv(claim):
+    pattern_p = re.search("p\\s?[<>=]\\s?\\d?\\.\\d+e?[-–]?\\d*", claim)
+    if pattern_p:
+        return pattern_p.group()
     else:
-        return default
+        return None
 
-def extract_p_values(file):
+
+def extract_p_values(file, doi):
     p_val_list = []
     sample_list = []
     filtered_sent = []
@@ -270,6 +275,9 @@ def extract_p_values(file):
         print("statistical p-values not found, all p-values of pdf", just_pvalues_list)
         p_val_list = just_pvalues_list
 
+    if len(p_val_list) == 0:
+        p_val_list.append(get_p_val_darpa_tsv(doi))
+
     try:
         # p_val_num_list = [float(string.split()[2]) for string in p_val_list]
         p_val_num_list = []
@@ -368,15 +376,15 @@ def parse_xml(directory, xml_file):
         if org_set:
             orgs = list(org_set)
             if orgs[0] != '':
-                uni_rank = c.getrank(orgs[0])
+                uni_rank = c.get_rank(orgs[0])
             elif len(orgs) > 1:
-                uni_rank = c.getrank(orgs[1])
+                uni_rank = c.get_rank(orgs[1])
         else:
-            uni_rank = c.getrank('random')
+            uni_rank = c.get_rank('random')
         print("Uni_Rank is: ", uni_rank)
 
         if doi:
-            api = getelsevier(doi)
+            api = get_elsevier(doi)
             try:
                 if api.empty:
                     api_doi_errors.append(doi)
@@ -402,22 +410,14 @@ def parse_xml(directory, xml_file):
                     if math.isnan(api.affilname_0[0]):
                         pass
                     else:
-                        uni_rank = c.getrank(api.affilname_0[0])
+                        uni_rank = c.get_rank(api.affilname_0[0])
             except AttributeError:
                 pass
             except TypeError:
                 pass
 
-    return {"num_citations": cited_by, "author_count": len(author_set), "sjr": sjr, "doi": doi,
+    return {"title": title, "num_citations": cited_by, "author_count": len(author_set), "sjr": sjr, "doi": doi,
             "u_rank": uni_rank}
-
-# Get Full Text Field
-
-# NER Acknowledgements
-
-# P-value / sample sizes
-
-# University Rankings
 
 
 def process_directory(xml_dir, txt_dir, label=None):
@@ -427,7 +427,7 @@ def process_directory(xml_dir, txt_dir, label=None):
         stage_1 = parse_xml(xml_dir, tei)
         txt_file = tei.strip("tei.xml") + ".txt"
         filename = txt_dir + '/' + txt_file
-        stage_2 = extract_p_values(filename)
+        stage_2 = extract_p_values(filename, stage_1["doi"])
         features = dict(**stage_1, **stage_2)
         xml_path = xml_dir + "/" + tei
         stage_3 = NER(XML2ack(xml_path))
@@ -455,15 +455,18 @@ def process_directory(xml_dir, txt_dir, label=None):
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Pipeline - Process PDFS - Market Pre-processing")
-    parser.add_argument("--path", default=os.getcwd(), help="set grobid-client execution path")
-    parser.add_argument("--input", help="parent folder that contains all pdfs")
-    parser.add_argument("--grobid_out", help="grobid output path")
-    parser.add_argument("--mode", default="processFulltextDocument", help="grobid mode")
 
+    parser = argparse.ArgumentParser(description="Pipeline - Process PDFS - Market Pre-processing")
+    parser.add_argument("-in", "--pdf_input", help="parent folder that contains all pdfs")
+    parser.add_argument("-out", "--grobid_out", help="grobid output path")
+    parser.add_argument("-m", "--mode", default="processFulltextDocument", help="grobid mode")
+    parser.add_argument("-n", default=10, help="concurrency for service usage")
+    no_p_values
     args = parser.parse_args()
 
-    fields = ('doi', 'num_citations', 'author_count', 'sjr', 'u_rank', 'num_hypo_tested', 'real_p',
+    run_grobid(args.pdf_input, args.grobid_out, args.n, args.mode)
+
+    fields = ('doi', 'title', 'num_citations', 'author_count', 'sjr', 'u_rank', 'num_hypo_tested', 'real_p',
               'real_p_sign', 'p_val_range', 'num_significant', 'sample_size',  "extend_p", "funded")
     record = namedtuple('record', fields)
     record.__new__.__defaults__ = (None,) * len(record._fields)
@@ -474,13 +477,13 @@ if __name__ == "__main__":
     csv_write_field_header(writer, header)
 
 
-    nlp = spacy.load("en_core_web_sm")
-    # Load English tokenizer, tagger, parser, NER and word vectors
-    nlp = English()
-    # Create the pipeline 'sentencizer' component
-    sbd = nlp.create_pipe('sentencizer')
-    # Add the component to the pipeline
-    nlp.add_pipe(sbd)
+    # nlp = spacy.load("en_core_web_sm")
+    # # Load English tokenizer, tagger, parser, NER and word vectors
+    # nlp = English()
+    # # Create the pipeline 'sentencizer' component
+    # sbd = nlp.create_pipe('sentencizer')
+    # # Add the component to the pipeline
+    # nlp.add_pipe(sbd)
 
     api_doi_errors = []
     no_p_values = []
@@ -490,7 +493,12 @@ if __name__ == "__main__":
     # txt_dir1 = [r"C:\Users\arjun\dev\text_files\publishPre", r"C:\Users\arjun\dev\text_files\retractedErrorData",
     #            r"C:\Users\arjun\dev\text_files\replicationProject\TRUE", r"C:\Users\arjun\dev\text_files\replicationProject\FALSE"]
 
-    c = UniRank('uni_rank.pickle')
+    c = ReadPickle('uni_rank.pickle')
+    sjr = ReadPickle('journal_dictionary.pkl')
+
+    print(c.get_rank('Harvard'))
+
+    print(sjr.get_sjr('American Economic Review'))
 
     # for i in range(len(xml_dir1)):
     #     if i == 0:
@@ -538,11 +546,11 @@ if __name__ == "__main__":
     # print("No P-Vals", no_p_values)
     # ------END
 
-    # python pipeline/pipeline.py --path C:\Users\arjun\repos\grobid-client-python\ --input C:\Users\arjun\dev\pdfs --grobid_out C:\Users\arjun\dev\xmls
+    # python pipeline/pipeline.py --path C:\Users\arjun\repos\grobid_client\ --input C:\Users\arjun\dev\pdfs --grobid_out C:\Users\arjun\dev\xmls
     # os.chdir(args.path)
-    # os.chdir(r"C:\Users\arjun\repos\grobid-client-python")
-    # command = "grobid-client.py --input {0} --output {1} {2}".format(args.input, args.grobid_out, args.mode)
-    # command = r"grobid-client.py --input C:\Users\arjun\dev\pdfs --output  C:\Users\arjun\dev\xmls processFulltextDocument"
+    # os.chdir(r"C:\Users\arjun\repos\grobid_client")
+    # command = "grobid_client.py --input {0} --output {1} {2}".format(args.input, args.grobid_out, args.mode)
+    # command = r"grobid_client.py --input C:\Users\arjun\dev\pdfs --output  C:\Users\arjun\dev\xmls processFulltextDocument"
     # os.system(command)
 
     # # # # Generate text files from PDF
