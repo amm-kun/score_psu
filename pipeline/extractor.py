@@ -114,6 +114,8 @@ class TEIExtractor:
         if api_resp:
             paper.cited_by_count = api_resp["cited_by"]
             paper.sjr = api_resp["sjr"]
+        # Set self-citations
+        paper.set_self_citations()
         # return paper
         return {"title": paper.title, "num_citations": paper.cited_by_count, "author_count": len(paper.authors),
                 "sjr": paper.sjr, "u_rank": paper.uni_rank, "funded": paper.funded}
@@ -163,7 +165,7 @@ if __name__ == "__main__":
     uni_rank = ReadPickle('uni_rank.pickle')
     sjr = ReadPickle('journal_dictionary.pkl')
 
-    test = r"C:\Users\arjun\dev\GROBID_processed\PublishPre\19.tei.xml"
+    test = r"C:\Users\arjun\Downloads\teregowda-hotcloud-10.tei.xml"
     extractor = TEIExtractor(test)
     test_paper = extractor.extract_paper_info()
     print(test_paper)

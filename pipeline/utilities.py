@@ -53,9 +53,9 @@ def elem_to_text(elem, default=''):
 # Return CSV writer object
 def csv_writer(filename, append=False):
     if append:
-        writer = csv.writer(open(filename, 'a', newline=''))
+        writer = csv.writer(open(filename, 'a', newline='', encoding='utf-8'))
     else:
-        writer = csv.writer(open(filename, 'w', newline=''))
+        writer = csv.writer(open(filename, 'w', newline='', encoding='utf-8'))
     return writer
 
 

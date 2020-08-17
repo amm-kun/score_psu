@@ -1,3 +1,5 @@
+from fuzzywuzzy import process
+
 """
 Object models for the Processing Pipeline to generate features for the DARPA SCORE project
 -----------------Includes the pre-processing step for the Predition Market----------------
@@ -21,10 +23,24 @@ class Paper:
         self.year = 0
         self.funded = 0
         self.cited_by_count = 0
+        self.self_citations = 0
         self.citations = []
         self.authors = []
         self.affiliations = []
         self.ack_pairs = []
+
+    def set_self_citations(self):
+        authors = [author.surname for author in self.authors]
+        for citation in self.citations:
+            citation_authors = [author.surname for author in citation.authors]
+            if not citation_authors:
+                continue
+            for author in authors:
+                match = process.extractOne(author, citation_authors)
+                if match[1] > 90:
+                    self.self_citations += 1
+                    break
+        return self.self_citations
 
 
 class Author:
