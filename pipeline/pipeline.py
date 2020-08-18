@@ -1,6 +1,6 @@
-from utilities import read_darpa_tsv, p_val_sign, elem_to_text
+from utilities import  p_val_sign, elem_to_text
 from bs4 import BeautifulSoup
-from ingestion.utilities import parse_dir_xml, parse_dir_pdf
+from ingestion.utilities import parse_dir_xml
 from elsevier_api import get_elsevier
 from grobid_client.grobid_client import run_grobid
 import math
@@ -8,13 +8,9 @@ import random
 from collections import namedtuple
 from disambiguation.utilities import csv_writer, csv_write_field_header, csv_write_record
 import argparse
-import re
-import spacy
-from spacy.lang.en import English
 from ack_pairs import *
-import os
 import pickle
-from fuzzywuzzy import fuzz, process
+from fuzzywuzzy import  process
 
 
 class ReadPickle:
