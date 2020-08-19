@@ -5,6 +5,7 @@ from p_value import extract_p_values
 from collections import namedtuple
 from os import listdir, rename, system, name, path, getcwd
 import argparse
+import random
 
 
 if __name__ == "__main__":
@@ -17,14 +18,15 @@ if __name__ == "__main__":
     parser.add_argument("-f", "--file", help="DARPA tsv for test")
     parser.add_argument("-csv", "--csv_out", default=getcwd(), help="CSV output path")
     parser.add_argument("-l", "--label", help="Assign y value | label for training set")
+    parser.add_argument("-lr", "--label_range", help="Assign y value within range for training set | Ex: 0.7-1")
 
     args = parser.parse_args()
 
     # Debug parameters config
-    args.mode = "extract-test"
-    args.grobid_out = r"C:\Users\arjun\dev\GROBID_processed\test"
-    args.pdf_input = r"C:\Users\arjun\dev\test\pdfs"
-    args.file = r"C:\Users\arjun\dev\covid_ta3.tsv"
+    # args.mode = "extract-test"
+    # args.grobid_out = r"C:\Users\arjun\dev\GROBID_processed\test"
+    # args.pdf_input = r"C:\Users\arjun\dev\test\pdfs"
+    # args.file = r"C:\Users\arjun\dev\covid_ta3.tsv"
 
     # Process PDFS -> Generate XMLs and txt files
     if args.mode == "process-pdfs":
@@ -45,14 +47,18 @@ if __name__ == "__main__":
 
     # Generate Training data
     elif args.mode == "generate-train":
-        fields = ('doi', 'title', 'num_citations', 'author_count', 'sjr', 'u_rank', 'num_hypo_tested', 'real_p',
+        fields = ('doi', 'title', 'num_citations', 'author_count', 'sjr', 'u_rank', 'self_citations', 'num_hypo_tested', 'real_p',
                   'real_p_sign', 'p_val_range', 'num_significant', 'sample_size', "extend_p", "funded", "y")
         record = namedtuple('record', fields)
         record.__new__.__defaults__ = (None,) * len(record._fields)
         # CSV output file (Delete the file manually if you wish to generate fresh output, default appends
+        if path.isfile(args.csv_out + "/train.csv"):
+            write_head = False
+        else:
+            write_head = True
         writer = csv_writer(r"{0}/{1}".format(args.csv_out, "train.csv"), append=True)
         header = list(fields)
-        if path.isfile(args.csv_out+"/train.csv"):
+        if write_head:
             csv_write_field_header(writer, header)
         # Run pipeline
         xmls = listdir(args.grobid_out)
@@ -62,7 +68,11 @@ if __name__ == "__main__":
             extraction_stage = extractor.extract_paper_info()
             p_val_stage = extract_p_values(args.pdf_input + '/' + xml.replace('.tei.xml', '.txt'))
             features = dict(**extraction_stage, **p_val_stage)
-            features['y'] = float(args.label)
+            if args.label_range:
+                label_range = args.label_range.split('-')
+                features['y'] = random.uniform(float(label_range[0]), float(label_range[1]))
+            else:
+                features['y'] = float(args.label)
             try:
                 csv_write_record(writer, features, header)
             except UnicodeDecodeError:

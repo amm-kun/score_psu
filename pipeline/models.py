@@ -40,7 +40,10 @@ class Paper:
                 if match[1] > 90:
                     self.self_citations += 1
                     break
-        return self.self_citations/len(self.citations)
+        if self.self_citations == 0:
+            return 0
+        else:
+            return self.self_citations/len(self.citations)
 
 
 class Author:

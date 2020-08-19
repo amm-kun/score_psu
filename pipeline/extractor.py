@@ -48,11 +48,13 @@ class TEIExtractor:
     def extract_paper_info(self):
         paper = Paper()
         # DOI
-        if self.soup.idno:
-            paper.doi = self.soup.idno.getText()
+        doi = self.soup.teiheader.find("idno")
+        if doi:
+            paper.doi = elem_to_text(doi)
         # Title
-        if self.soup.title:
-            paper.title = self.soup.title.getText()
+        title = self.soup.teiheader.find("title")
+        if title:
+            paper.title = elem_to_text(title)
         # Authors
         authors = self.get_authors(self.soup.analytic.find_all('author'))
         if authors:
@@ -115,10 +117,11 @@ class TEIExtractor:
             paper.cited_by_count = api_resp["cited_by"]
             paper.sjr = api_resp["sjr"]
         # Set self-citations
-        paper.set_self_citations()
+        paper.self_citations = paper.set_self_citations()
         # return paper
-        return {"title": paper.title, "num_citations": paper.cited_by_count, "author_count": len(paper.authors),
-                "sjr": paper.sjr, "u_rank": paper.uni_rank, "funded": paper.funded}
+        return {"doi": paper.doi, "title": paper.title, "num_citations": paper.cited_by_count, "author_count": len(paper.authors),
+                "sjr": paper.sjr, "u_rank": paper.uni_rank, "funded": paper.funded,
+                "self_citations": paper.self_citations}
 
     @staticmethod
     def get_authors(authors):

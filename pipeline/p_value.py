@@ -13,6 +13,9 @@ sbd = nlp.create_pipe('sentencizer')
 # Add the component to the pipeline
 nlp.add_pipe(sbd)
 
+# Max length for input (Memory bottleneck)
+nlp.max_length = 2500000
+
 
 def get_p_val_darpa_tsv(claim):
     pattern_p = re.search("p\\s?[<>=]\\s?\\d?\\.\\d+e?[-–]?\\d*", claim)
@@ -40,17 +43,25 @@ def extract_p_values(file, tsv_claim=None):
         # text = open(file, "r", encoding="utf8")
         text = open(file, "r")
         text1 = text.read()
-    # except UnicodeDecodeError:
-    #     return {"num_hypo_tested": num_hypo_test, "real_p": real_p_value, "real_p_sign": real_p_sign,
-    #             "p_val_range": range_p_values, "num_significant": number_significant, "sample_size": max_sample_size,
-    #             "extend_p": extended_p_val}
     except FileNotFoundError:
-        if file == r"C:\Users\arjun\dev\test\pdfs/Blagov_covid_jr83m.txt":
+        print("******---------- File not found: ", file, "----------******")
+        return {"num_hypo_tested": num_hypo_test, "real_p": real_p_value, "real_p_sign": real_p_sign,
+                "p_val_range": range_p_values, "num_significant": number_significant, "sample_size": max_sample_size,
+                "extend_p": extended_p_val}
+    except UnicodeDecodeError:
+        print("******---------- Encoding error: ", file, "----------******")
+        try:
+            text = open(file, "r", encoding="utf-8")
+            text1 = text.read()
+        except UnicodeDecodeError:
+            print("*********----------", file, "*********----------")
             return {"num_hypo_tested": num_hypo_test, "real_p": real_p_value, "real_p_sign": real_p_sign,
                 "p_val_range": range_p_values, "num_significant": number_significant, "sample_size": max_sample_size,
                 "extend_p": extended_p_val}
-        else:
-            print("-------------------------------", file, "-------------------------------")
+
+        # return {"num_hypo_tested": num_hypo_test, "real_p": real_p_value, "real_p_sign": real_p_sign,
+        #         "p_val_range": range_p_values, "num_significant": number_significant, "sample_size": max_sample_size,
+        #         "extend_p": extended_p_val}
 
     #  "nlp" Object is used to create documents with linguistic annotations.
     doc = nlp(text1)
@@ -218,7 +229,7 @@ def extract_p_values(file, tsv_claim=None):
                 else:
                     sample_chi = s[2]
                     df1 = s[1]
-                    chi_value = s[3]
+                    # chi_value = s[3]
                     sample_list.append(sample_chi)
 
         # --------------------------------------------------- Q-DISTRIBUTION ---------------------------------------------
@@ -239,7 +250,7 @@ def extract_p_values(file, tsv_claim=None):
                     df2 = s[1]
                     df1 = s[0]
 
-    print("P-vals list is:", p_val_list)
+    # print("P-vals list is:", p_val_list)
     if len(p_val_list) == 0:
         extended_p_val = 1
         for i in range(0, len(sentences) - 1):
@@ -255,7 +266,7 @@ def extract_p_values(file, tsv_claim=None):
                     # expression = pattern_t.group()
                     reported_pval = pattern_p.group()
                     just_pvalues_list.append(reported_pval)
-        print("statistical p-values not found, all p-values of pdf", just_pvalues_list)
+        # print("statistical p-values not found, all p-values of pdf", just_pvalues_list)
         p_val_list = just_pvalues_list
 
     if len(p_val_list) == 0 and tsv_claim:
@@ -280,12 +291,12 @@ def extract_p_values(file, tsv_claim=None):
     except IndexError:
         print("Index error in P-Val script")
         p_val_num_list = []
-    print("vector of p-value numbers:", p_val_num_list)
+    # print("vector of p-value numbers:", p_val_num_list)
     if len(p_val_list) > 0 and len(p_val_num_list) > 0:
         num_hypo_test = len(p_val_list)
         real_p_value = min(p_val_num_list)
-        print("Number of hypothesis tested:", num_hypo_test)
-        print("Real p-value:", real_p_value)
+        # print("Number of hypothesis tested:", num_hypo_test)
+        # print("Real p-value:", real_p_value)
 
         number_significant = 0
         for string in p_val_list:
@@ -297,11 +308,11 @@ def extract_p_values(file, tsv_claim=None):
                     string = string.replace('–', '-')
                     if float(string.split()[2]) <= 0.05:
                         number_significant += 1
-        print("Number Significant:", number_significant)
+        # print("Number Significant:", number_significant)
 
-        print("vector of p-values", p_val_list)
+        # print("vector of p-values", p_val_list)
         if sample_list:
-            print("vector of sample sizes", max(sample_list))
+            # print("vector of sample sizes", max(sample_list))
             max_sample_size = max(sample_list)
             range_p_values = max(p_val_num_list) - min(p_val_num_list)
             real_p_sign = p_val_list[p_val_num_list.index(min(p_val_num_list))].split()[1]
@@ -309,12 +320,12 @@ def extract_p_values(file, tsv_claim=None):
                 real_p_sign = p_val_sign[real_p_sign]
             except KeyError:
                 real_p_sign = 0
-        print("Max Sample size: ", max_sample_size)
-        print("Range of p-values: ", range_p_values)
-        print("Real p-value sign: ", real_p_sign)
+        # print("Max Sample size: ", max_sample_size)
+        # print("Range of p-values: ", range_p_values)
+        # print("Real p-value sign: ", real_p_sign)
     return {"num_hypo_tested": num_hypo_test, "real_p": real_p_value, "real_p_sign": real_p_sign,
             "p_val_range": range_p_values, "num_significant": number_significant, "sample_size": max_sample_size,
             "extend_p": extended_p_val}
 
 
-# extract_p_values(r"C:\Users\arjun\dev\test\pdfs\Abdelrahman_covid_4qm3l.txt")
+extract_p_values(r"C:\Users\arjun\dev\test\pdfs\Abdelrahman_covid_4qm3l.txt")

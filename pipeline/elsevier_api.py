@@ -123,11 +123,10 @@ def get_elsevier(doi):
 
     def return_row(r, query):
         status = r.status_code
-
+        empty = {'source-id': '0'}
         # Checking the status code: success_code = 200. Otherwise, return empty row
         if status != 200:
             # print('Error_status', status)
-            empty = {'source-id': '0'}
             empty = pd.DataFrame(empty, index=[0])
             return empty
         else:
@@ -178,7 +177,11 @@ def get_elsevier(doi):
                     new_columns.append('citeScoreYearInfoList.citeScoreTrackerYear')
                 if 'subject-area' in entry.columns:
                     new_columns.append('subject-area')
-                entry = pd.DataFrame(data=entry.loc[:, new_columns])
+                try:
+                    entry = pd.DataFrame(data=entry.loc[:, new_columns])
+                except KeyError:
+                    empty = pd.DataFrame(empty, index=[0])
+                    return empty
 
             row = entry
             # Subject-area json response to columns(only subject is chosen as feature)
