@@ -31,10 +31,10 @@ if __name__ == "__main__":
     # Process PDFS -> Generate XMLs and txt files
     if args.mode == "process-pdfs":
         # Change pdf names (Some PDFs have '-' instead of '_' in the names)
-        for count, filename in enumerate(listdir("xyz")):
+        for count, filename in enumerate(listdir(args.pdf_input)):
             print("Processing: ", filename, ", file number: ", count)
             new_name = filename.replace('-', '_')
-            rename(args.pdf_input+'/'+filename, new_name)
+            rename(args.pdf_input+'/'+filename, args.pdf_input+'/'+new_name)
             # Generate text files from PDFs
             if name == 'nt':
                 command = r"C:\Users\arjun\dev\xpdf-tools-win-4.02\bin64\pdftotext {0}/".format(args.pdf_input) + \

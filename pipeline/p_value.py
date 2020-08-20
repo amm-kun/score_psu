@@ -49,19 +49,14 @@ def extract_p_values(file, tsv_claim=None):
                 "p_val_range": range_p_values, "num_significant": number_significant, "sample_size": max_sample_size,
                 "extend_p": extended_p_val}
     except UnicodeDecodeError:
-        print("******---------- Encoding error: ", file, "----------******")
         try:
             text = open(file, "r", encoding="utf-8")
             text1 = text.read()
         except UnicodeDecodeError:
-            print("*********----------", file, "*********----------")
+            print("*********---------- Encoding error: ", file, "*********----------")
             return {"num_hypo_tested": num_hypo_test, "real_p": real_p_value, "real_p_sign": real_p_sign,
-                "p_val_range": range_p_values, "num_significant": number_significant, "sample_size": max_sample_size,
-                "extend_p": extended_p_val}
-
-        # return {"num_hypo_tested": num_hypo_test, "real_p": real_p_value, "real_p_sign": real_p_sign,
-        #         "p_val_range": range_p_values, "num_significant": number_significant, "sample_size": max_sample_size,
-        #         "extend_p": extended_p_val}
+                    "p_val_range": range_p_values, "num_significant": number_significant,
+                    "sample_size": max_sample_size, "extend_p": extended_p_val}
 
     #  "nlp" Object is used to create documents with linguistic annotations.
     doc = nlp(text1)

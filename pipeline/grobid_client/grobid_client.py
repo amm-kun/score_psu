@@ -131,7 +131,7 @@ class GrobidClient(ApiClient):
 
 def run_grobid(input_path, output_path, n, service="processFulltextDocument"):
 
-    config_path = "./config.json"
+    config_path = "./grobid_client/config.json"
 
     if n is not None:
         try:
@@ -154,7 +154,7 @@ def run_grobid(input_path, output_path, n, service="processFulltextDocument"):
 
     start_time = time.time()
 
-    client.process(input_path, output_path, n, service)
+    client.process(input_path, output_path, n, service, False, False, False, False, False)
 
     runtime = round(time.time() - start_time, 3)
     print("runtime: %s seconds " % runtime)
