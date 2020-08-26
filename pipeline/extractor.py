@@ -3,7 +3,7 @@ from fuzzywuzzy import process
 from utilities import elem_to_text
 from bs4 import BeautifulSoup
 from ack_pairs import *
-from elsevier_api import get_elsevier
+from elsevier_api import getapi
 import pickle
 
 """
@@ -116,12 +116,13 @@ class TEIExtractor:
         if api_resp:
             paper.cited_by_count = api_resp["cited_by"]
             paper.sjr = api_resp["sjr"]
+            paper.subject = api_resp["subject"]
         # Set self-citations
         paper.self_citations = paper.set_self_citations()
         # return paper
         return {"doi": paper.doi, "title": paper.title, "num_citations": paper.cited_by_count, "author_count": len(paper.authors),
                 "sjr": paper.sjr, "u_rank": paper.uni_rank, "funded": paper.funded,
-                "self_citations": paper.self_citations}
+                "self_citations": paper.self_citations, "subject": paper.subject}
 
     @staticmethod
     def get_authors(authors):
@@ -148,7 +149,7 @@ class TEIExtractor:
         if not paper.doi:
             return None
         else:
-            api = get_elsevier(paper.doi)
+            api = getapi(paper.doi)
             if api.empty:
                 return None
             else:
@@ -156,11 +157,15 @@ class TEIExtractor:
                     cited_by = api['citedby-count'][0]
                 except KeyError:
                     cited_by = 0
+                try: 
+                    subject = api['Subject']
+                except:
+                    subject = None
                 try:
                     sjr_score = api['SJR'][0]
                 except KeyError:
                     sjr_score = 0
-        return {"sjr": sjr_score, "cited_by": cited_by}
+        return {"sjr": sjr_score, "cited_by": cited_by, "subject": subject}
 
 
 if __name__ == "__main__":
