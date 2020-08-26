@@ -1,7 +1,6 @@
 # importing library 
 import requests 
 import pandas as pd
-from fuzzywuzzy import fuzz
 import os
 import math
 from datetime import datetime
@@ -198,16 +197,13 @@ def getapi(doi):
                     if 'subject-area' in entry.columns:
                         sub = entry['subject-area']
                         list = sub[0]
-                        subject_row = pd.DataFrame()
+                        sub_list = []
                         for i in range(len(list)):
                             subject= pd.json_normalize(list[i])
-                            col1 = "@_fa_Subject_"+str(i)
-                            col2 = "@code_subject_"+str(i)
-                            col3 = "@abbrev_"+str(i)
-                            col4 = "Subject_"+str(i)
-                            subject = subject.rename(columns={"@_fa":col1, "@code": col2,"@abbrev":col3, "$":col4})
-                            subject = subject.drop([col1, col2, col3],axis = 1)
-                            subject_row = pd.concat([subject_row,subject], axis = 1)    
+                            subject = subject["$"]
+                            sub_list.append(subject[0])
+                        sub_list = {'Subject' : str(sub_list)}
+                        subject_row = pd.DataFrame(sub_list, index=[0]) 
                         row = row.drop('subject-area', axis = 1)
                         row = pd.concat([row, subject_row],ignore_index=False, axis =1)
                         
