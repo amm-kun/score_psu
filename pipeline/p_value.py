@@ -104,8 +104,8 @@ def extract_p_values(file, tsv_claim=None):
         pattern_b_list = re.finditer("b\s*[=><]\s*\d*\.*\d*\s*,\s*[p|P]\s*[<>=]\s*\d*\.\d+e*[-–]*\d*", sentences[i])
 
 
-        #*****************REGEX FOR P VALUE EXPRESSION FROM DISTRIBUTION**************
-        #expression for p value expression
+        #------------------------REGEX FOR P VALUE EXPRESSION FROM DISTRIBUTION------------------------------
+        #expression for p value equation
         pattern_p = re.search( "[p|P]\\s?[<>=]\\s?\\d?\\.\\d+e?[-–]?\\d*", sentences[i])
 
         # --------------------------------------T-DISTRIBUTION---------------------------------------------
@@ -214,7 +214,7 @@ def extract_p_values(file, tsv_claim=None):
                     sample_cor1 = df1 + 2
                     sample_list.append(sample_cor1)
 
-    #***********************************************logistic (OR MEANS ODDS RATIO) regression*************************
+    #-------------------------------------------logistic (OR MEANS ODDS RATIO) regression---------------------------------
         for pattern_logreg in pattern_logreg_list:
             if pattern_logreg:
                 expression = pattern_logreg.group()
@@ -224,7 +224,7 @@ def extract_p_values(file, tsv_claim=None):
                 
 
 
-        #********************* HR (hazard ratio) statistics *******************************************
+        #------------------------------------------ HR (hazard ratio) statistics -----------------------------------------------------
         for pattern_hr in pattern_HR_list:
             if pattern_hr:
                 expression = pattern_hr.group()
@@ -302,8 +302,8 @@ def extract_p_values(file, tsv_claim=None):
         extended_p_val = 1
         for i in range(0, len(sentences) - 1):
 
-            # *****************REGEX FOR P VALUE EXP from sentences **************
-            # expression for p value expression
+            # ---------------------------REGEX FOR P VALUE EXP from sentences ----------------------------
+           
             pattern_p_list = re.finditer("[p|P]\\s?[<>=]\\s?\\d?\\.\\d+e?[-–]?\\d*", sentences[i])
 
             
