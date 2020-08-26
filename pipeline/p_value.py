@@ -321,23 +321,24 @@ def extract_p_values(file, tsv_claim=None):
         if from_claim:
             p_val_list.append(get_p_val_darpa_tsv(tsv_claim))
 
-    try:
+    # try:
         # p_val_num_list = [float(string.split()[2]) for string in p_val_list]
-        p_val_num_list = []
-        for string in p_val_list:
+    p_val_num_list = []
+    for string in p_val_list:
+        try:
+            p_val_num_list.append(float(string.split()[2]))
+        except ValueError:
+            string = string.replace('–', '-')
             try:
                 p_val_num_list.append(float(string.split()[2]))
             except ValueError:
-                string = string.replace('–', '-')
-                try:
-                    p_val_num_list.append(float(string.split()[2]))
-                except ValueError:
-                    p_val_num_list.append(float((re.split('[<>=]', string))[-1]))
-            except AttributeError:
-                pass
-    except IndexError:
-        print("Index error in P-Val script")
-        p_val_num_list = []
+                p_val_num_list.append(float((re.split('[<>=]', string))[-1]))
+        except AttributeError:
+            pass
+        except IndexError:
+            p_val_num_list.append(float((re.split('[<>=]', string))[-1]))
+            # print("Index error in P-Val script")
+            # p_val_num_list = []
     # print("vector of p-value numbers:", p_val_num_list)
     if len(p_val_list) > 0 and len(p_val_num_list) > 0:
         num_hypo_test = len(p_val_list)
@@ -347,14 +348,19 @@ def extract_p_values(file, tsv_claim=None):
 
         number_significant = 0
         for string in p_val_list:
-            if string.split()[1] == '<' or string.split()[1] == '=':
-                try:
+            try:
+                if string.split()[1] == '<' or string.split()[1] == '=':
                     if float(string.split()[2]) <= 0.05:
                         number_significant += 1
-                except ValueError:
-                    string = string.replace('–', '-')
-                    if float(string.split()[2]) <= 0.05:
+            except ValueError:
+                string = string.replace('–', '-')
+                if float(string.split()[2]) <= 0.05 and (string.split()[1] == '<' or string.split()[1] == '='):
+                    number_significant += 1
+            except IndexError:
+                if any(character in string for character in ['<', '=']):
+                    if float((re.split('[<>=]', string))[-1]) <= 0.05:
                         number_significant += 1
+
         # print("Number Significant:", number_significant)
 
         # print("vector of p-values", p_val_list)
@@ -362,11 +368,14 @@ def extract_p_values(file, tsv_claim=None):
             # print("vector of sample sizes", max(sample_list))
             max_sample_size = max(sample_list)
             range_p_values = max(p_val_num_list) - min(p_val_num_list)
-            real_p_sign = p_val_list[p_val_num_list.index(min(p_val_num_list))].split()[1]
             try:
+                real_p_sign = p_val_list[p_val_num_list.index(min(p_val_num_list))].split()[1]
                 real_p_sign = p_val_sign[real_p_sign]
             except KeyError:
                 real_p_sign = 0
+            except IndexError:
+                real_p_sign = p_val_sign[re.search('[<>=]', p_val_list[p_val_num_list.index(min(p_val_num_list))]).group()]
+
         # print("Max Sample size: ", max_sample_size)
         # print("Range of p-values: ", range_p_values)
         # print("Real p-value sign: ", real_p_sign)
@@ -375,4 +384,4 @@ def extract_p_values(file, tsv_claim=None):
             "extend_p": extended_p_val}
 
 
-extract_p_values(r"C:\Users\arjun\dev\test\pdfs\Abdelrahman_covid_4qm3l.txt")
+extract_p_values(r"C:\Users\arjun\dev\test\pdfs\Hongbo_covid_gy96y.txt")
