@@ -28,6 +28,7 @@ def get_p_val_darpa_tsv(claim):
 def extract_p_values(file, tsv_claim=None):
     p_val_list = []
     sample_list = []
+    real_sample_list = []
     filtered_sent = []
     sentences = []
     just_pvalues_list = []
@@ -103,8 +104,17 @@ def extract_p_values(file, tsv_claim=None):
 
 
         #*****************REGEX FOR P VALUE EXPRESSION FROM DISTRIBUTION**************
-        #expression for p value expression
+    
         pattern_p = re.search( "[p|P]\\s?[<>=]\\s?\\d?\\.\\d+e?[-|–]?\\d*", sentences[i])
+
+        # #*****************Expression for sample size in 'n' form**********************
+        # pattern_sample = re.finditer("(N|n)\s*=\s*\d*", sentences[i])
+
+        # #**********append sample sizes to list********************
+        # for sample in pattern_sample:
+        #     if sample:
+        #         samplesize = sample.group()
+        #         real_sample_list.append(samplesize)
 
 
         # --------------------------------------T-DISTRIBUTION---------------------------------------------
@@ -115,7 +125,7 @@ def extract_p_values(file, tsv_claim=None):
                 pattern_pval = re.search( "[p|P]\\s?[<>=]\\s?\\d?\\.\\d+e?[-|–]?\\d*", expression)
                 reported_pval_exp = pattern_pval.group()
                 p_val_list.append(reported_pval_exp)
-                # sentence = pattern_t.string
+                
                 s = [float(s) for s in re.findall(r'-?\d+\.?\d*', expression)]
                 if len(s) == 3:
                     df2 = 'NULL'
@@ -135,18 +145,7 @@ def extract_p_values(file, tsv_claim=None):
                 pattern_pval = re.search( "[p|P]\\s?[<>=]\\s?\\d?\\.\\d+e?[-|–]?\\d*", expression)
                 reported_pval_exp = pattern_pval.group()
                 p_val_list.append(reported_pval_exp)
-                s = [float(s) for s in re.findall(r'-?\d+\.?\d*', expression)]
-                if len(s) == 3:
-                    df2 = 'NULL'
-                    df1 = s[0]
-                    sample_t1 = df1 + 1
-                    sample_list.append(sample_t1)
-
-                else:
-                    df2 = s[1]
-                    df1 = s[0]
-                    sample_t1 = df1 + 1
-                    sample_list.append(sample_t1)    
+                   
 
         # --------------------------------------------------F-DISTRIBUTION--------------------------------
 
@@ -201,19 +200,7 @@ def extract_p_values(file, tsv_claim=None):
                 pattern_pval = re.search( "[p|P]\\s?[<>=]\\s?\\d?\\.\\d+e?[-|–]?\\d*", expression)
                 reported_pval_exp = pattern_pval.group()
                 p_val_list.append(reported_pval_exp)
-                s = [float(s) for s in re.findall(r'-?\d+\.?\d*', expression)]
-                if len(s) == 3:
-                    df2 = 'NULL'
-                    df1 = s[0]
-                    sample_cor1 = df1 + 2
-                    sample_list.append(sample_cor1)
-
                 
-                else:
-                    df2 = s[1]
-                    df1 = s[0]
-                    sample_cor1 = df1 + 2
-                    sample_list.append(sample_cor1)
 
     #***********************************************logistic (OR MEANS ODDS RATIO) regression*************************
         for pattern_logreg in pattern_logreg_list:
@@ -223,8 +210,6 @@ def extract_p_values(file, tsv_claim=None):
                 reported_pval_exp = pattern_pval.group()
                 p_val_list.append(reported_pval_exp)
                 
-
-
         #********************* HR (hazard ratio) statistics *******************************************
         for pattern_hr in pattern_HR_list:
             if pattern_hr:
@@ -241,13 +226,7 @@ def extract_p_values(file, tsv_claim=None):
                 pattern_pval = re.search( "[p|P]\\s?[<>=]\\s?\\d?\\.\\d+e?[-|–]?\\d*", expression)
                 reported_pval_exp = pattern_pval.group()
                 p_val_list.append(reported_pval_exp)
-                s = [float(s) for s in re.findall(r'-?\d+\.?\d*', expression)]
-                if len(s) == 3:
-                    df2 = 'NULL'
-                    df1 = s[0]
-                else:
-                    df2 = s[1]
-                    df1 = s[0]
+               
 
         # ---------------------------------------------- Z-DISTRIBUTION ----------------------------------------------
 
@@ -257,10 +236,7 @@ def extract_p_values(file, tsv_claim=None):
                 pattern_pval = re.search( "[p|P]\\s?[<>=]\\s?\\d?\\.\\d+e?[-|–]?\\d*", expression)
                 reported_pval_exp = pattern_pval.group()
                 p_val_list.append(reported_pval_exp)
-                s = [float(s) for s in re.findall(r'-?\d+\.?\d*', expression)]
-                # if len(s) == 2:
-                #     df2 = 'NULL'
-                #     df1 = 'NULL'
+               
 
         # ------------------------------------ CHI SQUARE DISTRIBUTION---------------------------------------------
 
@@ -273,11 +249,11 @@ def extract_p_values(file, tsv_claim=None):
                 s = [float(s) for s in re.findall(r'-?\d+\.?\d*', expression)]
                 if len(s) == 4:
                     sample_chi = 'NULL'
-                    df1 = s[1]
+                    # df1 = s[1]
                 else:
                     sample_chi = s[2]
-                    df1 = s[1]
-                    chi_value = s[3]
+                    # df1 = s[1]
+                    # chi_value = s[3]
                     sample_list.append(sample_chi)
 
         # --------------------------------------------------- Q-DISTRIBUTION ---------------------------------------------
@@ -288,13 +264,7 @@ def extract_p_values(file, tsv_claim=None):
                 pattern_pval = re.search( "[p|P]\\s?[<>=]\\s?\\d?\\.\\d+e?[-|–]?\\d*", expression)
                 reported_pval_exp = pattern_pval.group()
                 p_val_list.append(reported_pval_exp)
-                s = [float(s) for s in re.findall(r'-?\d+\.?\d*', expression)]
-                if len(s) == 3:
-                    df2 = 'NULL'
-                    df1 = s[0]
-                else:
-                    df2 = s[1]
-                    df1 = s[0]
+               
 
         #_______________________________________________________________________________________________________________________
 
@@ -385,4 +355,6 @@ def extract_p_values(file, tsv_claim=None):
             "extend_p": extended_p_val}
 
 
-extract_p_values(r"C:\Users\arjun\dev\test\pdfs\Hongbo_covid_gy96y.txt")
+# extract_p_values(r"C:\Users\arjun\dev\test\pdfs\Hongbo_covid_gy96y.txt")
+# path_text = "C:\\Users\\lanka\\Desktop\\Claims_08_27\\Seaman_covid_9NDq.txt"
+# print(extract_p_values(path_text))
