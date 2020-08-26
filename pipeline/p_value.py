@@ -176,7 +176,7 @@ def extract_p_values(file, tsv_claim=None):
         for pattern_cor in pattern_cor_list:
             if pattern_cor:
                 expression = pattern_cor.group()
-                print(expression)
+                # print(expression)
                 pattern_pval = re.search( "[p|P]\\s?[<>=]\\s?\\d?\\.\\d+e?[-|–]?\\d*", expression)
                 reported_pval_exp = pattern_pval.group()
                 p_val_list.append(reported_pval_exp)
