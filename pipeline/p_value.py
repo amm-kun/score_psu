@@ -104,7 +104,7 @@ def extract_p_values(file, tsv_claim=None):
         pattern_b_list = re.finditer("b\s*[=><]\s*\d*\.*\d*\s*,\s*[p|P]\s*[<>=]\s*\d*\.\d+e*[-|–]*\d*", sentences[i])
 
 
-        #*****************REGEX FOR P VALUE EXPRESSION FROM DISTRIBUTION**************
+        #*****************REGEX FOR P VALUE EXPRESSION FROM DISTRIBUTION*****************************
     
         pattern_p = re.search( "[p|P]\\s?[<>=]\\s?\\d?\\.\\d+e?[-|–]?\\d*", sentences[i])
 
