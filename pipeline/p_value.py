@@ -32,6 +32,7 @@ def extract_p_values(file, tsv_claim=None):
     filtered_sent = []
     sentences = []
     just_pvalues_list = []
+    just_pvalues_range = []
     max_sample_size = 0
     range_p_values = 0
     real_p_sign = 0
@@ -142,9 +143,12 @@ def extract_p_values(file, tsv_claim=None):
         for pattern_t_nodf in pattern_t_nodf_list:
             if pattern_t_nodf:
                 expression = pattern_t_nodf.group()
+                # print(expression)
                 pattern_pval = re.search( "[p|P]\\s?[<>=]\\s?\\d?\\.\\d+e?[-|–]?\\d*", expression)
-                reported_pval_exp = pattern_pval.group()
-                p_val_list.append(reported_pval_exp)
+                # print(pattern_pval)
+                if pattern_pval:
+                    reported_pval_exp = pattern_pval.group()
+                    p_val_list.append(reported_pval_exp)
                    
 
         # --------------------------------------------------F-DISTRIBUTION--------------------------------
@@ -275,17 +279,28 @@ def extract_p_values(file, tsv_claim=None):
 
             # ---------------------------REGEX FOR P VALUE EXP from sentences ----------------------------
            
-            pattern_p_list = re.finditer("[p|P]\\s?[<>=]\\s?\\d?\\.\\d+e?[-–]?\\d*", sentences[i])
+           #old p val exp : [p|P]\\s?[<>=]\\s?\\d?\\.\\d+e?[-–]?\\d*
+            pattern_p_list = re.finditer("[p|P]\s*[<>=]\s*\d*\.\d+(e[-–]\d*)?(?!.*(-|–))", sentences[i])
+            pattern_p_range_list = re.finditer("(p|P)\s*[=<>]\s*\d*.\d*(-|–)\s*\d*.\d*", sentences[i])
+
 
             
-
+            # append just pvalues to a list names 'just_pvalues_list'
             for pattern_p in pattern_p_list:
                 if pattern_p:
-                    # expression = pattern_t.group()
                     reported_pval = pattern_p.group()
                     just_pvalues_list.append(reported_pval)
+
+            # append just pvalues in the form of range to a list names 'just_pvalues_range'
+            for pattern_p_range in pattern_p_range_list:
+                if pattern_p_range:
+                    reported_pval_range = pattern_p_range.group()
+                    just_pvalues_range.append(reported_pval_range)
+
         # print("statistical p-values not found, all p-values of pdf", just_pvalues_list)
         p_val_list = just_pvalues_list
+        # print(just_pvalues_range)
+        # print(just_pvalues_list)
 
     if len(p_val_list) == 0 and tsv_claim:
         from_claim = get_p_val_darpa_tsv(tsv_claim)
@@ -296,6 +311,7 @@ def extract_p_values(file, tsv_claim=None):
         # p_val_num_list = [float(string.split()[2]) for string in p_val_list]
     p_val_num_list = []
     for string in p_val_list:
+        
         try:
             p_val_num_list.append(float(string.split()[2]))
         except ValueError:
@@ -356,5 +372,5 @@ def extract_p_values(file, tsv_claim=None):
 
 
 # extract_p_values(r"C:\Users\arjun\dev\test\pdfs\Hongbo_covid_gy96y.txt")
-# path_text = "C:\\Users\\lanka\\Desktop\\Claims_08_27\\Seaman_covid_9NDq.txt"
-# print(extract_p_values(path_text))
+path_text = "C:\\Users\\lanka\\Downloads\\6713.txt"
+print(extract_p_values(path_text))
