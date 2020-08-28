@@ -405,7 +405,6 @@ for path in os.listdir(d):
     if os.path.isfile(full_path):
         filepaths_list.append(full_path)
 
-# print(len(filepaths_list))
 
 for path_text in filepaths_list:
     print(path_text)
