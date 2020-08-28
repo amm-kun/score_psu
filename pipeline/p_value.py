@@ -22,7 +22,7 @@ def get_p_val_darpa_tsv(claim):
     
     # [p|P]\\s?[<>=]\\s?\\d?\\.\\d+e?[-|–]?\\d*
     
-    pattern_p = re.search("[p|P]\s*[<>=]\s*\d*\.\d+(e[-–]\d*)?(?!.*(-|–))", claim)
+    pattern_p = re.search("[p|P]\s*[<>=]\s*\d*\.\d+(e[-–]\d*)?(?!.*(-|–))(?!.*e)", claim)
     if pattern_p:
         return pattern_p.group()
     else:
