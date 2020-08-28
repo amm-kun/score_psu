@@ -1,5 +1,6 @@
 import re
 import spacy
+import os
 from spacy.lang.en import English
 from utilities import p_val_sign
 
@@ -14,11 +15,14 @@ sbd = nlp.create_pipe('sentencizer')
 nlp.add_pipe(sbd)
 
 # Max length for input (Memory bottleneck)
-nlp.max_length = 2500000
+nlp.max_length = 6000000
 
 
 def get_p_val_darpa_tsv(claim):
-    pattern_p = re.search("[p|P]\\s?[<>=]\\s?\\d?\\.\\d+e?[-–]?\\d*", claim)
+    
+    # [p|P]\\s?[<>=]\\s?\\d?\\.\\d+e?[-|–]?\\d*
+    
+    pattern_p = re.search("[p|P]\s*[<>=]\s*\d*\.\d+(e[-–]\d*)?(?!.*(-|–))", claim)
     if pattern_p:
         return pattern_p.group()
     else:
@@ -84,7 +88,7 @@ def extract_p_values(file, tsv_claim=None):
         
         #expression for correlation r vs p value
         pattern_cor_list = re.finditer("r\\s?\\(\\s?\\d*\\.?\\d+\\s?\\)\\s?[<>=]\\s?[^a-z\\d]{0,5}\\s?\\d*\\.?\\d+\\s?[,;]\\s?(([^a-z]ns)|([p|P]\\s?[<>=-]\\s?\\d?\\.\\d+e?(-|–)?\\d*))", sentences[i])
-        pattern_cor_no_df_list = re.finditer("(r|rpb|R)\\s?\\s?[<>=]\\s?[^a-z\\d]{0,5}\\s?\\d*\\.?\\d+\\s?[,;]\\s?(([^a-z]ns)|([p|P]\\s?[<>=-]\\s?\\d?\\.\\d+e?(-|–)?\\d*))", sentences[i])
+        pattern_cor_no_df_list = re.finditer("(r|rpb|R)\s*\s*[<>=]\s*[^a-z\d*]{0,5}\s*\d*\.?\d+\s*[,;]\s*(([^a-z]ns)|([p|P]\s*[<>=-]\s*\d*\.\d+e?(-|–)?\d*))", sentences[i])
 
         # expression for z distribution
         pattern_z_list = re.finditer("[^a-z]z\\s?[<>=]\\s?[^a-z\\d]{0,3}\\s?\\d*,?\\d*\\.?\\d+\\s?,\\s?(([^a-z]ns)|([p|P]\\s?[<>=-]\\s?\\d?\\.\\d+e?(-|–)?\\d*))", sentences[i])
@@ -97,6 +101,7 @@ def extract_p_values(file, tsv_claim=None):
 
         #expression for logistic regression distribution vs p value
         pattern_logreg_list = re.finditer("[OR|or|oR|Or]\\s?\\s?[<>=]\\s?[^a-z\\d]{0,5}\\s?\\d*\\.?\\d+\\s?[,;]\\s?(([^a-z]ns)|([p|P]\\s?[<>=-]\\s?\\d?\\.\\d+e?-?\\d*))", sentences[i])
+
 
         pattern_HR_list = re.finditer("HR[\s*|=]\d*\.*\d*,\s*(.*,(.*[p|P]\s*[<>=]\s*\d*\.\d+e?[-|–]*\d*))", sentences[i])
 
@@ -123,9 +128,11 @@ def extract_p_values(file, tsv_claim=None):
         for pattern_t in pattern_t_list:
             if pattern_t:
                 expression = pattern_t.group()
-                pattern_pval = re.search( "[p|P]\\s?[<>=]\\s?\\d?\\.\\d+e?[-|–]?\\d*", expression)
-                reported_pval_exp = pattern_pval.group()
-                p_val_list.append(reported_pval_exp)
+                # print(expression)
+                pattern_pval = re.search( "[p|P|Ps|ps]\s*[<>=]\s*\d*\.\d+(e[-–]\d*)?(?!.*(-|–))(?!.*e)", expression)
+                if pattern_pval:
+                    reported_pval_exp = pattern_pval.group()
+                    p_val_list.append(reported_pval_exp)
                 
                 s = [float(s) for s in re.findall(r'-?\d+\.?\d*', expression)]
                 if len(s) == 3:
@@ -143,8 +150,8 @@ def extract_p_values(file, tsv_claim=None):
         for pattern_t_nodf in pattern_t_nodf_list:
             if pattern_t_nodf:
                 expression = pattern_t_nodf.group()
-                # print(expression)
-                pattern_pval = re.search( "[p|P]\\s?[<>=]\\s?\\d?\\.\\d+e?[-|–]?\\d*", expression)
+                print(expression)
+                pattern_pval = re.search( "[p|P|Ps|ps]\s*[<>=]\s*\d*\.\d+(e[-–]\d*)?(?!.*(-|–))(?!.*e)", expression)
                 # print(pattern_pval)
                 if pattern_pval:
                     reported_pval_exp = pattern_pval.group()
@@ -156,7 +163,8 @@ def extract_p_values(file, tsv_claim=None):
         for pattern_f in pattern_f_list:
             if pattern_f:
                 expression = pattern_f.group()
-                pattern_pval = re.search( "[p|P]\\s?[<>=]\\s?\\d?\\.\\d+e?[-|–]?\\d*", expression)
+                # print(expression)
+                pattern_pval = re.search( "[p|P|Ps|ps]\s*[<>=]\s*\d*\.\d+(e[-–]\d*)?(?!.*(-|–))(?!.*e)", expression)
                 reported_pval_exp = pattern_pval.group()
                 p_val_list.append(reported_pval_exp)
                 s = [float(s) for s in re.findall(r'-?\d+\.?\d*', expression)]
@@ -180,7 +188,8 @@ def extract_p_values(file, tsv_claim=None):
             if pattern_cor:
                 expression = pattern_cor.group()
                 # print(expression)
-                pattern_pval = re.search( "[p|P]\\s?[<>=]\\s?\\d?\\.\\d+e?[-|–]?\\d*", expression)
+                # print(sentences[i])
+                pattern_pval = re.search( "[p|P|Ps|ps]\s*[<>=]\s*\d*\.\d+(e[-–]\d*)?(?!.*(-|–))(?!.*e)", expression)
                 reported_pval_exp = pattern_pval.group()
                 p_val_list.append(reported_pval_exp)
                 s = [float(s) for s in re.findall(r'-?\d+\.?\d*', expression)]
@@ -200,25 +209,30 @@ def extract_p_values(file, tsv_claim=None):
         for pattern_cor_ndf in pattern_cor_no_df_list:
             if pattern_cor_ndf:
                 expression = pattern_cor_ndf.group()
-                print(expression)
-                pattern_pval = re.search( "[p|P]\\s?[<>=]\\s?\\d?\\.\\d+e?[-|–]?\\d*", expression)
-                reported_pval_exp = pattern_pval.group()
-                p_val_list.append(reported_pval_exp)
+                # print(expression)
+                # print(sentences[i])
+                pattern_pval = re.search( "[p|P|Ps|ps]\s*[<>=]\s*\d*\.\d+(e[-–]\d*)?(?!.*(-|–))(?!.*e)", expression)
+                if pattern_pval:
+                    reported_pval_exp = pattern_pval.group()
+                    p_val_list.append(reported_pval_exp)
                 
 
     #***********************************************logistic (OR MEANS ODDS RATIO) regression*************************
         for pattern_logreg in pattern_logreg_list:
             if pattern_logreg:
                 expression = pattern_logreg.group()
-                pattern_pval = re.search( "[p|P]\\s?[<>=]\\s?\\d?\\.\\d+e?[-|–]?\\d*", expression)
-                reported_pval_exp = pattern_pval.group()
-                p_val_list.append(reported_pval_exp)
+                # print(expression)
+                pattern_pval = re.search( "[p|P|Ps|ps]\s*[<>=]\s*\d*\.\d+(e[-–]\d*)?(?!.*(-|–))(?!.*e)", expression)
+                if pattern_pval:
+                    reported_pval_exp = pattern_pval.group()
+                    p_val_list.append(reported_pval_exp)
                 
         #********************* HR (hazard ratio) statistics *******************************************
         for pattern_hr in pattern_HR_list:
             if pattern_hr:
                 expression = pattern_hr.group()
-                pattern_pval = re.search( "[p|P]\\s?[<>=]\\s?\\d?\\.\\d+e?[-|–]?\\d*", expression)
+                # print(expression)
+                pattern_pval = re.search( "[p|P|Ps|ps]\s*[<>=]\s*\d*\.\d+(e[-–]\d*)?(?!.*(-|–))(?!.*e)", expression)
                 reported_pval_exp = pattern_pval.group()
                 p_val_list.append(reported_pval_exp)
 
@@ -227,7 +241,8 @@ def extract_p_values(file, tsv_claim=None):
         for pattern_b in pattern_b_list:
             if pattern_b:
                 expression = pattern_b.group()
-                pattern_pval = re.search( "[p|P]\\s?[<>=]\\s?\\d?\\.\\d+e?[-|–]?\\d*", expression)
+                # print(expression)
+                pattern_pval = re.search( "[p|P|Ps|ps]\s*[<>=]\s*\d*\.\d+(e[-–]\d*)?(?!.*(-|–))(?!.*e)", expression)
                 reported_pval_exp = pattern_pval.group()
                 p_val_list.append(reported_pval_exp)
                
@@ -237,7 +252,9 @@ def extract_p_values(file, tsv_claim=None):
         for pattern_z in pattern_z_list:
             if pattern_z:
                 expression = pattern_z.group()
-                pattern_pval = re.search( "[p|P]\\s?[<>=]\\s?\\d?\\.\\d+e?[-|–]?\\d*", expression)
+                # print(expression)
+                # [p|P]\\s?[<>=]\\s?\\d?\\.\\d+e?[-|–]?\\d*
+                pattern_pval = re.search( "[p|P|Ps|ps]\s*[<>=]\s*\d*\.\d+(e[-–]\d*)?(?!.*(-|–))(?!.*e)", expression)
                 reported_pval_exp = pattern_pval.group()
                 p_val_list.append(reported_pval_exp)
                
@@ -247,7 +264,8 @@ def extract_p_values(file, tsv_claim=None):
         for pattern_chi in pattern_chi_list:
             if pattern_chi:
                 expression = pattern_chi.group()
-                pattern_pval = re.search( "[p|P]\\s?[<>=]\\s?\\d?\\.\\d+e?[-|–]?\\d*", expression)
+                # print(expression)
+                pattern_pval = re.search( "[p|P|Ps|ps]\s*[<>=]\s*\d*\.\d+(e[-–]\d*)?(?!.*(-|–))(?!.*e)", expression)
                 reported_pval_exp = pattern_pval.group()
                 p_val_list.append(reported_pval_exp)
                 s = [float(s) for s in re.findall(r'-?\d+\.?\d*', expression)]
@@ -265,10 +283,13 @@ def extract_p_values(file, tsv_claim=None):
         for pattern_q in pattern_q_list:
             if pattern_q:
                 expression = pattern_q.group()
-                pattern_pval = re.search( "[p|P]\\s?[<>=]\\s?\\d?\\.\\d+e?[-|–]?\\d*", expression)
+                # print(expression)
+                pattern_pval = re.search( "[p|P|Ps|ps]\s*[<>=]\s*\d*\.\d+(e[-–]\d*)?(?!.*(-|–))(?!.*e)", expression)
                 reported_pval_exp = pattern_pval.group()
                 p_val_list.append(reported_pval_exp)
                
+        
+    
 
         #_______________________________________________________________________________________________________________________
 
@@ -280,7 +301,7 @@ def extract_p_values(file, tsv_claim=None):
             # ---------------------------REGEX FOR P VALUE EXP from sentences ----------------------------
            
            #old p val exp : [p|P]\\s?[<>=]\\s?\\d?\\.\\d+e?[-–]?\\d*
-            pattern_p_list = re.finditer("[p|P]\s*[<>=]\s*\d*\.\d+(e[-–]\d*)?(?!.*(-|–))", sentences[i])
+            pattern_p_list = re.finditer("[p|P|Ps|ps]\s*[<>=]\s*\d*\.\d+(e[-–]\d*)?(?!.*(-|–))(?!.*e)", sentences[i])
             pattern_p_range_list = re.finditer("(p|P)\s*[=<>]\s*\d*.\d*(-|–)\s*\d*.\d*", sentences[i])
 
 
@@ -290,6 +311,7 @@ def extract_p_values(file, tsv_claim=None):
                 if pattern_p:
                     reported_pval = pattern_p.group()
                     just_pvalues_list.append(reported_pval)
+                    
 
             # append just pvalues in the form of range to a list names 'just_pvalues_range'
             for pattern_p_range in pattern_p_range_list:
@@ -299,20 +321,23 @@ def extract_p_values(file, tsv_claim=None):
 
         # print("statistical p-values not found, all p-values of pdf", just_pvalues_list)
         p_val_list = just_pvalues_list
+        # print(p_val_list)
         # print(just_pvalues_range)
         # print(just_pvalues_list)
-
+    
     if len(p_val_list) == 0 and tsv_claim:
         from_claim = get_p_val_darpa_tsv(tsv_claim)
+        
         if from_claim:
             p_val_list.append(get_p_val_darpa_tsv(tsv_claim))
-
+    # print(p_val_list)
     # try:
         # p_val_num_list = [float(string.split()[2]) for string in p_val_list]
     p_val_num_list = []
     for string in p_val_list:
         
         try:
+            # print(string)
             p_val_num_list.append(float(string.split()[2]))
         except ValueError:
             string = string.replace('–', '-')
@@ -372,5 +397,16 @@ def extract_p_values(file, tsv_claim=None):
 
 
 # extract_p_values(r"C:\Users\arjun\dev\test\pdfs\Hongbo_covid_gy96y.txt")
-path_text = "C:\\Users\\lanka\\Downloads\\6713.txt"
-print(extract_p_values(path_text))
+# path_text = "C:\\Users\\lanka\\Downloads\\6713.txt"
+d = "C:\\Users\\lanka\\Desktop\\Lab\\DARPA\\new_pval_code_for_pipeline_edited_statcheck\\train\\retractedErrorData"
+filepaths_list = []
+for path in os.listdir(d):
+    full_path = os.path.join(d, path)
+    if os.path.isfile(full_path):
+        filepaths_list.append(full_path)
+
+# print(len(filepaths_list))
+
+for path_text in filepaths_list:
+    print(path_text)
+    print(extract_p_values(path_text))
