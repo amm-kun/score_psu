@@ -114,7 +114,7 @@ class TEIExtractor:
         # SJR
         api_resp = self.get_sjr(paper)
         if api_resp:
-            paper.cited_by_count = api_resp["cited_by"]
+            paper.cited_by_count = api_resp["num_citations"]
             paper.sjr = api_resp["sjr"]
             paper.subject = api_resp["subject"]
         # Set self-citations
@@ -154,7 +154,7 @@ class TEIExtractor:
                 return None
             else:
                 try:
-                    cited_by = api['citedby-count'][0]
+                    cited_by = api['num_citations'][0]
                 except KeyError:
                     cited_by = 0
                 try: 
@@ -165,7 +165,7 @@ class TEIExtractor:
                     sjr_score = api['SJR'][0]
                 except KeyError:
                     sjr_score = 0
-        return {"sjr": sjr_score, "cited_by": cited_by, "subject": subject}
+        return {"sjr": sjr_score, "num_citations": cited_by, "subject": subject}
 
 
 if __name__ == "__main__":
