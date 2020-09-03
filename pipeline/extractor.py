@@ -149,7 +149,7 @@ class TEIExtractor:
         if not paper.doi:
             return None
         else:
-            api = getapi(paper.doi)
+            api = getapi(paper.doi,paper.title)
             if api.empty:
                 return None
             else:
@@ -158,7 +158,7 @@ class TEIExtractor:
                 except KeyError:
                     cited_by = 0
                 try: 
-                    subject = api['Subject']
+                    subject = api['subject']
                 except:
                     subject = None
                 try:
