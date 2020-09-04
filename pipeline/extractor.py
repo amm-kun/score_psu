@@ -38,53 +38,32 @@ class ReadPickle:
 
 
 class TEIExtractor:
-    def __init__(self, file):
+    def __init__(self, file, test_tsv=None):
         self.file = file
         self.uni_rank = ReadPickle('uni_rank.pickle')
         self.sjr = ReadPickle('journal_dictionary.pkl')
+        self.document = test_tsv
+        self.paper = Paper()
         with open(file, 'rb') as tei:
             self.soup = BeautifulSoup(tei, features="lxml")
 
-    def extract_paper_info(self):
-        paper = Paper()
+    # TODO: return paper | redesign extractor to make it more modular to test individual components
+
+    def get_self_citations(self):
         # DOI
-        doi = self.soup.teiheader.find("idno")
+        doi = self.soup.teiheader.find("idno", type="DOI")
         if doi:
-            paper.doi = elem_to_text(doi)
+            self.paper.doi = elem_to_text(doi)
+        elif self.document:
+            self.paper.doi = self.document['doi']
         # Title
         title = self.soup.teiheader.find("title")
         if title:
-            paper.title = elem_to_text(title)
+            self.paper.title = elem_to_text(title)
         # Authors
         authors = self.get_authors(self.soup.analytic.find_all('author'))
         if authors:
-            paper.authors = authors
-        # Year
-        published = self.soup.analytic.find("publicationstmt")
-        if published:
-            paper.year = elem_to_text(published.find("date", type="when"))
-        # Organization / Affiliations
-        affiliations = self.soup.analytic.find_all('affiliation')
-        for affiliation in affiliations:
-            org = Organization()
-            org.type = "institution"
-            org.name = elem_to_text(affiliation.find("orgname", type="institution"))
-            address = Address()
-            addr = affiliation.find("address")
-            if addr:
-                address.place = elem_to_text(addr.find("settlement"))
-                address.region = elem_to_text(addr.find("region"))
-                address.country = elem_to_text(addr.find("country"))
-            org.address = address
-            paper.affiliations.append(org)
-        # University Ranking
-        if paper.affiliations:
-            if paper.affiliations[0] != '':
-                paper.uni_rank = self.uni_rank.get_rank(paper.affiliations[0].name)
-            elif len(paper.affiliations) > 1:
-                paper.uni_rank = self.uni_rank.get_rank(paper.affiliations[1].name)
-        else:
-            paper.uni_rank = self.uni_rank.get_rank('Random')
+            self.paper.authors = authors
         # Citations
         bibliography = self.soup.listbibl.find_all('biblstruct')
         for bibl in bibliography:
@@ -103,26 +82,90 @@ class TEIExtractor:
                     citation.publish_year = cited_journal.imprint.date['when']
                 except TypeError:
                     pass
-            paper.citations.append(citation)
-        # NER - Ack pairs - Funding status
-        paper.ack_pairs = self.get_funding_status()
-        er_list = [org for (entity, org) in paper.ack_pairs]
-        if 'ORG' in er_list:
-            paper.funded = 1
+            self.paper.citations.append(citation)
+        self.paper.set_self_citations()
+        return {'doi': self.paper.doi, 'title': self.paper.title, 'total_citations': len(self.paper.citations),
+                'self_citations': self.paper.self_citations}
+
+    def extract_paper_info(self):
+        # DOI
+        doi = self.soup.teiheader.find("idno", type="DOI")
+        if doi:
+            self.paper.doi = elem_to_text(doi)
+        elif self.document:
+            self.paper.doi = self.document['doi']
+        # Title
+        title = self.soup.teiheader.find("title")
+        if title:
+            self.paper.title = elem_to_text(title)
+        # Authors
+        authors = self.get_authors(self.soup.analytic.find_all('author'))
+        if authors:
+            self.paper.authors = authors
+        # Year
+        published = self.soup.analytic.find("publicationstmt")
+        if published:
+            self.paper.year = elem_to_text(published.find("date", type="when"))
+        # Organization / Affiliations
+        affiliations = self.soup.analytic.find_all('affiliation')
+        for affiliation in affiliations:
+            org = Organization()
+            org.type = "institution"
+            org.name = elem_to_text(affiliation.find("orgname", type="institution"))
+            address = Address()
+            addr = affiliation.find("address")
+            if addr:
+                address.place = elem_to_text(addr.find("settlement"))
+                address.region = elem_to_text(addr.find("region"))
+                address.country = elem_to_text(addr.find("country"))
+            org.address = address
+            self.paper.affiliations.append(org)
+        # University Ranking
+        if self.paper.affiliations:
+            if self.paper.affiliations[0] != '':
+                self.paper.uni_rank = self.uni_rank.get_rank(self.paper.affiliations[0].name)
+            elif len(self.paper.affiliations) > 1:
+                self.paper.uni_rank = self.uni_rank.get_rank(self.paper.affiliations[1].name)
         else:
-            paper.funded = 0
+            self.paper.uni_rank = self.uni_rank.get_rank('Random')
+        # Citations
+        bibliography = self.soup.listbibl.find_all('biblstruct')
+        for bibl in bibliography:
+            citation = Citation()
+            cited_paper = bibl.analytic
+            if cited_paper:
+                citation.title = elem_to_text(cited_paper.find("title", type="main"))
+                citation_authors = self.get_authors(cited_paper.find_all("author"))
+                citation.doi = elem_to_text(cited_paper.find("idno", type="DOI"))
+                if citation_authors:
+                    citation.authors = citation_authors
+            cited_journal = bibl.monogr
+            if cited_journal:
+                citation.source = elem_to_text(cited_journal.find("title"))
+                try:
+                    citation.publish_year = cited_journal.imprint.date['when']
+                except TypeError:
+                    pass
+            self.paper.citations.append(citation)
+        # NER - Ack pairs - Funding status
+        self.paper.ack_pairs = self.get_funding_status()
+        er_list = [org for (entity, org) in self.paper.ack_pairs]
+        if 'ORG' in er_list:
+            self.paper.funded = 1
+        else:
+            self.paper.funded = 0
         # SJR
-        api_resp = self.get_sjr(paper)
+        api_resp = self.get_sjr(self.paper.doi)
         if api_resp:
-            paper.cited_by_count = api_resp["num_citations"]
-            paper.sjr = api_resp["sjr"]
-            paper.subject = api_resp["subject"]
+            self.paper.cited_by_count = api_resp["num_citations"]
+            self.paper.sjr = api_resp["sjr"]
+            self.paper.subject = api_resp["subject"]
         # Set self-citations
-        paper.self_citations = paper.set_self_citations()
+        self.paper.self_citations = self.paper.set_self_citations()
         # return paper
-        return {"doi": paper.doi, "title": paper.title, "num_citations": paper.cited_by_count, "author_count": len(paper.authors),
-                "sjr": paper.sjr, "u_rank": paper.uni_rank, "funded": paper.funded,
-                "self_citations": paper.self_citations, "subject": paper.subject}
+        return {"doi": self.paper.doi, "title": self.paper.title, "num_citations": self.paper.cited_by_count, "author_count": len(self.paper.authors),
+                "sjr": self.paper.sjr, "u_rank": self.paper.uni_rank, "funded": self.paper.funded,
+                "self_citations": self.paper.self_citations, "subject": self.paper.subject}
 
     @staticmethod
     def get_authors(authors):
@@ -145,11 +188,11 @@ class TEIExtractor:
         return pairs
 
     @staticmethod
-    def get_sjr(paper):
-        if not paper.doi:
+    def get_sjr(doi):
+        if not doi:
             return None
         else:
-            api = getapi(paper.doi,paper.title)
+            api = getapi(doi,title)
             if api.empty:
                 return None
             else:
@@ -173,7 +216,7 @@ if __name__ == "__main__":
     uni_rank = ReadPickle('uni_rank.pickle')
     sjr = ReadPickle('journal_dictionary.pkl')
 
-    test = r"C:\Users\arjun\Downloads\teregowda-hotcloud-10.tei.xml"
+    test = r"C:\Users\arjun\dev\GROBID_processed\test\Gelfand_covid_n8dr9.tei.xml"
     extractor = TEIExtractor(test)
     test_paper = extractor.extract_paper_info()
     print(test_paper)

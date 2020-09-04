@@ -39,8 +39,13 @@ def strip_punctuation(text: str):
 def read_darpa_tsv(file):
     df = pd.read_csv(file, sep="\t")
     for index, row in df.iterrows():
-        yield {"title": row['title_CR'], "pub_year": row['pub_year_CR'], "doi": row['DOI_CR'],
+        try:
+            yield {"title": row['title_CR'], "pub_year": row['pub_year_CR'], "doi": row['DOI_CR'],
                "ta3_pid": row['ta3_pid'], "pdf_filename": row['pdf_filename'], "claim4": row['claim4_inftest']}
+        except KeyError:
+            ta3_pid = row['pdf_filename'].split()[-1]
+            yield {"title": row['title_CR'], "pub_year": row['pub_year_CR'], "doi": row['DOI_CR'],
+                   "ta3_pid": ta3_pid, "pdf_filename": row['pdf_filename'], "claim4": row['claim4_inftest']}
 
 
 def elem_to_text(elem, default=''):
