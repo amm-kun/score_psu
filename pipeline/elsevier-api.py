@@ -225,7 +225,7 @@ def getapi(doi,title):
                             subject= pd.json_normalize(list[i])
                             subject = subject["@code"]
                             sub_list.append(subject[0])
-                        sub_list = {'subject' : str(sub_list)}
+                        sub_list = {'subject' : str(sub_list[0])}
                         subject_row = pd.DataFrame(sub_list, index=[0])    
                         row = row.drop('subject-area', axis = 1)
                         row = pd.concat([row, subject_row],ignore_index=False, axis =1)
