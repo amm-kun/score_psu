@@ -159,13 +159,13 @@ class TEIExtractor:
         if api_resp:
             self.paper.cited_by_count = api_resp["num_citations"]
             self.paper.sjr = api_resp["sjr"]
-            self.paper.subject = api_resp["subject"]
+            #self.paper.subject = api_resp["subject"]
         # Set self-citations
         self.paper.self_citations = self.paper.set_self_citations()
         # return paper
         return {"doi": self.paper.doi, "title": self.paper.title, "num_citations": self.paper.cited_by_count, "author_count": len(self.paper.authors),
                 "sjr": self.paper.sjr, "u_rank": self.paper.uni_rank, "funded": self.paper.funded,
-                "self_citations": self.paper.self_citations, "subject": self.paper.subject}
+                "self_citations": self.paper.self_citations}
 
     @staticmethod
     def get_authors(authors):
@@ -200,15 +200,15 @@ class TEIExtractor:
                     cited_by = api['num_citations'][0]
                 except KeyError:
                     cited_by = 0
-                try: 
-                    subject = api['subject']
-                except:
-                    subject = None
                 try:
                     sjr_score = api['SJR'][0]
                 except KeyError:
                     sjr_score = 0
-        return {"sjr": sjr_score, "num_citations": cited_by, "subject": subject}
+                #try: 
+                    #subject = api['subject']
+                #except:
+                    #subject = None
+        return {"sjr": sjr_score, "num_citations": cited_by}
 
 
 if __name__ == "__main__":
