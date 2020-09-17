@@ -32,6 +32,7 @@ def extract_p_values(file, tsv_claim=None):
     p_val_list = []
     sample_list = []
     real_sample_list = []
+    intext_samplesize = []
     filtered_sent = []
     sentences = []
     just_pvalues_list = []
@@ -303,7 +304,26 @@ def extract_p_values(file, tsv_claim=None):
         
     
 
-        #_______________________________________________________________________________________________________________________
+        #______________________________________________sample size from text_________________________________________________________________________
+
+    for i in range(0, len(sentences) - 1):
+
+            # ---------------------------REGEX FOR P VALUE EXP from sentences ----------------------------
+
+            samplesize_list = re.finditer("(n|N|sample size|samplesize)\s*[=]\s*\d*", sentences[i])
+            
+            
+
+            # append intext sample size to a list names 'intext_samplesize'
+            for sample in samplesize_list:
+                
+                if sample:
+                    reported_samplesize = sample.group()
+                    intext_samplesize.append(reported_samplesize)
+    
+
+
+    #------------------if no statistical p-values are found search for just intext pvalues________________________-
 
     # print("P-vals list is:", p_val_list)
     if len(p_val_list) == 0:
@@ -317,7 +337,7 @@ def extract_p_values(file, tsv_claim=None):
             
             pattern_p_range_list = re.finditer("(p|P)\s*[=<>]\s*\d*.\d*(-|–)\s*\d*.\d*", sentences[i])
 
-            
+        
             
             # append just pvalues to a list names 'just_pvalues_list'
             for pattern_p in pattern_p_list:
@@ -332,6 +352,9 @@ def extract_p_values(file, tsv_claim=None):
                 if pattern_p_range:
                     reported_pval_range = pattern_p_range.group()
                     just_pvalues_range.append(reported_pval_range)
+
+            
+                         
 
         # print("statistical p-values not found, all p-values of pdf", just_pvalues_list)
         p_val_list = just_pvalues_list
@@ -367,6 +390,26 @@ def extract_p_values(file, tsv_claim=None):
             # print("Index error in P-Val script")
             # p_val_num_list = []
     # print("vector of p-value numbers:", p_val_num_list)
+    
+    intext_sample_num_list = []
+    for string in intext_samplesize:
+        
+        try:
+            # print(string)
+            intext_sample_num_list.append(float(string.split()[2]))
+        except ValueError:
+            # string = string.replace('–', '-')
+            try:
+                intext_sample_num_list.append(float(string.split()[2]))
+            except ValueError:
+                intext_sample_num_list.append(float((re.split('[=]', string))[-1]))
+        except AttributeError:
+            pass
+        except IndexError:
+            # print((re.split('[<>=]', string))[-1])
+            intext_sample_num_list.append(float((re.split('[=]', string))[-1]))
+    
+
     if len(p_val_list) > 0 and len(p_val_num_list) > 0:
         num_hypo_test = len(p_val_list)
         real_p_value = min(p_val_num_list)
@@ -391,8 +434,20 @@ def extract_p_values(file, tsv_claim=None):
         # print("Number Significant:", number_significant)
 
         # print("vector of p-values", p_val_list)
-        if sample_list:
+        
+
+        if intext_sample_num_list:
             # print("vector of sample sizes", max(sample_list))
+            max_sample_size = max(intext_sample_num_list)
+            range_p_values = max(p_val_num_list) - min(p_val_num_list)
+            try:
+                real_p_sign = p_val_list[p_val_num_list.index(min(p_val_num_list))].split()[1]
+                real_p_sign = p_val_sign[real_p_sign]
+            except KeyError:
+                real_p_sign = 0
+            except IndexError:
+                real_p_sign = p_val_sign[re.search('[<>=]', p_val_list[p_val_num_list.index(min(p_val_num_list))]).group()]
+        elif sample_list and not intext_sample_num_list:
             max_sample_size = max(sample_list)
             range_p_values = max(p_val_num_list) - min(p_val_num_list)
             try:
@@ -402,6 +457,10 @@ def extract_p_values(file, tsv_claim=None):
                 real_p_sign = 0
             except IndexError:
                 real_p_sign = p_val_sign[re.search('[<>=]', p_val_list[p_val_num_list.index(min(p_val_num_list))]).group()]
+            
+
+
+
 
         # print("Max Sample size: ", max_sample_size)
         # print("Range of p-values: ", range_p_values)
@@ -415,7 +474,7 @@ def extract_p_values(file, tsv_claim=None):
 
 
 # extract_p_values(r"C:\Users\arjun\dev\test\pdfs\Hongbo_covid_gy96y.txt")
-path_text = "C:\\Users\\lanka\\Desktop\\Lab\\DARPA\\new_pval_code_for_pipeline_edited_statcheck\\train\\publishPre\\0.txt"
+path_text = "C:\\Users\\lanka\\Desktop\\Lab\\DARPA\\new_pval_code_for_pipeline_edited_statcheck\\train\\publishPre\\3.txt"
 print(extract_p_values(path_text))
 
 # d = "C:\\Users\\lanka\\Desktop\\Lab\\DARPA\\new_pval_code_for_pipeline_edited_statcheck\\train\\replicationProject\\FALSE"
