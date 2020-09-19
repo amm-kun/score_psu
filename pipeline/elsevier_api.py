@@ -264,7 +264,7 @@ def getapi(doi,title):
                     output = return_scopus(r,title,'title')
                     
                 else:
-                    output = {'dc:title':title,'prism:doi':query, 'prism:issn':'0', 'source-id':'0', 'prism:coverDate':'0', 'citedby-count':'-1'}
+                    output = {'dc:title':title,'prism:doi':query, 'prism:issn':'0', 'source-id':'0', 'prism:coverDate':'0', 'citedby-count':'0'}
                     output = pd.DataFrame(data = output, index = [0])
 
 
