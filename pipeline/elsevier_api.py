@@ -24,20 +24,19 @@ def getapi(doi,title):
             # Example of DOI input: '10.1016/j.jesp.2018.04.001'
 
             doi = query.replace('/','%2F')  # For generating the URL correctly
-            url = 'https://api.elsevier.com/content/search/scopus?query=' + doi + '&apiKey=f81795bcd97d071e6a60f88e6c3329a8'
+            url = 'https://api.elsevier.com/content/search/scopus?query=' + doi + '&apiKey=60eac67a00256938d498a1f2ac68dc68'
             return url
 
         def serial_title(query):
 
             # Example of ISSN input: '00221031'
-
             issn = query
-            url = 'https://api.elsevier.com/content/serial/title/issn/' + issn + '?apiKey=f81795bcd97d071e6a60f88e6c3329a8'
+            url = 'https://api.elsevier.com/content/serial/title/issn/' + issn + '?apiKey=60eac67a00256938d498a1f2ac68dc68'
             return url
 
         def title_search(query):
             title = str(query).replace(' ','%2F')  # For generating the URL correctly
-            url = 'https://api.elsevier.com/content/search/scopus?query=' + str(title) + '&apiKey=f81795bcd97d071e6a60f88e6c3329a8'
+            url = 'https://api.elsevier.com/content/search/scopus?query=' + str(title) + '&apiKey=60eac67a00256938d498a1f2ac68dc68'
             return url
 
         #Return result as row
@@ -46,10 +45,10 @@ def getapi(doi,title):
                 status = r.status_code
                 query = str(query)
                 if x == 'doi':
-                    row = {'dc:title':float('NaN'),'prism:doi':query, 'prism:issn':'0', 'source-id':'0', 'prism:coverDate':'0', 'citedby-count':'0'}
+                    row = {'dc:title':float('NaN'),'prism:doi':query, 'prism:issn':'0', 'source-id':'0', 'prism:coverDate':'0', 'citedby-count':'-1'}
                     empty= pd.DataFrame(data = row, index = [0])
                 if x == 'title':
-                    row = {'prism:doi':float('NaN'),"dc:title":query, 'prism:issn':'0', 'source-id':'0', 'prism:coverDate':'0', 'citedby-count':'0'}
+                    row = {'prism:doi':float('NaN'),"dc:title":query, 'prism:issn':'0', 'source-id':'0', 'prism:coverDate':'0', 'citedby-count':'-1'}
                     empty= pd.DataFrame(data = row, index = [0])
                 #Checking the status code: success_code = 200. Otherwise, return empty row
                 if status!=200:
@@ -65,25 +64,9 @@ def getapi(doi,title):
                 df = df_search['entry']
                 df = df.tolist()
                 entry = pd.json_normalize(df[0])
-
-                # Affiliation json response t columns(affiliation city is not returned)
-                try:
-                    aff = entry['affiliation']
-                    list = aff[0]
-                    aff_row = pd.DataFrame()
-                    for i in range(len(list)):
-                        aff= pd.json_normalize(list[i])
-                        col2 = "affilname_"+str(i)
-                        col3 = "affiliation-city_"+str(i)
-                        col4 = "affiliation-country_"+str(i)
-                        aff = aff.rename(columns={"affilname": col2,"affiliation-city":col3, "affiliation-country":col4})
-                        aff = aff.drop(['@_fa', col3],axis=1)
-                        aff_row = pd.concat([aff_row,aff], axis = 1)
-                except:
-                    aff_row = pd.DataFrame()
-
+                
                 # Selecting only necessary features
-                columns = ['prism:issn', 'prism:doi','source-id','prism:coverDate', 'citedby-count', 'openaccessFlag', 'dc:title']
+                columns = ['prism:issn', 'prism:doi','source-id','prism:coverDate', 'citedby-count', 'openaccessFlag', 'dc:title','affiliation']
                 if set(columns).issubset(entry.columns):
                     doi_entry = entry['prism:doi']
                     title_entry = entry["dc:title"]
@@ -114,11 +97,31 @@ def getapi(doi,title):
                         new_columns.append('openaccessFlag')
                     if 'dc:title' in entry.columns:
                         new_columns.append('dc:title')
-                    doi_entry = entry['prism:doi']
-                    title_entry = entry["dc:title"]
+                    if 'affiliation' in entry.columns:
+                        new_columns.append('affiliation')
+                    if 'prism:doi' in entry.columns:
+                        doi_entry = entry['prism:doi']
+                    else:
+                        entry['prism:doi']='none'
+                    if 'dc:title' in entry.columns:
+                        title_entry = entry["dc:title"]
+                    else:
+                        entry['dc:title'] = 'none'
                     entry = pd.DataFrame(data = entry.loc[:,new_columns])
 
-                entry = pd.concat([entry,aff_row], axis=1)
+                if 'affiliation' in entry.columns:
+                    try:
+                        aff = entry['affiliation']
+                        list = aff[0]
+                        aff_row = pd.DataFrame()
+                        aff= pd.json_normalize(list[0])
+                        aff = aff.drop(['@_fa', "affiliation-city"],axis=1)
+                        aff_row = pd.concat([aff_row,aff], axis = 1)
+                        entry = entry.drop(['affiliation'], axis = 1)
+                        entry = pd.concat([entry,aff_row], axis=1)
+                    except:
+                        entry = entry.drop(['affiliation'], axis = 1)
+
                 # Getting the entry matches the doi of required paper otherwsie return empty row
                 for i in range(len(entry)):
                     if x =='doi':
@@ -172,7 +175,7 @@ def getapi(doi,title):
                         entry = pd.json_normalize(df[j])
                     else:
                         return empty 
-        
+                    
                     # Selecting only necessary features
                     columns = ['source-id','SJRList.SJR','SNIPList.SNIP','citeScoreYearInfoList.citeScoreCurrentMetric','citeScoreYearInfoList.citeScoreTracker','subject-area']
                     if set(columns).issubset(entry.columns):
@@ -225,7 +228,18 @@ def getapi(doi,title):
                             subject= pd.json_normalize(list[i])
                             subject = subject["@code"]
                             sub_list.append(subject[0])
-                        sub_list = {'subject' : str(sub_list[0])}
+                        subject = int(sub_list[0])
+                        if 1100<=subject<1200 or 1300<=subject<1400 or 2400<=subject<2500 or 2800<=subject<2900 or 3000<=subject<3100:
+                            s = 1 # Life sciences
+                        elif 1200<=subject<1300 or 1400<=subject<1500 or 1800<=subject<1900 or 2000<=subject<2100 or 3200<=subject<3400:
+                            s = 2 # Social science and Humanities
+                        elif 1500<=subject<1800 or 1900<=subject<2000 or 2100<=subject<2400 or 2500<=subject<2700 or 3100<=subject<3200:
+                            s = 3 #Physical Sciences
+                        elif 2700<=subject<2800 or 2900<=subject<3000 or 3400<=subject<3700:
+                            s = 4 # Health Sciences
+                        else:
+                            s = 0 # Multidisciplinary
+                        sub_list = {'subject' : s, 'subject_code':subject}
                         subject_row = pd.DataFrame(sub_list, index=[0])    
                         row = row.drop('subject-area', axis = 1)
                         row = pd.concat([row, subject_row],ignore_index=False, axis =1)
@@ -244,9 +258,16 @@ def getapi(doi,title):
             output = return_scopus(r,query,'doi')
         else:
             if math.isnan(query)==True:
-                URL = title_search(title)
-                r = requests.get(URL)
-                output = return_scopus(r,title,'title')        
+                if type(title)==str:
+                    URL = title_search(title)
+                    r = requests.get(URL)
+                    output = return_scopus(r,title,'title')
+                    
+                else:
+                    output = {'dc:title':title,'prism:doi':query, 'prism:issn':'0', 'source-id':'0', 'prism:coverDate':'0', 'citedby-count':'-1'}
+                    output = pd.DataFrame(data = output, index = [0])
+
+
 
         # Add 0's in the beginning of output from Scopus Search API
         issn = output['prism:issn']
@@ -275,12 +296,12 @@ def getapi(doi,title):
 
         # URL generator: replace with email id to be contacted for errors
         def meta_url(query):
-            url = 'https://api.crossref.org/works/' + str(query) +'?mailto=rajalnivargi@yahoo.co.in'
+            url = 'https://api.crossref.org/works/' + str(query) +'?mailto=rfn5089@psu.edu'
             return url
 
         def title_url(query):
             title =str(query).replace(' ','+')  # For generating the URL correctly
-            url = 'https://api.crossref.org/works?query=' + title + '?mailto=rajalnivargi@yahoo.co.in'
+            url = 'https://api.crossref.org/works?query=' + title + '?mailto=rfn5089@psu.edu'
             return url
 
         # Reponse from the api
@@ -290,13 +311,13 @@ def getapi(doi,title):
                 if x == 'doi':
                     items = data['message']
                     data = pd.json_normalize(items)
-                    row = {'doi':query,'citedby-count-crossref':'0'}
+                    row = {'doi':query,'citedby-count-crossref':'-1'}
                     empty= pd.DataFrame(data = row, index = [0])
                 if x == 'title':
                     data = data['message']
                     items = data['items']
                     data = pd.json_normalize(items)
-                    row = {'title':query,'doi':'0','citedby-count-crossref':'0'}
+                    row = {'title':query,'doi':'0','citedby-count-crossref':'-1'}
                     empty= pd.DataFrame(data = row, index = [0])
                 if r.status_code!=200:
                     print('status-error')
@@ -323,7 +344,7 @@ def getapi(doi,title):
                         title_check = titles[i]
                         title_check = title_check[0]
                         ratio = fuzz.partial_ratio(query.lower(),title_check.lower())
-                        if ratio>=90:
+                        if ratio>=95:
                             flag=0
                             index = i
                             doi = dois[i]
@@ -342,14 +363,12 @@ def getapi(doi,title):
                     date = date[0] #selecting the year
                 else:
                     date = float('NaN')
-
-                # Will be using subject of journal instead, from Elsevier API
+                # Will be using subject of journal instead from Elsevier API
                 #if 'subject' in data.columns:
                     #subject = data.loc[index,'subject']
                     #subject = str(subject)
                 #else:
                     #subject = float('NaN')
-
                 if 'is-referenced-by-count' in data.columns:
                     select = data.loc[index,'is-referenced-by-count']
                 else:
@@ -361,10 +380,10 @@ def getapi(doi,title):
 
             except:
                 if x == 'doi':
-                    row = {'doi':query,'citedby-count-crossref':'0'}
+                    row = {'doi':query,'citedby-count-crossref':'-1'}
                     empty= pd.DataFrame(data = row, index = [0])
                 if x == 'title':
-                    row = {'title':query,'doi':'0','citedby-count-crossref':'0'}
+                    row = {'title':query,'doi':'0','citedby-count-crossref':'-1'}
                     empty= pd.DataFrame(data = row, index = [0])
                 return empty
 
@@ -375,11 +394,15 @@ def getapi(doi,title):
             row = get_row(r,query,'doi')
         else:
             if math.isnan(query)==True:
-                URL = title_url(title)
-                r = requests.get(URL)
-                row = get_row(r,title,'title')
+                if type(title) == str:
+                    URL = title_url(title)
+                    r = requests.get(URL)
+                    row = get_row(r,title,'title')
+                else:
+                    row = {'title':title,'doi':float('NaN'),'citedby-count-crossref':'-1'}
+                    row = pd.DataFrame(data = row, index = [0])
         return row
-    
+
     def comparecitations(elsevier, crossref):
         output = pd.DataFrame()
         # Comparing the number of citations from both and choosing the highest one
