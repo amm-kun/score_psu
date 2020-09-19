@@ -45,10 +45,10 @@ def getapi(doi,title):
                 status = r.status_code
                 query = str(query)
                 if x == 'doi':
-                    row = {'dc:title':float('NaN'),'prism:doi':query, 'prism:issn':'0', 'source-id':'0', 'prism:coverDate':'0', 'citedby-count':'-1'}
+                    row = {'dc:title':float('NaN'),'prism:doi':query, 'prism:issn':'0', 'source-id':'0', 'prism:coverDate':'0', 'citedby-count':'0'}
                     empty= pd.DataFrame(data = row, index = [0])
                 if x == 'title':
-                    row = {'prism:doi':float('NaN'),"dc:title":query, 'prism:issn':'0', 'source-id':'0', 'prism:coverDate':'0', 'citedby-count':'-1'}
+                    row = {'prism:doi':float('NaN'),"dc:title":query, 'prism:issn':'0', 'source-id':'0', 'prism:coverDate':'0', 'citedby-count':'0'}
                     empty= pd.DataFrame(data = row, index = [0])
                 #Checking the status code: success_code = 200. Otherwise, return empty row
                 if status!=200:
@@ -311,13 +311,13 @@ def getapi(doi,title):
                 if x == 'doi':
                     items = data['message']
                     data = pd.json_normalize(items)
-                    row = {'doi':query,'citedby-count-crossref':'-1'}
+                    row = {'doi':query,'citedby-count-crossref':'0'}
                     empty= pd.DataFrame(data = row, index = [0])
                 if x == 'title':
                     data = data['message']
                     items = data['items']
                     data = pd.json_normalize(items)
-                    row = {'title':query,'doi':'0','citedby-count-crossref':'-1'}
+                    row = {'title':query,'doi':'0','citedby-count-crossref':'0'}
                     empty= pd.DataFrame(data = row, index = [0])
                 if r.status_code!=200:
                     print('status-error')
@@ -380,10 +380,10 @@ def getapi(doi,title):
 
             except:
                 if x == 'doi':
-                    row = {'doi':query,'citedby-count-crossref':'-1'}
+                    row = {'doi':query,'citedby-count-crossref':'0'}
                     empty= pd.DataFrame(data = row, index = [0])
                 if x == 'title':
-                    row = {'title':query,'doi':'0','citedby-count-crossref':'-1'}
+                    row = {'title':query,'doi':'0','citedby-count-crossref':'0'}
                     empty= pd.DataFrame(data = row, index = [0])
                 return empty
 
@@ -399,7 +399,7 @@ def getapi(doi,title):
                     r = requests.get(URL)
                     row = get_row(r,title,'title')
                 else:
-                    row = {'title':title,'doi':float('NaN'),'citedby-count-crossref':'-1'}
+                    row = {'title':title,'doi':float('NaN'),'citedby-count-crossref':'0'}
                     row = pd.DataFrame(data = row, index = [0])
         return row
 
