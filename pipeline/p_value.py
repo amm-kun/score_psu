@@ -32,6 +32,7 @@ def extract_p_values(file, tsv_claim=None):
     p_val_list = []
     sample_list = []
     real_sample_list = []
+    intext_samplesize = []
     filtered_sent = []
     sentences = []
     just_pvalues_list = []
@@ -107,6 +108,9 @@ def extract_p_values(file, tsv_claim=None):
         # expression for b distribution (unstandardalized beta)
         pattern_b_list = re.finditer("b\s*[=><]\s*\d*\.*\d*\s*,\s*[p|P]\s*[<>=]\s*\d*\.\d+e*[-|–]*\d*", sentences[i])
 
+        #expression for d distribution (possion ratio related)
+        pattern_d_list = re.finditer("d\s*[=><]\s*\d*\.*\d*\s*,\s*[p|P]\s*[<>=]\s*\d*\.\d+e*[-|–]*\d*", sentences[i])
+
 
         #*****************REGEX FOR P VALUE EXPRESSION FROM DISTRIBUTION*****************************
     
@@ -149,7 +153,7 @@ def extract_p_values(file, tsv_claim=None):
         for pattern_t_nodf in pattern_t_nodf_list:
             if pattern_t_nodf:
                 expression = pattern_t_nodf.group()
-                print(expression)
+                # print(expression)
                 pattern_pval = re.search( "[p|P|Ps|ps]\s*[<>=]\s*\d*\.\d+(e[-–]\d*)?(?!.*(-|–))(?!.*e)", expression)
                 # print(pattern_pval)
                 if pattern_pval:
@@ -244,6 +248,16 @@ def extract_p_values(file, tsv_claim=None):
                 pattern_pval = re.search( "[p|P|Ps|ps]\s*[<>=]\s*\d*\.\d+(e[-–]\d*)?(?!.*(-|–))(?!.*e)", expression)
                 reported_pval_exp = pattern_pval.group()
                 p_val_list.append(reported_pval_exp)
+
+
+        # ----------------------------------- d value in distribution ------------------------------------------------
+        for pattern_d in pattern_d_list:
+            if pattern_d:
+                expression = pattern_d.group()
+                # print(expression)
+                pattern_pval = re.search( "[p|P|Ps|ps]\s*[<>=]\s*\d*\.\d+(e[-–]\d*)?(?!.*(-|–))(?!.*e)", expression)
+                reported_pval_exp = pattern_pval.group()
+                p_val_list.append(reported_pval_exp)
                
 
         # ---------------------------------------------- Z-DISTRIBUTION ----------------------------------------------
@@ -290,7 +304,26 @@ def extract_p_values(file, tsv_claim=None):
         
     
 
-        #_______________________________________________________________________________________________________________________
+        #______________________________________________sample size from text_________________________________________________________________________
+
+    for i in range(0, len(sentences) - 1):
+
+            # ---------------------------REGEX FOR P VALUE EXP from sentences ----------------------------
+
+            samplesize_list = re.finditer("(n|N|sample size|samplesize)\s*[=]\s*\d*", sentences[i])
+            
+            
+
+            # append intext sample size to a list names 'intext_samplesize'
+            for sample in samplesize_list:
+                
+                if sample:
+                    reported_samplesize = sample.group()
+                    intext_samplesize.append(reported_samplesize)
+    
+
+
+    #------------------if no statistical p-values are found search for just intext pvalues________________________-
 
     # print("P-vals list is:", p_val_list)
     if len(p_val_list) == 0:
@@ -300,23 +333,28 @@ def extract_p_values(file, tsv_claim=None):
             # ---------------------------REGEX FOR P VALUE EXP from sentences ----------------------------
            
            #old p val exp : [p|P]\\s?[<>=]\\s?\\d?\\.\\d+e?[-–]?\\d*
-            pattern_p_list = re.finditer("[p|P|Ps|ps]\s*[<>=]\s*\d*\.\d+(e[-–]\d*)?(?!.*(-|–))(?!.*e)", sentences[i])
+            pattern_p_list = re.finditer("([p|P]|(Ps|ps)|(p\s*[-–]\s*value))\s*[<>=]\s*\d*\.*\d+((e[-–]|e-)\d+)?(?!.*[-–])(?!.*e\s*[-–])", sentences[i])
+            
             pattern_p_range_list = re.finditer("(p|P)\s*[=<>]\s*\d*.\d*(-|–)\s*\d*.\d*", sentences[i])
 
-
+        
             
             # append just pvalues to a list names 'just_pvalues_list'
             for pattern_p in pattern_p_list:
                 if pattern_p:
                     reported_pval = pattern_p.group()
+            
                     just_pvalues_list.append(reported_pval)
-                    
+                # print(sentences[i])    
 
             # append just pvalues in the form of range to a list names 'just_pvalues_range'
             for pattern_p_range in pattern_p_range_list:
                 if pattern_p_range:
                     reported_pval_range = pattern_p_range.group()
                     just_pvalues_range.append(reported_pval_range)
+
+            
+                         
 
         # print("statistical p-values not found, all p-values of pdf", just_pvalues_list)
         p_val_list = just_pvalues_list
@@ -347,10 +385,31 @@ def extract_p_values(file, tsv_claim=None):
         except AttributeError:
             pass
         except IndexError:
+            # print((re.split('[<>=]', string))[-1])
             p_val_num_list.append(float((re.split('[<>=]', string))[-1]))
             # print("Index error in P-Val script")
             # p_val_num_list = []
     # print("vector of p-value numbers:", p_val_num_list)
+    
+    intext_sample_num_list = []
+    for string in intext_samplesize:
+        
+        try:
+            # print(string)
+            intext_sample_num_list.append(float(string.split()[2]))
+        except ValueError:
+            # string = string.replace('–', '-')
+            try:
+                intext_sample_num_list.append(float(string.split()[2]))
+            except ValueError:
+                intext_sample_num_list.append(float((re.split('[=]', string))[-1]))
+        except AttributeError:
+            pass
+        except IndexError:
+            # print((re.split('[<>=]', string))[-1])
+            intext_sample_num_list.append(float((re.split('[=]', string))[-1]))
+    
+
     if len(p_val_list) > 0 and len(p_val_num_list) > 0:
         num_hypo_test = len(p_val_list)
         real_p_value = min(p_val_num_list)
@@ -375,8 +434,20 @@ def extract_p_values(file, tsv_claim=None):
         # print("Number Significant:", number_significant)
 
         # print("vector of p-values", p_val_list)
-        if sample_list:
+        
+
+        if intext_sample_num_list:
             # print("vector of sample sizes", max(sample_list))
+            max_sample_size = max(intext_sample_num_list)
+            range_p_values = max(p_val_num_list) - min(p_val_num_list)
+            try:
+                real_p_sign = p_val_list[p_val_num_list.index(min(p_val_num_list))].split()[1]
+                real_p_sign = p_val_sign[real_p_sign]
+            except KeyError:
+                real_p_sign = 0
+            except IndexError:
+                real_p_sign = p_val_sign[re.search('[<>=]', p_val_list[p_val_num_list.index(min(p_val_num_list))]).group()]
+        elif sample_list and not intext_sample_num_list:
             max_sample_size = max(sample_list)
             range_p_values = max(p_val_num_list) - min(p_val_num_list)
             try:
@@ -386,26 +457,41 @@ def extract_p_values(file, tsv_claim=None):
                 real_p_sign = 0
             except IndexError:
                 real_p_sign = p_val_sign[re.search('[<>=]', p_val_list[p_val_num_list.index(min(p_val_num_list))]).group()]
+            
+
+
+
 
         # print("Max Sample size: ", max_sample_size)
         # print("Range of p-values: ", range_p_values)
         # print("Real p-value sign: ", real_p_sign)
+
     return {"num_hypo_tested": num_hypo_test, "real_p": real_p_value, "real_p_sign": real_p_sign,
             "p_val_range": range_p_values, "num_significant": number_significant, "sample_size": max_sample_size,
             "extend_p": extended_p_val}
 
+    # return real_p_value
+
 
 # extract_p_values(r"C:\Users\arjun\dev\test\pdfs\Hongbo_covid_gy96y.txt")
-# path_text = "C:\\Users\\lanka\\Downloads\\6713.txt"
-d = "C:\\Users\\lanka\\Desktop\\Lab\\DARPA\\new_pval_code_for_pipeline_edited_statcheck\\train\\retractedErrorData"
-filepaths_list = []
-for path in os.listdir(d):
-    full_path = os.path.join(d, path)
-    if os.path.isfile(full_path):
-        filepaths_list.append(full_path)
+path_text = "C:\\Users\\lanka\\Desktop\\Lab\\DARPA\\new_pval_code_for_pipeline_edited_statcheck\\train\\publishPre\\3.txt"
+print(extract_p_values(path_text))
 
-# print(len(filepaths_list))
+# d = "C:\\Users\\lanka\\Desktop\\Lab\\DARPA\\new_pval_code_for_pipeline_edited_statcheck\\train\\replicationProject\\FALSE"
+# filepaths_list = []
+# for path in os.listdir(d):
+#     full_path = os.path.join(d, path)
+#     if os.path.isfile(full_path):
+#         filepaths_list.append(full_path)
 
-for path_text in filepaths_list:
-    print(path_text)
-    print(extract_p_values(path_text))
+
+# count = 0
+# nopval_paths = []
+# for path_text in filepaths_list:
+#     print(path_text)
+#     print(extract_p_values(path_text))
+#     if extract_p_values(path_text) == 1:
+#         count = count+1
+#         nopval_paths.append(path_text)
+# print(count)
+# print(nopval_paths)
