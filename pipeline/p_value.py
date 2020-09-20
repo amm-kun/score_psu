@@ -310,7 +310,7 @@ def extract_p_values(file, tsv_claim=None):
 
             # ---------------------------REGEX FOR P VALUE EXP from sentences ----------------------------
 
-            samplesize_list = re.finditer("(n|N|sample size|samplesize)\s*[=]\s*\d*", sentences[i])
+            samplesize_list = re.finditer("(n|N|sample size|samplesize)\s*[=]\s*\d+", sentences[i])
             
             
 
