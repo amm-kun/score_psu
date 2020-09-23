@@ -206,11 +206,11 @@ class TEIExtractor:
                 except KeyError:
                     sjr_score = 0
                 try: 
-                    subject = api['subject']
+                    subject = api['subject'][0]
                 except:
                     subject = float('NaN')
                 try: 
-                    subject_code = api['subject_code']
+                    subject_code = api['subject_code'][0]
                 except:
                     subject_code = float('NaN')
         return {"sjr": sjr_score, "num_citations": cited_by, "subject":subject,"subject_code":subject_code}

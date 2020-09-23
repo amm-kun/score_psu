@@ -7,7 +7,7 @@ from time import sleep
 import XIN
 import string
 
-nlp = stanza.Pipeline(lang='en', processors='tokenize,ner')
+nlp = stanza.Pipeline(lang='en', processors='tokenize,ner',use_gpu=False)
 
 
 # nlp2 = stanza.Pipeline('en')

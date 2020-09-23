@@ -28,6 +28,8 @@ class Paper:
         self.authors = []
         self.affiliations = []
         self.ack_pairs = []
+        self.subject=''
+        self.subject_code=''
 
     def set_self_citations(self):
         authors = [author.surname for author in self.authors]

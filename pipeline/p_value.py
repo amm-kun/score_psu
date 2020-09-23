@@ -310,7 +310,7 @@ def extract_p_values(file, tsv_claim=None):
 
             # ---------------------------REGEX FOR P VALUE EXP from sentences ----------------------------
 
-            samplesize_list = re.finditer("(n|N|sample size|samplesize)\s*[=]\s*\d*", sentences[i])
+            samplesize_list = re.finditer("(n|N|sample size|samplesize)\s*[=]\s*\d+", sentences[i])
             
             
 
@@ -474,8 +474,8 @@ def extract_p_values(file, tsv_claim=None):
 
 
 # extract_p_values(r"C:\Users\arjun\dev\test\pdfs\Hongbo_covid_gy96y.txt")
-path_text = "C:\\Users\\lanka\\Desktop\\Lab\\DARPA\\new_pval_code_for_pipeline_edited_statcheck\\train\\publishPre\\3.txt"
-print(extract_p_values(path_text))
+#path_text = "C:\\Users\\lanka\\Desktop\\Lab\\DARPA\\new_pval_code_for_pipeline_edited_statcheck\\train\\publishPre\\3.txt"
+#print(extract_p_values(path_text))
 
 # d = "C:\\Users\\lanka\\Desktop\\Lab\\DARPA\\new_pval_code_for_pipeline_edited_statcheck\\train\\replicationProject\\FALSE"
 # filepaths_list = []

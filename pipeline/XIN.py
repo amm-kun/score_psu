@@ -14,7 +14,7 @@ import string
 import re
 import stanza
 
-nlp = stanza.Pipeline('en')
+nlp = stanza.Pipeline('en', use_gpu=False)
 
 
 # text = open("ak01.txt",'r')
