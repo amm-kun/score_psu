@@ -48,7 +48,7 @@ if __name__ == "__main__":
 
     # Generate Training data
     elif args.mode == "generate-train":
-        fields = ('doi', 'title', 'num_citations', 'author_count', 'sjr', 'u_rank', 'self_citations', 'num_hypo_tested',
+        fields = ('doi', 'title', 'num_citations', 'author_count', 'sjr', 'u_rank', 'self_citations','subject','subject_code', 'num_hypo_tested',
                   'real_p', 'real_p_sign', 'p_val_range', 'num_significant', 'sample_size', "extend_p", "funded", "y")
         record = namedtuple('record', fields)
         record.__new__.__defaults__ = (None,) * len(record._fields)
@@ -64,27 +64,31 @@ if __name__ == "__main__":
         # Run pipeline
         xmls = listdir(args.grobid_out)
         for xml in xmls:
-            print("Processing ", xml)
-            extractor = TEIExtractor(args.grobid_out + '/' + xml)
-            extraction_stage = extractor.extract_paper_info()
-            p_val_stage = extract_p_values(args.pdf_input + '/' + xml.replace('.tei.xml', '.txt'))
-            features = dict(**extraction_stage, **p_val_stage)
-            if args.label_range:
-                label_range = args.label_range.split('-')
-                features['y'] = random.uniform(float(label_range[0]), float(label_range[1]))
-            else:
-                features['y'] = float(args.label)
             try:
-                csv_write_record(writer, features, header)
-            except UnicodeDecodeError:
-                print("CSV WRITE ERROR", features["ta3_pid"])
-            except UnicodeEncodeError:
-                print("CSV WRITE ERROR", features["ta3_pid"])
+                print("Processing ", xml)
+                extractor = TEIExtractor(args.grobid_out + '/' + xml)
+                extraction_stage = extractor.extract_paper_info()
+                p_val_stage = extract_p_values(args.pdf_input + '/' + xml.replace('.tei.xml', '.txt'))
+                features = dict(**extraction_stage, **p_val_stage)
+                if args.label_range:
+                    label_range = args.label_range.split('-')
+                    features['y'] = random.uniform(float(label_range[0]), float(label_range[1]))
+                else:
+                    features['y'] = float(args.label)
+                try:
+                    csv_write_record(writer, features, header)
+                except UnicodeDecodeError:
+                    print("CSV WRITE ERROR", features["ta3_pid"])
+                except UnicodeEncodeError:
+                    print("CSV WRITE ERROR", features["ta3_pid"])
+            except Exception as e:
+                print(str(e))
+                
 
     # Generate DARPA SCORE Test set
     elif args.mode == "extract-test":
         start = time.time()
-        fields = ('ta3_pid', 'doi', 'title', 'num_citations', 'author_count', 'sjr', 'u_rank', 'self_citations',
+        fields = ('ta3_pid', 'doi', 'title', 'num_citations', 'author_count', 'sjr', 'u_rank', 'self_citations','subject','subject_code',
                   'num_hypo_tested', 'real_p', 'real_p_sign', 'p_val_range', 'num_significant', 'sample_size',
                   "extend_p", "funded")
         record = namedtuple('record', fields)
@@ -94,17 +98,20 @@ if __name__ == "__main__":
         header = list(fields)
         csv_write_field_header(writer, header)
         for document in read_darpa_tsv(args.file):
-            print("Processing ", document['pdf_filename'])
-            extractor = TEIExtractor(args.grobid_out + '/' + document['pdf_filename'] + '.tei.xml', document)
-            extraction_stage = extractor.extract_paper_info()
-            p_val_stage = extract_p_values(args.pdf_input + '/' + document['pdf_filename'] + '.txt', document['claim4'])
-            features = dict(**extraction_stage, **p_val_stage)
-            features['ta3_pid'] = document['ta3_pid']
             try:
-                csv_write_record(writer, features, header)
-            except UnicodeDecodeError:
-                print("CSV WRITE ERROR", features["ta3_pid"])
-            except UnicodeEncodeError:
-                print("CSV WRITE ERROR", features["ta3_pid"])
+                print("Processing ", document['pdf_filename'])
+                extractor = TEIExtractor(args.grobid_out + '/' + document['pdf_filename'] + '.tei.xml', document)
+                extraction_stage = extractor.extract_paper_info()
+                p_val_stage = extract_p_values(args.pdf_input + '/' + document['pdf_filename'] + '.txt', document['claim4'])
+                features = dict(**extraction_stage, **p_val_stage)
+                features['ta3_pid'] = document['ta3_pid']
+                try:
+                    csv_write_record(writer, features, header)
+                except UnicodeDecodeError:
+                    print("CSV WRITE ERROR", features["ta3_pid"])
+                except UnicodeEncodeError:
+                    print("CSV WRITE ERROR", features["ta3_pid"])
+            except Exception as e:
+                print(str(e))
         end = time.time()
         print("Execution time: ", end-start)

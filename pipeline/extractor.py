@@ -3,7 +3,7 @@ from fuzzywuzzy import process
 from utilities import elem_to_text
 from bs4 import BeautifulSoup
 from ack_pairs import *
-from elsevier_api import get_elsevier
+from elsevier_api import getapi
 import pickle
 
 """
@@ -155,16 +155,18 @@ class TEIExtractor:
         else:
             self.paper.funded = 0
         # SJR
-        api_resp = self.get_sjr(self.paper.doi)
+        api_resp = self.get_sjr(self.paper.doi,self.paper.title)
         if api_resp:
-            self.paper.cited_by_count = api_resp["cited_by"]
+            self.paper.cited_by_count = api_resp["num_citations"]
             self.paper.sjr = api_resp["sjr"]
+            self.paper.subject = api_resp["subject"]
+            self.paper.subject_code = api_resp["subject_code"]
         # Set self-citations
         self.paper.self_citations = self.paper.set_self_citations()
         # return paper
-        return {"doi": self.paper.doi, "title": self.paper.title, "num_citations": self.paper.cited_by_count,
-                "author_count": len(self.paper.authors), "sjr": self.paper.sjr, "u_rank": self.paper.uni_rank,
-                "funded": self.paper.funded, "self_citations": self.paper.self_citations}
+        return {"doi": self.paper.doi, "title": self.paper.title, "num_citations": self.paper.cited_by_count, "author_count": len(self.paper.authors),
+                "sjr": self.paper.sjr, "u_rank": self.paper.uni_rank, "funded": self.paper.funded,
+                "self_citations": self.paper.self_citations,"subject":self.paper.subject, "subject_code":self.paper.subject_code}
 
     @staticmethod
     def get_authors(authors):
@@ -187,23 +189,31 @@ class TEIExtractor:
         return pairs
 
     @staticmethod
-    def get_sjr(doi):
+    def get_sjr(doi,title):
         if not doi:
             return None
         else:
-            api = get_elsevier(doi)
+            api = getapi(doi,title)
             if api.empty:
                 return None
             else:
                 try:
-                    cited_by = api['citedby-count'][0]
+                    cited_by = api['num_citations'][0]
                 except KeyError:
                     cited_by = 0
                 try:
                     sjr_score = api['SJR'][0]
                 except KeyError:
                     sjr_score = 0
-        return {"sjr": sjr_score, "cited_by": cited_by}
+                try: 
+                    subject = api['subject'][0]
+                except:
+                    subject = float('NaN')
+                try: 
+                    subject_code = api['subject_code'][0]
+                except:
+                    subject_code = float('NaN')
+        return {"sjr": sjr_score, "num_citations": cited_by, "subject":subject,"subject_code":subject_code}
 
 
 if __name__ == "__main__":
