@@ -169,11 +169,10 @@ class TEIExtractor:
         # Set self-citations
         self.paper.self_citations = self.paper.set_self_citations()
         # return paper
-        return {"doi": self.paper.doi, "title": self.paper.title, "num_citations": self.paper.cited_by_count,"normalized_citations":self.paper.normalized,
-                "citationVelocity":self.paper.velocity,"influentialCitationCount":self.paper.influentialcitations,"references_count":self.paper.references, 
-                "author_count": len(self.paper.authors),"sjr": self.paper.sjr, "u_rank": self.paper.uni_rank, "funded": self.paper.funded,
-                "self_citations": self.paper.self_citations,"subject":self.paper.subject, "subject_code":self.paper.subject_code, 
-                "openaccessflag":self.paper.flag }
+        return {"doi":self.paper.doi,"title":self.paper.title,"num_citations":self.paper.cited_by_count, "author_count": len(self.paper.authors),"sjr": self.paper.sjr, 
+                "u_rank": self.paper.uni_rank, "funded": self.paper.funded,"self_citations": self.paper.self_citations,"subject":self.paper.subject,
+                "subject_code":self.paper.subject_code,"citationVelocity":self.paper.velocity,"influentialCitationCount":self.paper.influentialcitations,
+                "references_count":self.paper.references,"openaccessflag":self.paper.flag,"normalized_citations":self.paper.normalized}
 
     @staticmethod
     def get_authors(authors):
