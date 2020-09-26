@@ -227,6 +227,7 @@ class TEIExtractor:
                     sjr_score = 0
                 try: 
                     subject = api['subject'][0]
+
                 except:
                     subject = 0
                 try: 
