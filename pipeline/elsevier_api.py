@@ -411,13 +411,13 @@ def getapi(doi,title):
         query = str(doi)
         URL= 'https://api.semanticscholar.org/v1/paper/'+query
         r = requests.get(URL)
-        data = r.json()
-        data = pd.json_normalize(data)
         row = {'doi': query, 'title': float('NaN'), 'citationVelocity': 0, 'influentialCitationCount': 0,'is_open_access':0}
         empty= pd.DataFrame(data = row, index = [0])
         empty= pd.DataFrame(row, index = [0])
         if r.status_code!=200:
             return empty
+        data = r.json()
+        data = pd.json_normalize(data)
         doi_api = data['doi']
         title_api = data['title']
         
