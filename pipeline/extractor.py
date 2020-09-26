@@ -161,12 +161,19 @@ class TEIExtractor:
             self.paper.sjr = api_resp["sjr"]
             self.paper.subject = api_resp["subject"]
             self.paper.subject_code = api_resp["subject_code"]
+            self.paper.normalized = api_resp["normalized_citations"]
+            self.paper.velocity = api_resp["citationVelocity"]
+            self.paper.influentialcitations = api_resp["influentialCitationCount"]
+            self.paper.references = api_resp["references_count"]
+            self.paper.flag = api_resp["openaccessflag"]
         # Set self-citations
         self.paper.self_citations = self.paper.set_self_citations()
         # return paper
-        return {"doi": self.paper.doi, "title": self.paper.title, "num_citations": self.paper.cited_by_count, "author_count": len(self.paper.authors),
-                "sjr": self.paper.sjr, "u_rank": self.paper.uni_rank, "funded": self.paper.funded,
-                "self_citations": self.paper.self_citations,"subject":self.paper.subject, "subject_code":self.paper.subject_code}
+        return {"doi": self.paper.doi, "title": self.paper.title, "num_citations": self.paper.cited_by_count,"normalized_citations":self.paper.normalized,
+                "citationVelocity":self.paper.velocity,"influentialCitationCount":self.paper.influentialcitations,"references_count":self.paper.references, 
+                "author_count": len(self.paper.authors),"sjr": self.paper.sjr, "u_rank": self.paper.uni_rank, "funded": self.paper.funded,
+                "self_citations": self.paper.self_citations,"subject":self.paper.subject, "subject_code":self.paper.subject_code, 
+                "openaccessflag":self.paper.flag }
 
     @staticmethod
     def get_authors(authors):
@@ -190,9 +197,6 @@ class TEIExtractor:
 
     @staticmethod
     def get_sjr(doi,title):
-        if not doi:
-            return None
-        else:
             api = getapi(doi,title)
             if api.empty:
                 return None
@@ -201,19 +205,42 @@ class TEIExtractor:
                     cited_by = api['num_citations'][0]
                 except KeyError:
                     cited_by = 0
+                try: 
+                    normalized = api['normalized_citations'][0]
+                except:
+                    normalized = 0.0
+                try: 
+                    velocity = api['citationVelocity'][0]
+                except:
+                    velocity = 0
+                try: 
+                    influentialcitations = api['influentialCitationCount'][0]
+                except:
+                    influentialcitations = 0
+                try: 
+                    references  = api['references_count'][0]
+                except:
+                    references = 0
                 try:
                     sjr_score = api['SJR'][0]
                 except KeyError:
                     sjr_score = 0
                 try: 
                     subject = api['subject'][0]
+
                 except:
-                    subject = float('NaN')
+                    subject = 0
                 try: 
                     subject_code = api['subject_code'][0]
                 except:
-                    subject_code = float('NaN')
-        return {"sjr": sjr_score, "num_citations": cited_by, "subject":subject,"subject_code":subject_code}
+                    subject_code = 900
+                try: 
+                    flag = api['openaccessflag'][0]
+                except:
+                    flag = 0
+                
+        return {"sjr": sjr_score, "num_citations": cited_by, "subject":subject,"subject_code":subject_code,"normalized_citations":normalized,
+                "citationVelocity":velocity,"influentialCitationCount":influentialcitations,"references_count":references, "openaccessflag":flag}
 
 
 if __name__ == "__main__":
