@@ -257,7 +257,7 @@ def getapi(doi,title):
             #print(r.content)
             output = return_scopus(r,query,'doi')
         else:
-            if math.isnan(query)==True:
+            if query and math.isnan(query)==True:
                 if type(title)==str:
                     URL = title_search(title)
                     r = requests.get(URL)
@@ -266,6 +266,9 @@ def getapi(doi,title):
                 else:
                     output = {'dc:title':title,'prism:doi':query, 'prism:issn':'0', 'source-id':'0', 'prism:coverDate':'0', 'citedby-count':'0','openaccessFlag':'0'}
                     output = pd.DataFrame(data = output, index = [0])
+            else:
+                output = {'dc:title':title,'prism:doi':query, 'prism:issn':'0', 'source-id':'0', 'prism:coverDate':'0', 'citedby-count':'0','openaccessFlag':'0'}
+                output = pd.DataFrame(data = output, index = [0])
 
 
 
@@ -393,10 +396,13 @@ def getapi(doi,title):
             r = requests.get(URL)
             row = get_row(r,query,'doi')
         else:
-            if math.isnan(query)==True:
+            if query and math.isnan(query)==True:
                 URL = title_url(title)
                 r = requests.get(URL)
                 row = get_row(r,title,'title')
+            else:
+                row = {'doi':query,'title':title,'citedby-count-crossref':'0','coverdate':0}
+                row= pd.DataFrame(data = row, index = [0])
         return row
 
     # Semantic scholor API
@@ -509,7 +515,7 @@ def getapi(doi,title):
         elsevier = getelsevier(doi,title)
         semantic = getsemantic(doi)
     else:
-        if math.isnan(doi)==True:
+        if doi and math.isnan(doi)==True:
             doi = crossref.loc[0,'doi']
         elsevier = getelsevier(doi,title)
         semantic = getsemantic(doi)
