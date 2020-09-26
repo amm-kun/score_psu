@@ -48,7 +48,8 @@ if __name__ == "__main__":
 
     # Generate Training data
     elif args.mode == "generate-train":
-        fields = ('doi', 'title', 'num_citations', 'author_count', 'sjr', 'u_rank', 'self_citations','subject','subject_code', 'num_hypo_tested',
+        fields = ('doi', 'title', 'num_citations', 'author_count', 'sjr', 'u_rank', 'self_citations','subject','subject_code',
+                  'citationVelocity','influentialCitationCount','references_count','openaccessflag', 'normalized_citations','num_hypo_tested',
                   'real_p', 'real_p_sign', 'p_val_range', 'num_significant', 'sample_size', "extend_p", "funded", "y")
         record = namedtuple('record', fields)
         record.__new__.__defaults__ = (None,) * len(record._fields)
