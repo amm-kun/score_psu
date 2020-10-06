@@ -166,13 +166,26 @@ class TEIExtractor:
             self.paper.influentialcitations = api_resp["influentialCitationCount"]
             self.paper.references = api_resp["references_count"]
             self.paper.flag = api_resp["openaccessflag"]
+            self.paper.influentialref = api_resp["influentialReferencesCount"]
+            self.paper.ref_background = api_resp["reference_background"]
+            self.paper.ref_result = api_resp["reference_result"]
+            self.paper.ref_met = api_resp["reference_methodology"]
+            self.paper.cite_background = api_resp["citations_background"]
+            self.paper.cite_result = api_resp["citations_result"]
+            self.paper.cite_met = api_resp["citations_methodology"]
+            self.paper.cite_next = api_resp["citations_next"]
         # Set self-citations
         self.paper.self_citations = self.paper.set_self_citations()
         # return paper
-        return {"doi": self.paper.doi, "title": self.paper.title, "num_citations": self.paper.cited_by_count,"citationVelocity":self.paper.velocity,"influentialCitationCount":self.paper.influentialcitations,"references_count":self.paper.references, 
-                "author_count": len(self.paper.authors),"sjr": self.paper.sjr, "u_rank": self.paper.uni_rank, "funded": self.paper.funded,
-                "self_citations": self.paper.self_citations,"subject":self.paper.subject, "subject_code":self.paper.subject_code, 
-                "openaccessflag":self.paper.flag }
+
+        return {"doi":self.paper.doi,"title":self.paper.title,"num_citations":self.paper.cited_by_count, "author_count": len(self.paper.authors),"sjr": self.paper.sjr, 
+                "u_rank": self.paper.uni_rank, "funded": self.paper.funded,"self_citations": self.paper.self_citations,"subject":self.paper.subject,
+                "subject_code":self.paper.subject_code,"citationVelocity":self.paper.velocity,"influentialCitationCount":self.paper.influentialcitations,
+                "references_count":self.paper.references,"openaccessflag":self.paper.flag,"normalized_citations":self.paper.normalized, 
+                "influentialReferencesCount":self.paper.influentialref, "reference_background": self.paper.ref_background, "reference_result":self.paper.ref_result, 
+                "reference_methodology":self.paper.ref_met,"citations_background":self.paper.cite_background,"citations_result":self.paper.cite_result,
+                "citations_methodology":self.paper.cite_met, "citations_next":self.paper.cite_next}
+
 
     @staticmethod
     def get_authors(authors):
@@ -237,8 +250,45 @@ class TEIExtractor:
                     flag = api['openaccessflag'][0]
                 except:
                     flag = 0
+                try: 
+                    influentialref = api['influentialReferencesCount'][0]
+                except:
+                    influentialref = 0
+                try: 
+                    ref_background = api['reference_background'][0]
+                except:
+                    ref_background = 0
+                try: 
+                    ref_result = api['reference_result'][0]
+                except:
+                    ref_result = 0
+                try: 
+                    ref_met = api['reference_methodology'][0]
+                except:
+                    ref_met = 0
+                try: 
+                    cite_background = api['citations_background'][0]
+                except:
+                    cite_background = 0
+                try: 
+                    cite_result = api['citations_result'][0]
+                except:
+                    cite_result = 0
+                try: 
+                    cite_met = api['citations_methodology'][0]
+                except:
+                    cite_met = 0
+                try: 
+                    cite_next = api['citations_next'][0]
+                except:
+                    cite_next = 0
                 
-        return {"sjr": sjr_score, "num_citations": cited_by, "subject":subject,"subject_code":subject_code,"citationVelocity":velocity,"influentialCitationCount":influentialcitations,"references_count":references, "openaccessflag":flag}
+
+        return {"sjr": sjr_score, "num_citations": cited_by, "subject":subject,"subject_code":subject_code,"normalized_citations":normalized,
+                "citationVelocity":velocity,"influentialCitationCount":influentialcitations,"references_count":references, "openaccessflag":flag, 
+                "influentialReferencesCount":influentialref, "reference_background": ref_background, "reference_result":ref_result, "reference_methodology":ref_met, 
+                "citations_background":cite_background,"citations_result":cite_result,"citations_methodology":cite_met, "citations_next":cite_next}
+
 
 
 if __name__ == "__main__":
