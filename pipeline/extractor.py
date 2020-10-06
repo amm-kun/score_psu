@@ -161,7 +161,7 @@ class TEIExtractor:
             self.paper.sjr = api_resp["sjr"]
             self.paper.subject = api_resp["subject"]
             self.paper.subject_code = api_resp["subject_code"]
-            #self.paper.normalized = api_resp["normalized_citations"]
+            self.paper.normalized = api_resp["normalized_citations"]
             self.paper.velocity = api_resp["citationVelocity"]
             self.paper.influentialcitations = api_resp["influentialCitationCount"]
             self.paper.references = api_resp["references_count"]
@@ -169,10 +169,10 @@ class TEIExtractor:
             self.paper.influentialref = api_resp["influentialReferencesCount"]
             self.paper.ref_background = api_resp["reference_background"]
             self.paper.ref_result = api_resp["reference_result"]
-            self.paper.ref_met = api_resp["reference_methodology"]
+            self.paper.ref_method = api_resp["reference_methodology"]
             self.paper.cite_background = api_resp["citations_background"]
             self.paper.cite_result = api_resp["citations_result"]
-            self.paper.cite_met = api_resp["citations_methodology"]
+            self.paper.cite_method = api_resp["citations_methodology"]
             self.paper.cite_next = api_resp["citations_next"]
         # Set self-citations
         self.paper.self_citations = self.paper.set_self_citations()
@@ -183,8 +183,8 @@ class TEIExtractor:
                 "subject_code":self.paper.subject_code,"citationVelocity":self.paper.velocity,"influentialCitationCount":self.paper.influentialcitations,
                 "references_count":self.paper.references,"openaccessflag":self.paper.flag,"normalized_citations":self.paper.normalized, 
                 "influentialReferencesCount":self.paper.influentialref, "reference_background": self.paper.ref_background, "reference_result":self.paper.ref_result, 
-                "reference_methodology":self.paper.ref_met,"citations_background":self.paper.cite_background,"citations_result":self.paper.cite_result,
-                "citations_methodology":self.paper.cite_met, "citations_next":self.paper.cite_next}
+                "reference_methodology":self.paper.ref_method,"citations_background":self.paper.cite_background,"citations_result":self.paper.cite_result,
+                "citations_methodology":self.paper.cite_method, "citations_next":self.paper.cite_next}
 
 
     @staticmethod
@@ -263,9 +263,9 @@ class TEIExtractor:
                 except:
                     ref_result = 0
                 try: 
-                    ref_met = api['reference_methodology'][0]
+                    ref_method = api['reference_methodology'][0]
                 except:
-                    ref_met = 0
+                    ref_method = 0
                 try: 
                     cite_background = api['citations_background'][0]
                 except:
@@ -275,19 +275,17 @@ class TEIExtractor:
                 except:
                     cite_result = 0
                 try: 
-                    cite_met = api['citations_methodology'][0]
+                    cite_method = api['citations_methodology'][0]
                 except:
-                    cite_met = 0
+                    cite_method = 0
                 try: 
                     cite_next = api['citations_next'][0]
                 except:
                     cite_next = 0
-                
-
         return {"sjr": sjr_score, "num_citations": cited_by, "subject":subject,"subject_code":subject_code,"normalized_citations":normalized,
                 "citationVelocity":velocity,"influentialCitationCount":influentialcitations,"references_count":references, "openaccessflag":flag, 
-                "influentialReferencesCount":influentialref, "reference_background": ref_background, "reference_result":ref_result, "reference_methodology":ref_met, 
-                "citations_background":cite_background,"citations_result":cite_result,"citations_methodology":cite_met, "citations_next":cite_next}
+                "influentialReferencesCount":influentialref, "reference_background": ref_background, "reference_result":ref_result, "reference_methodology":ref_method, 
+                "citations_background":cite_background,"citations_result":cite_result,"citations_methodology":cite_method, "citations_next":cite_next}
 
 
 
