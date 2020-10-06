@@ -166,24 +166,25 @@ def extract_p_values(file, tsv_claim=None):
         for pattern_f in pattern_f_list:
             if pattern_f:
                 expression = pattern_f.group()
-                # print(expression)
                 pattern_pval = re.search( "[p|P|Ps|ps]\s*[<>=]\s*\d*\.\d+(e[-–]\d*)?(?!.*(-|–))(?!.*e)", expression)
-                reported_pval_exp = pattern_pval.group()
-                p_val_list.append(reported_pval_exp)
-                s = [float(s) for s in re.findall(r'-?\d+\.?\d*', expression)]
-                if len(s) == 3:
-                    df2 = s[1]
-                    df1 = s[0]
-                    constant = df1 + 1
-                    sample_f = constant + df2
-                    sample_list.append(sample_f)
+                print(pattern_pval)
+                if pattern_pval:
+                    reported_pval_exp = pattern_pval.group()
+                    p_val_list.append(reported_pval_exp)
+                    s = [float(s) for s in re.findall(r'-?\d+\.?\d*', expression)]
+                    if len(s) == 3:
+                        df2 = s[1]
+                        df1 = s[0]
+                        constant = df1 + 1
+                        sample_f = constant + df2
+                        sample_list.append(sample_f)
 
-                else:
-                    df2 = s[1]
-                    df1 = s[0]
-                    constant = df1 + 1
-                    sample_f = constant + df2
-                    sample_list.append(sample_f)
+                    else:
+                        df2 = s[1]
+                        df1 = s[0]
+                        constant = df1 + 1
+                        sample_f = constant + df2
+                        sample_list.append(sample_f)
 
         # ------------------------------------------- CORRELATION ----------------------------------------------------
 
@@ -474,8 +475,8 @@ def extract_p_values(file, tsv_claim=None):
 
 
 # extract_p_values(r"C:\Users\arjun\dev\test\pdfs\Hongbo_covid_gy96y.txt")
-#path_text = "C:\\Users\\lanka\\Desktop\\Lab\\DARPA\\new_pval_code_for_pipeline_edited_statcheck\\train\\publishPre\\3.txt"
-#print(extract_p_values(path_text))
+# path_text = "/home/svm6277/test_texts/Blagov_covid_jr83m.txt"
+# print(extract_p_values(path_text))
 
 # d = "C:\\Users\\lanka\\Desktop\\Lab\\DARPA\\new_pval_code_for_pipeline_edited_statcheck\\train\\replicationProject\\FALSE"
 # filepaths_list = []

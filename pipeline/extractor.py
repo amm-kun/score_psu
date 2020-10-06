@@ -5,7 +5,7 @@ from bs4 import BeautifulSoup
 from ack_pairs import *
 from elsevier_api import getapi
 import pickle
-
+import pdb
 """
 Object models for the Processing Pipeline to generate features for the DARPA SCORE project
 -----------------Includes the pre-processing step for the Predition Market----------------
@@ -169,11 +169,7 @@ class TEIExtractor:
         # Set self-citations
         self.paper.self_citations = self.paper.set_self_citations()
         # return paper
-        return {"doi": self.paper.doi, "title": self.paper.title, "num_citations": self.paper.cited_by_count,"normalized_citations":self.paper.normalized,
-                "citationVelocity":self.paper.velocity,"influentialCitationCount":self.paper.influentialcitations,"references_count":self.paper.references, 
-                "author_count": len(self.paper.authors),"sjr": self.paper.sjr, "u_rank": self.paper.uni_rank, "funded": self.paper.funded,
-                "self_citations": self.paper.self_citations,"subject":self.paper.subject, "subject_code":self.paper.subject_code, 
-                "openaccessflag":self.paper.flag }
+        return {"doi":self.paper.doi,"title":self.paper.title,"num_citations":self.paper.cited_by_count, "author_count": len(self.paper.authors),"sjr": self.paper.sjr, "u_rank": self.paper.uni_rank, "funded": self.paper.funded,"self_citations": self.paper.self_citations,"subject":self.paper.subject,"subject_code":self.paper.subject_code,"citationVelocity":self.paper.velocity,"influentialCitationCount":self.paper.influentialcitations,"references_count":self.paper.references,"openaccessflag":self.paper.flag,"normalized_citations":self.paper.normalized}
 
     @staticmethod
     def get_authors(authors):
@@ -239,9 +235,7 @@ class TEIExtractor:
                 except:
                     flag = 0
                 
-        return {"sjr": sjr_score, "num_citations": cited_by, "subject":subject,"subject_code":subject_code,"normalized_citations":normalized,
-                "citationVelocity":velocity,"influentialCitationCount":influentialcitations,"references_count":references, "openaccessflag":flag}
-
+            return {"sjr": sjr_score, "num_citations": cited_by, "subject":subject,"subject_code":subject_code, "citationVelocity":velocity,"influentialCitationCount":influentialcitations,"references_count":references, "openaccessflag":flag,"normalized_citations":normalized}
 
 if __name__ == "__main__":
 

@@ -257,7 +257,7 @@ def getapi(doi,title):
             #print(r.content)
             output = return_scopus(r,query,'doi')
         else:
-            if math.isnan(query)==True:
+            if query and math.isnan(query)==True:
                 if type(title)==str:
                     URL = title_search(title)
                     r = requests.get(URL)
@@ -266,6 +266,9 @@ def getapi(doi,title):
                 else:
                     output = {'dc:title':title,'prism:doi':query, 'prism:issn':'0', 'source-id':'0', 'prism:coverDate':'0', 'citedby-count':'0','openaccessFlag':'0'}
                     output = pd.DataFrame(data = output, index = [0])
+            else:
+                output = {'dc:title':title,'prism:doi':query, 'prism:issn':'0', 'source-id':'0', 'prism:coverDate':'0', 'citedby-count':'0','openaccessFlag':'0'}
+                output = pd.DataFrame(data = output, index = [0])
 
 
 
@@ -311,13 +314,13 @@ def getapi(doi,title):
                 if x == 'doi':
                     items = data['message']
                     data = pd.json_normalize(items)
-                    row = {'doi':query,'citedby-count-crossref':'0'}
+                    row = {'doi':query,'citedby-count-crossref':'0','coverdate':0}
                     empty= pd.DataFrame(data = row, index = [0])
                 if x == 'title':
                     data = data['message']
                     items = data['items']
                     data = pd.json_normalize(items)
-                    row = {'title':query,'doi':'0','citedby-count-crossref':'0'}
+                    row = {'title':query,'doi':'0','citedby-count-crossref':'0','coverdate':0}
                     empty= pd.DataFrame(data = row, index = [0])
                 if r.status_code!=200:
                     print('status-error')
@@ -393,10 +396,14 @@ def getapi(doi,title):
             r = requests.get(URL)
             row = get_row(r,query,'doi')
         else:
-            if math.isnan(query)==True:
+            if query and math.isnan(query)==True:
                 URL = title_url(title)
                 r = requests.get(URL)
                 row = get_row(r,title,'title')
+            else:
+                row = {'doi':query,'title':title,'citedby-count-crossref':'0','coverdate':0}
+                row= pd.DataFrame(data = row, index = [0])
+                
         return row
 
     # Semantic scholor API
@@ -405,13 +412,13 @@ def getapi(doi,title):
         query = str(doi)
         URL= 'https://api.semanticscholar.org/v1/paper/'+query
         r = requests.get(URL)
-        data = r.json()
-        data = pd.json_normalize(data)
         row = {'doi': query, 'title': float('NaN'), 'citationVelocity': 0, 'influentialCitationCount': 0,'is_open_access':0}
         empty= pd.DataFrame(data = row, index = [0])
         empty= pd.DataFrame(row, index = [0])
         if r.status_code!=200:
             return empty
+        data = r.json()
+        data = pd.json_normalize(data)
         doi_api = data['doi']
         title_api = data['title']
         
@@ -472,6 +479,8 @@ def getapi(doi,title):
             normalized_citations = 0
         else:
             years = currentYear - int(coverdate)
+            if years == 0:
+                years = 1
             normalized_citations = cite/years
         c = {'num_citations':cite,'normalized_citations':normalized_citations}
         cite = pd.DataFrame(c,index = [0])
@@ -504,14 +513,13 @@ def getapi(doi,title):
         return output
 
     crossref = getCrosref(doi,title)
+    elsevier = getelsevier(doi,title)
     
     if type(doi) == str:
-        elsevier = getelsevier(doi,title)
         semantic = getsemantic(doi)
     else:
-        if math.isnan(doi)==True:
+        if doi and math.isnan(doi)==True:
             doi = crossref.loc[0,'doi']
-        elsevier = getelsevier(doi,title)
         semantic = getsemantic(doi)
 
     final = comparecitations(elsevier,crossref,semantic)
