@@ -243,7 +243,6 @@ def getapi(doi,title):
                         subject_row = pd.DataFrame(sub_list, index=[0])    
                         row = row.drop('subject-area', axis = 1)
                         row = pd.concat([row, subject_row],ignore_index=False, axis =1)
-                        
                     return row
        
         # Scopus search api
@@ -269,8 +268,6 @@ def getapi(doi,title):
             else:
                 output = {'dc:title':title,'prism:doi':query, 'prism:issn':'0', 'source-id':'0', 'prism:coverDate':'0', 'citedby-count':'0','openaccessFlag':'0'}
                 output = pd.DataFrame(data = output, index = [0])
-
-
 
         # Add 0's in the beginning of output from Scopus Search API
         issn = output['prism:issn']
@@ -571,5 +568,5 @@ def getapi(doi,title):
         semantic,year = getsemantic(doi)
 
     final = comparecitations(elsevier,crossref,semantic,year)
-    
+   
     return final
