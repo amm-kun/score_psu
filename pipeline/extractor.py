@@ -161,7 +161,7 @@ class TEIExtractor:
             self.paper.sjr = api_resp["sjr"]
             self.paper.subject = api_resp["subject"]
             self.paper.subject_code = api_resp["subject_code"]
-            self.paper.normalized = api_resp["normalized_citations"]
+            #self.paper.normalized = api_resp["normalized_citations"]
             self.paper.velocity = api_resp["citationVelocity"]
             self.paper.influentialcitations = api_resp["influentialCitationCount"]
             self.paper.references = api_resp["references_count"]
@@ -177,6 +177,7 @@ class TEIExtractor:
         # Set self-citations
         self.paper.self_citations = self.paper.set_self_citations()
         # return paper
+
         return {"doi":self.paper.doi,"title":self.paper.title,"num_citations":self.paper.cited_by_count, "author_count": len(self.paper.authors),"sjr": self.paper.sjr, 
                 "u_rank": self.paper.uni_rank, "funded": self.paper.funded,"self_citations": self.paper.self_citations,"subject":self.paper.subject,
                 "subject_code":self.paper.subject_code,"citationVelocity":self.paper.velocity,"influentialCitationCount":self.paper.influentialcitations,
@@ -184,6 +185,7 @@ class TEIExtractor:
                 "influentialReferencesCount":self.paper.influentialref, "reference_background": self.paper.ref_background, "reference_result":self.paper.ref_result, 
                 "reference_methodology":self.paper.ref_met,"citations_background":self.paper.cite_background,"citations_result":self.paper.cite_result,
                 "citations_methodology":self.paper.cite_met, "citations_next":self.paper.cite_next}
+
 
     @staticmethod
     def get_authors(authors):
@@ -215,10 +217,10 @@ class TEIExtractor:
                     cited_by = api['num_citations'][0]
                 except KeyError:
                     cited_by = 0
-                try: 
-                    normalized = api['normalized_citations'][0]
-                except:
-                    normalized = 0.0
+                #try: 
+                    #normalized = api['normalized_citations'][0]
+                #except:
+                    #normalized = 0.0
                 try: 
                     velocity = api['citationVelocity'][0]
                 except:
@@ -281,6 +283,7 @@ class TEIExtractor:
                 except:
                     cite_next = 0
                 
+
         return {"sjr": sjr_score, "num_citations": cited_by, "subject":subject,"subject_code":subject_code,"normalized_citations":normalized,
                 "citationVelocity":velocity,"influentialCitationCount":influentialcitations,"references_count":references, "openaccessflag":flag, 
                 "influentialReferencesCount":influentialref, "reference_background": ref_background, "reference_result":ref_result, "reference_methodology":ref_met, 
