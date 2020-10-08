@@ -169,16 +169,17 @@ class TEIExtractor:
             self.paper.influentialref = api_resp["influentialReferencesCount"]
             self.paper.ref_background = api_resp["reference_background"]
             self.paper.ref_result = api_resp["reference_result"]
-            self.paper.ref_met = api_resp["reference_methodology"]
+            self.paper.ref_method = api_resp["reference_methodology"]
             self.paper.cite_background = api_resp["citations_background"]
             self.paper.cite_result = api_resp["citations_result"]
-            self.paper.cite_met = api_resp["citations_methodology"]
+            self.paper.cite_method = api_resp["citations_methodology"]
             self.paper.cite_next = api_resp["citations_next"]
         # Set self-citations
         self.paper.self_citations = self.paper.set_self_citations()
         # return paper
         
         return {"doi":self.paper.doi,"title":self.paper.title,"num_citations":self.paper.cited_by_count, "author_count": len(self.paper.authors),"sjr": self.paper.sjr, "u_rank": self.paper.uni_rank, "funded": self.paper.funded,"self_citations": self.paper.self_citations,"subject":self.paper.subject,"subject_code":self.paper.subject_code,"citationVelocity":self.paper.velocity,"influentialCitationCount":self.paper.influentialcitations,"references_count":self.paper.references,"openaccessflag":self.paper.flag,"normalized_citations":self.paper.normalized,"influentialReferencesCount":self.paper.influentialref, "reference_background": self.paper.ref_background, "reference_result":self.paper.ref_result,"reference_methodology":self.paper.ref_met,"citations_background":self.paper.cite_background,"citations_result":self.paper.cite_result,"citations_methodology":self.paper.cite_met, "citations_next":self.paper.cite_next}
+
 
     @staticmethod
     def get_authors(authors):
@@ -256,9 +257,9 @@ class TEIExtractor:
                 except:
                     ref_result = 0
                 try: 
-                    ref_met = api['reference_methodology'][0]
+                    ref_method = api['reference_methodology'][0]
                 except:
-                    ref_met = 0
+                    ref_method = 0
                 try: 
                     cite_background = api['citations_background'][0]
                 except:
@@ -268,9 +269,9 @@ class TEIExtractor:
                 except:
                     cite_result = 0
                 try: 
-                    cite_met = api['citations_methodology'][0]
+                    cite_method = api['citations_methodology'][0]
                 except:
-                    cite_met = 0
+                    cite_method = 0
                 try: 
                     cite_next = api['citations_next'][0]
                 except:
