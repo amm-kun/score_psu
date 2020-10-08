@@ -403,8 +403,7 @@ def getapi(doi,title):
             else:
                 row = {'doi':query,'title':title,'citedby-count-crossref':'0','coverdate':0}
                 row= pd.DataFrame(data = row, index = [0])
-                
-        return row
+    return row
 
     # Semantic scholor API
     def getsemantic(doi):
@@ -412,13 +411,12 @@ def getapi(doi,title):
         query = str(doi)
         URL= 'https://api.semanticscholar.org/v1/paper/'+query
         r = requests.get(URL)
-        row = {'doi': query, 'title': float('NaN'), 'citationVelocity': 0, 'influentialCitationCount': 0,'is_open_access':0}
-        empty= pd.DataFrame(data = row, index = [0])
-        empty= pd.DataFrame(row, index = [0])
-        if r.status_code!=200:
-            return empty
         data = r.json()
         data = pd.json_normalize(data)
+        row = {'doi': query, 'title': float('NaN'), 'citationVelocity': 0, 'influentialCitationCount': 0,'is_open_access':0,'references_count':0,'influentialReferencesCount':0,'reference_background':0,'reference_result':0,'reference_methodology':0,'citations_background':0,'citations_result':0,'citations_methodology':0}
+        empty= pd.DataFrame(data = row, index = [0])
+        if r.status_code!=200:
+            return empty,[]
         doi_api = data['doi']
         title_api = data['title']
         
@@ -434,32 +432,78 @@ def getapi(doi,title):
                 flag=1
         if flag==1:
             return empty
-
         # Selecting only necessary features
         if 'references' in data.columns:
             references = data.loc[index,'references']
+            ref = pd.json_normalize(references)
+            if 'isInfluential' in ref.columns:
+                inf = ref['isInfluential']
+                inf = inf.tolist()
+                ref_inf = sum(bool(x) for x in inf) 
+            else:
+                ref_inf = 0
+            if 'intent' in ref.columns:
+                intent = ref['intent']
+                intent = intent.tolist()
+                flat_list = [item for sublist in intent for item in sublist]
+                background= flat_list.count('background')
+                result= flat_list.count('result')
+                methodology= flat_list.count('methodology')
+            else:
+                background = 0
+                result = 0
+                methodology = 0
             references_count = len(references)
         else:
             references_count = 0
+            ref_inf=0
+            background = 0
+            result = 0
+            methodology = 0
         if 'citationVelocity' in data.columns:
             velocity = data.loc[index,'citationVelocity'] 
         else:
-            velocity = float('NaN')
+            velocity = 0.0
         if 'influentialCitationCount' in data.columns:
             influentialcitation = data.loc[index,'influentialCitationCount']
         else:
-            influentialcitation = float('NaN')
+            influentialcitation = 0
         if 'is_open_access' in data.columns:
             openaccess = data.loc[index,'is_open_access']
             
         else:
-            openaccess = float('NaN')
+            openaccess = 0
+        if 'citations' in data.columns:
+            citations = data.loc[index,'citations']
+            cit = pd.json_normalize(citations)
+            if 'intent' in cit.columns:
+                cintent = cit['intent']
+                cintent = cintent.tolist()
+                cflat_list = [item for sublist in cintent for item in sublist]
+                cbackground= cflat_list.count('background')
+                cresult= cflat_list.count('result')
+                cmethodology= cflat_list.count('methodology')
+            else:
+                cbackground= 0
+                cresult=0
+                cmethodology= 0
+            if 'year' in cit.columns:
+                year = cit['year']
+                year = year.tolist()
+            else:
+                year = []
+        else:
+            year = []
+            cbackground= 0
+            cresult=0
+            cmethodology= 0
         
-        d = {'doi': query, 'title': title, 'citationVelocity': velocity, 'influentialCitationCount': influentialcitation,'is_open_access':openaccess,'references_count':references_count}
-        row = pd.DataFrame(d, index = [0])
-        return row
+        d = {'doi': query, 'title': title, 'citationVelocity': velocity, 'influentialCitationCount': influentialcitation,'is_open_access':openaccess,'references_count':references_count,'influentialReferencesCount':ref_inf,'reference_background':background,'reference_result':result,'reference_methodology':methodology,'citations_background':cbackground,'citations_result':cresult,'citations_methodology':cmethodology}
+        row = pd.DataFrame(data = d, index = [0])
+        
+        return row,year
     
-    def comparecitations(elsevier, crossref,semantic):
+    def comparecitations(elsevier, crossref,semantic,year):
         output = pd.DataFrame()
         # Comparing the number of citations from both and choosing the highest one
         cite1 = elsevier.loc[:,'citedby-count']
@@ -477,12 +521,18 @@ def getapi(doi,title):
         coverdate = crossref.loc[0,'coverdate']
         if coverdate == 0:
             normalized_citations = 0
+        elif coverdate == currentYear:
+            normalized_citations = cite*1.0
         else:
             years = currentYear - int(coverdate)
             if years == 0:
                 years = 1
             normalized_citations = cite/years
-        c = {'num_citations':cite,'normalized_citations':normalized_citations}
+        
+        c = [y for y in year if y-coverdate<=3]
+        citation_next = sum(Counter(c).values())
+
+        c = {'num_citations':cite,'normalized_citations':normalized_citations, 'citation_next':citation_next}
         cite = pd.DataFrame(c,index = [0])
 
         # Comparing open access flag
@@ -496,11 +546,10 @@ def getapi(doi,title):
 
         if (open1 == open2):
             open.append(open1)
+        elif (open1==1 or open2==1):
+            open.append('1')
         else:
-            if (open1==1 or open2==1):
-                open.append('1')
-            else:
-                open.append('0')
+            open.append('0')
         
         open = pd.DataFrame(data = open, columns = ['openaccessflag'])
         #Generating a single row output from both apis
@@ -516,12 +565,14 @@ def getapi(doi,title):
     elsevier = getelsevier(doi,title)
     
     if type(doi) == str:
-        semantic = getsemantic(doi)
+        elsevier = getelsevier(doi,title)
+        semantic,year = getsemantic(doi)
     else:
         if doi and math.isnan(doi)==True:
             doi = crossref.loc[0,'doi']
-        semantic = getsemantic(doi)
+        elsevier = getelsevier(doi,title)
+        semantic,year = getsemantic(doi)
 
-    final = comparecitations(elsevier,crossref,semantic)
+    final = comparecitations(elsevier,crossref,semantic,year)
     
     return final

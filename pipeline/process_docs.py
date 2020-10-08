@@ -48,8 +48,8 @@ if __name__ == "__main__":
 
     # Generate Training data
     elif args.mode == "generate-train":
-        fields = ('doi', 'title', 'num_citations', 'author_count', 'sjr', 'u_rank', 'self_citations','subject','subject_code','citationVelocity','influentialCitationCount','references_count','openaccessflag', 'normalized_citations','num_hypo_tested',
-                  'real_p', 'real_p_sign', 'p_val_range', 'num_significant', 'sample_size', "extend_p", "funded", "y")
+        fields = ('doi', 'title', 'num_citations', 'author_count', 'sjr', 'u_rank','self_citations','subject','subject_code','citationVelocity','influentialCitationCount','references_count','openaccessflag','normalized_citations','influentialReferencesCount','reference_background','reference_result','reference_methodology','citations_background','citations_result','citations_methodology','citations_next','num_hypo_tested','real_p', 'real_p_sign', 'p_val_range', 'num_significant', 'sample_size', "extend_p", "funded", "y")
+        
         record = namedtuple('record', fields)
         record.__new__.__defaults__ = (None,) * len(record._fields)
         # CSV output file (Delete the file manually if you wish to generate fresh output, default appends
@@ -88,8 +88,9 @@ if __name__ == "__main__":
     # Generate DARPA SCORE Test set
     elif args.mode == "extract-test":
         start = time.time()
-        fields = ('ta3_pid','doi', 'title', 'num_citations', 'author_count', 'sjr', 'u_rank', 'self_citations','subject','subject_code','citationVelocity','influentialCitationCount','references_count','openaccessflag', 'normalized_citations','num_hypo_tested',
-                  'real_p', 'real_p_sign', 'p_val_range', 'num_significant', 'sample_size', "extend_p", "funded")
+
+        fields = ('ta3_pid', 'doi', 'title', 'num_citations', 'author_count', 'sjr', 'u_rank', 'self_citations','subject','subject_code','citationVelocity','influentialCitationCount','references_count','openaccessflag', 'normalized_citations','influentialReferencesCount','reference_background','reference_result', 'reference_methodology','citations_background','citations_result','citations_methodology','citations_next','num_hypo_tested', 'real_p', 'real_p_sign', 'p_val_range', 'num_significant', 'sample_size',"extend_p", "funded")
+
         record = namedtuple('record', fields)
         record.__new__.__defaults__ = (None,) * len(record._fields)
         # CSV output file
