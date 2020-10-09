@@ -311,13 +311,13 @@ def getapi(doi,title):
                 if x == 'doi':
                     items = data['message']
                     data = pd.json_normalize(items)
-                    row = {'doi':query,'citedby-count-crossref':'0'}
+                    row = {'doi':query,'citedby-count-crossref':'0','coverdate':0}
                     empty= pd.DataFrame(data = row, index = [0])
                 if x == 'title':
                     data = data['message']
                     items = data['items']
                     data = pd.json_normalize(items)
-                    row = {'title':query,'doi':'0','citedby-count-crossref':'0'}
+                    row = {'title':query,'doi':'0','citedby-count-crossref':'0','coverdate':0}
                     empty= pd.DataFrame(data = row, index = [0])
                 if r.status_code!=200:
                     print('status-error')
@@ -400,7 +400,7 @@ def getapi(doi,title):
             else:
                 row = {'doi':query,'title':title,'citedby-count-crossref':'0','coverdate':0}
                 row= pd.DataFrame(data = row, index = [0])
-        return row
+    return row
 
     # Semantic scholor API
     def getsemantic(doi):
@@ -522,6 +522,8 @@ def getapi(doi,title):
             normalized_citations = cite*1.0
         else:
             years = currentYear - int(coverdate)
+            if years == 0:
+                years = 1
             normalized_citations = cite/years
         
         c = [y for y in year if y-coverdate<=3]
@@ -557,6 +559,7 @@ def getapi(doi,title):
         return output
 
     crossref = getCrosref(doi,title)
+    elsevier = getelsevier(doi,title)
     
     if type(doi) == str:
         elsevier = getelsevier(doi,title)

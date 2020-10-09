@@ -5,7 +5,7 @@ from bs4 import BeautifulSoup
 from ack_pairs import *
 from elsevier_api import getapi
 import pickle
-
+import pdb
 """
 Object models for the Processing Pipeline to generate features for the DARPA SCORE project
 -----------------Includes the pre-processing step for the Predition Market----------------
@@ -177,14 +177,8 @@ class TEIExtractor:
         # Set self-citations
         self.paper.self_citations = self.paper.set_self_citations()
         # return paper
-
-        return {"doi":self.paper.doi,"title":self.paper.title,"num_citations":self.paper.cited_by_count, "author_count": len(self.paper.authors),"sjr": self.paper.sjr, 
-                "u_rank": self.paper.uni_rank, "funded": self.paper.funded,"self_citations": self.paper.self_citations,"subject":self.paper.subject,
-                "subject_code":self.paper.subject_code,"citationVelocity":self.paper.velocity,"influentialCitationCount":self.paper.influentialcitations,
-                "references_count":self.paper.references,"openaccessflag":self.paper.flag,"normalized_citations":self.paper.normalized, 
-                "influentialReferencesCount":self.paper.influentialref, "reference_background": self.paper.ref_background, "reference_result":self.paper.ref_result, 
-                "reference_methodology":self.paper.ref_method,"citations_background":self.paper.cite_background,"citations_result":self.paper.cite_result,
-                "citations_methodology":self.paper.cite_method, "citations_next":self.paper.cite_next}
+        
+        return {"doi":self.paper.doi,"title":self.paper.title,"num_citations":self.paper.cited_by_count, "author_count": len(self.paper.authors),"sjr": self.paper.sjr, "u_rank": self.paper.uni_rank, "funded": self.paper.funded,"self_citations": self.paper.self_citations,"subject":self.paper.subject,"subject_code":self.paper.subject_code,"citationVelocity":self.paper.velocity,"influentialCitationCount":self.paper.influentialcitations,"references_count":self.paper.references,"openaccessflag":self.paper.flag,"normalized_citations":self.paper.normalized,"influentialReferencesCount":self.paper.influentialref, "reference_background": self.paper.ref_background, "reference_result":self.paper.ref_result,"reference_methodology":self.paper.ref_met,"citations_background":self.paper.cite_background,"citations_result":self.paper.cite_result,"citations_methodology":self.paper.cite_met, "citations_next":self.paper.cite_next}
 
 
     @staticmethod
@@ -217,10 +211,10 @@ class TEIExtractor:
                     cited_by = api['num_citations'][0]
                 except KeyError:
                     cited_by = 0
-                #try: 
-                    #normalized = api['normalized_citations'][0]
-                #except:
-                    #normalized = 0.0
+                try: 
+                    normalized = api['normalized_citations'][0]
+                except:
+                    normalized = 0.0
                 try: 
                     velocity = api['citationVelocity'][0]
                 except:
@@ -282,12 +276,8 @@ class TEIExtractor:
                     cite_next = api['citations_next'][0]
                 except:
                     cite_next = 0
-        return {"sjr": sjr_score, "num_citations": cited_by, "subject":subject,"subject_code":subject_code,"normalized_citations":normalized,
-                "citationVelocity":velocity,"influentialCitationCount":influentialcitations,"references_count":references, "openaccessflag":flag, 
-                "influentialReferencesCount":influentialref, "reference_background": ref_background, "reference_result":ref_result, "reference_methodology":ref_method, 
-                "citations_background":cite_background,"citations_result":cite_result,"citations_methodology":cite_method, "citations_next":cite_next}
-
-
+                
+        return {"sjr": sjr_score, "num_citations": cited_by,"subject":subject,"subject_code":subject_code,"normalized_citations":normalized,"citationVelocity":velocity,"influentialCitationCount":influentialcitations,"references_count":references,"openaccessflag":flag,"influentialReferencesCount":influentialref, "reference_background": ref_background, "reference_result":ref_result, "reference_methodology":ref_met,"citations_background":cite_background,"citations_result":cite_result,"citations_methodology":cite_met, "citations_next":cite_next}
 
 if __name__ == "__main__":
 
