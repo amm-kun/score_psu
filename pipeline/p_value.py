@@ -332,10 +332,7 @@ def extract_p_values(file, tsv_claim=None):
                     reported_pval_range = pattern_p_range.group()
                     just_pvalues_range.append(reported_pval_range)
 
-            
-                         
-
-        # print("statistical p-values not found, all p-values of pdf", just_pvalues_list)
+        
         p_val_list = just_pvalues_list
         
     
