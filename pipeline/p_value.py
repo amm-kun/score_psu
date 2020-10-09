@@ -332,7 +332,8 @@ def extract_p_values(file, tsv_claim=None):
                     reported_pval_range = pattern_p_range.group()
                     just_pvalues_range.append(reported_pval_range)
 
-                      
+            
+                         
 
         # print("statistical p-values not found, all p-values of pdf", just_pvalues_list)
         p_val_list = just_pvalues_list
@@ -384,7 +385,8 @@ def extract_p_values(file, tsv_claim=None):
 
     if len(p_val_list) > 0 and len(p_val_num_list) > 0:
         num_hypo_test = len(p_val_list)
-        real_p_value = min(p_val_num_list)
+        if min(p_val_num_list) <= 1:
+            real_p_value = min(p_val_num_list)
         # print("Number of hypothesis tested:", num_hypo_test)
         # print("Real p-value:", real_p_value)
 
@@ -407,26 +409,39 @@ def extract_p_values(file, tsv_claim=None):
         if intext_sample_num_list:
             # print("vector of sample sizes", max(sample_list))
             max_sample_size = max(intext_sample_num_list)
-            range_p_values = max(p_val_num_list) - min(p_val_num_list)
+            if max(p_val_num_list) >= 1:
+                range_p_values = 0
+            else:
+                range_p_values = max(p_val_num_list) - min(p_val_num_list)
             try:
-                real_p_sign = p_val_list[p_val_num_list.index(min(p_val_num_list))].split()[1]
-                real_p_sign = p_val_sign[real_p_sign]
+                if min(p_val_num_list) <= 1:
+                    real_p_sign = p_val_list[p_val_num_list.index(min(p_val_num_list))].split()[1]
+                    real_p_sign = p_val_sign[real_p_sign]
             except KeyError:
                 real_p_sign = 0
             except IndexError:
                 real_p_sign = p_val_sign[re.search('[<>=]', p_val_list[p_val_num_list.index(min(p_val_num_list))]).group()]
         elif sample_list and not intext_sample_num_list:
+
             max_sample_size = max(sample_list)
-            range_p_values = max(p_val_num_list) - min(p_val_num_list)
+
+            if max(p_val_num_list) <= 1:
+                range_p_values = max(p_val_num_list) - min(p_val_num_list)
+            else:
+                range_p_values = 0
+
             try:
-                real_p_sign = p_val_list[p_val_num_list.index(min(p_val_num_list))].split()[1]
-                real_p_sign = p_val_sign[real_p_sign]
+                if min(p_val_num_list) <= 1:
+                    real_p_sign = p_val_list[p_val_num_list.index(min(p_val_num_list))].split()[1]
+                    real_p_sign = p_val_sign[real_p_sign]
             except KeyError:
                 real_p_sign = 0
             except IndexError:
-                real_p_sign = p_val_sign[re.search('[<>=]', p_val_list[p_val_num_list.index(min(p_val_num_list))]).group()]
+                if min(p_val_num_list) <= 1:
+                    real_p_sign = p_val_sign[re.search('[<>=]', p_val_list[p_val_num_list.index(min(p_val_num_list))]).group()]
             
 
     return {"num_hypo_tested": num_hypo_test, "real_p": real_p_value, "real_p_sign": real_p_sign,
             "p_val_range": range_p_values, "num_significant": number_significant, "sample_size": max_sample_size,
             "extend_p": extended_p_val}
+
