@@ -5,6 +5,7 @@ from fuzzywuzzy import fuzz
 import os
 import math
 from datetime import datetime
+from collections import Counter
 
 _author_ = "Rajal Nivargi"
 _copyright_ = "Copyright 2020, Penn State University"
@@ -45,10 +46,10 @@ def getapi(doi,title):
                 status = r.status_code
                 query = str(query)
                 if x == 'doi':
-                    row = {'dc:title':float('NaN'),'prism:doi':query, 'prism:issn':'0', 'source-id':'0', 'prism:coverDate':'0', 'citedby-count':'0'}
+                    row = {'dc:title':float('NaN'),'prism:doi':query, 'prism:issn':'0', 'source-id':'0', 'prism:coverDate':'0', 'citedby-count':'0','openaccessFlag':'0'}
                     empty= pd.DataFrame(data = row, index = [0])
                 if x == 'title':
-                    row = {'prism:doi':float('NaN'),"dc:title":query, 'prism:issn':'0', 'source-id':'0', 'prism:coverDate':'0', 'citedby-count':'0'}
+                    row = {'prism:doi':float('NaN'),"dc:title":query, 'prism:issn':'0', 'source-id':'0', 'prism:coverDate':'0', 'citedby-count':'0','openaccessFlag':'0'}
                     empty= pd.DataFrame(data = row, index = [0])
                 #Checking the status code: success_code = 200. Otherwise, return empty row
                 if status!=200:
@@ -110,17 +111,17 @@ def getapi(doi,title):
                     entry = pd.DataFrame(data = entry.loc[:,new_columns])
 
                 if 'affiliation' in entry.columns:
+                    aff = entry['affiliation']
                     try:
-                        aff = entry['affiliation']
                         list = aff[0]
                         aff_row = pd.DataFrame()
                         aff= pd.json_normalize(list[0])
                         aff = aff.drop(['@_fa', "affiliation-city"],axis=1)
                         aff_row = pd.concat([aff_row,aff], axis = 1)
-                        entry = entry.drop(['affiliation'], axis = 1)
-                        entry = pd.concat([entry,aff_row], axis=1)
                     except:
-                        entry = entry.drop(['affiliation'], axis = 1)
+                        aff_row = pd.DataFrame()
+                    entry = entry.drop(['affiliation'], axis = 1)
+                    entry = pd.concat([entry,aff_row], axis=1)
 
                 # Getting the entry matches the doi of required paper otherwsie return empty row
                 for i in range(len(entry)):
@@ -238,12 +239,11 @@ def getapi(doi,title):
                         elif 2700<=subject<2800 or 2900<=subject<3000 or 3400<=subject<3700:
                             s = 4 # Health Sciences
                         else:
-                            s = 0 # Multidisciplinary
+                            s = 5 # Multidisciplinary
                         sub_list = {'subject' : s, 'subject_code':subject}
                         subject_row = pd.DataFrame(sub_list, index=[0])    
                         row = row.drop('subject-area', axis = 1)
                         row = pd.concat([row, subject_row],ignore_index=False, axis =1)
-                        
                     return row
        
         # Scopus search api
@@ -257,17 +257,18 @@ def getapi(doi,title):
             #print(r.content)
             output = return_scopus(r,query,'doi')
         else:
-            if math.isnan(query)==True:
+            if query and math.isnan(query)==True:
                 if type(title)==str:
                     URL = title_search(title)
                     r = requests.get(URL)
                     output = return_scopus(r,title,'title')
                     
                 else:
-                    output = {'dc:title':title,'prism:doi':query, 'prism:issn':'0', 'source-id':'0', 'prism:coverDate':'0', 'citedby-count':'0'}
+                    output = {'dc:title':title,'prism:doi':query, 'prism:issn':'0', 'source-id':'0', 'prism:coverDate':'0', 'citedby-count':'0','openaccessFlag':'0'}
                     output = pd.DataFrame(data = output, index = [0])
-
-
+            else:
+                output = {'dc:title':title,'prism:doi':query, 'prism:issn':'0', 'source-id':'0', 'prism:coverDate':'0', 'citedby-count':'0','openaccessFlag':'0'}
+                output = pd.DataFrame(data = output, index = [0])
 
         # Add 0's in the beginning of output from Scopus Search API
         issn = output['prism:issn']
@@ -311,13 +312,13 @@ def getapi(doi,title):
                 if x == 'doi':
                     items = data['message']
                     data = pd.json_normalize(items)
-                    row = {'doi':query,'citedby-count-crossref':'0'}
+                    row = {'doi':query,'citedby-count-crossref':'0','coverdate':0}
                     empty= pd.DataFrame(data = row, index = [0])
                 if x == 'title':
                     data = data['message']
                     items = data['items']
                     data = pd.json_normalize(items)
-                    row = {'title':query,'doi':'0','citedby-count-crossref':'0'}
+                    row = {'title':query,'doi':'0','citedby-count-crossref':'0','coverdate':0}
                     empty= pd.DataFrame(data = row, index = [0])
                 if r.status_code!=200:
                     print('status-error')
@@ -380,56 +381,198 @@ def getapi(doi,title):
 
             except:
                 if x == 'doi':
-                    row = {'doi':query,'citedby-count-crossref':'0'}
+                    row = {'doi':query,'citedby-count-crossref':'0','coverdate':0}
                     empty= pd.DataFrame(data = row, index = [0])
                 if x == 'title':
-                    row = {'title':query,'doi':'0','citedby-count-crossref':'0'}
+                    row = {'title':query,'doi':'0','citedby-count-crossref':'0','coverdate': 0}
                     empty= pd.DataFrame(data = row, index = [0])
                 return empty
-
         
         if type(query)== str:
             URL = meta_url(query)
             r = requests.get(URL)
             row = get_row(r,query,'doi')
+            return row
         else:
-            if math.isnan(query)==True:
-                if type(title) == str:
-                    URL = title_url(title)
-                    r = requests.get(URL)
-                    row = get_row(r,title,'title')
-                else:
-                    row = {'title':title,'doi':float('NaN'),'citedby-count-crossref':'0'}
-                    row = pd.DataFrame(data = row, index = [0])
-        return row
+            if query and math.isnan(query)==True:
+                URL = title_url(title)
+                r = requests.get(URL)
+                row = get_row(r,title,'title')
+                return row
+            else:
+                row = {'doi':query,'title':title,'citedby-count-crossref':'0','coverdate':0}
+                row= pd.DataFrame(data = row, index = [0])
+                return row
+    
 
-    def comparecitations(elsevier, crossref):
+    # Semantic scholor API
+    def getsemantic(doi):
+
+        query = str(doi)
+        URL= 'https://api.semanticscholar.org/v1/paper/'+query
+        r = requests.get(URL)
+        data = r.json()
+        data = pd.json_normalize(data)
+        row = {'doi': query, 'title': float('NaN'), 'citationVelocity': 0, 'influentialCitationCount': 0,'is_open_access':0,'references_count':0,'influentialReferencesCount':0,'reference_background':0,'reference_result':0,'reference_methodology':0,'citations_background':0,'citations_result':0,'citations_methodology':0}
+        empty= pd.DataFrame(data = row, index = [0])
+        if r.status_code!=200:
+            return empty,[]
+        doi_api = data['doi']
+        title_api = data['title']
+        
+        for i in range(0,len(doi_api)):
+            doi_check = doi_api[i]
+            if str(doi_check.lower()) == str(query.lower()):
+                flag=0
+                index = i
+                doi = doi_api[i]
+                title = title_api[i]
+                break
+            else:
+                flag=1
+        if flag==1:
+            return empty
+        # Selecting only necessary features
+        if 'references' in data.columns:
+            references = data.loc[index,'references']
+            ref = pd.json_normalize(references)
+            if 'isInfluential' in ref.columns:
+                inf = ref['isInfluential']
+                inf = inf.tolist()
+                ref_inf = sum(bool(x) for x in inf) 
+            else:
+                ref_inf = 0
+            if 'intent' in ref.columns:
+                intent = ref['intent']
+                intent = intent.tolist()
+                flat_list = [item for sublist in intent for item in sublist]
+                background= flat_list.count('background')
+                result= flat_list.count('result')
+                methodology= flat_list.count('methodology')
+            else:
+                background = 0
+                result = 0
+                methodology = 0
+            references_count = len(references)
+        else:
+            references_count = 0
+            ref_inf=0
+            background = 0
+            result = 0
+            methodology = 0
+        if 'citationVelocity' in data.columns:
+            velocity = data.loc[index,'citationVelocity'] 
+        else:
+            velocity = 0.0
+        if 'influentialCitationCount' in data.columns:
+            influentialcitation = data.loc[index,'influentialCitationCount']
+        else:
+            influentialcitation = 0
+        if 'is_open_access' in data.columns:
+            openaccess = data.loc[index,'is_open_access']
+            
+        else:
+            openaccess = 0
+        if 'citations' in data.columns:
+            citations = data.loc[index,'citations']
+            cit = pd.json_normalize(citations)
+            if 'intent' in cit.columns:
+                cintent = cit['intent']
+                cintent = cintent.tolist()
+                cflat_list = [item for sublist in cintent for item in sublist]
+                cbackground= cflat_list.count('background')
+                cresult= cflat_list.count('result')
+                cmethodology= cflat_list.count('methodology')
+            else:
+                cbackground= 0
+                cresult=0
+                cmethodology= 0
+            if 'year' in cit.columns:
+                year = cit['year']
+                year = year.tolist()
+            else:
+                year = []
+        else:
+            year = []
+            cbackground= 0
+            cresult=0
+            cmethodology= 0
+        
+        d = {'doi': query, 'title': title, 'citationVelocity': velocity, 'influentialCitationCount': influentialcitation,'is_open_access':openaccess,'references_count':references_count,'influentialReferencesCount':ref_inf,'reference_background':background,'reference_result':result,'reference_methodology':methodology,'citations_background':cbackground,'citations_result':cresult,'citations_methodology':cmethodology}
+        row = pd.DataFrame(data = d, index = [0])
+        
+        return row,year
+    
+    def comparecitations(elsevier, crossref,semantic,year):
         output = pd.DataFrame()
         # Comparing the number of citations from both and choosing the highest one
         cite1 = elsevier.loc[:,'citedby-count']
         cite1 = cite1.fillna(0)
         cite2 = crossref.loc[:,'citedby-count-crossref']
         cite2 = cite2.fillna(0)
-        cite = []
         c1 = int(cite1.iloc[0])
         c2 = int(cite2.iloc[0])
         
         if c1>c2:
-            cite.append(c1)
+            cite=c1
         else:
-            cite.append(c2)
-        cite = pd.DataFrame(data = cite, columns = ['num_citations'])
+            cite=c2
+        currentYear = datetime.now().year
+        coverdate = crossref.loc[0,'coverdate']
+        if coverdate == 0:
+            normalized_citations = 0
+        elif coverdate == currentYear:
+            normalized_citations = cite*1.0
+        else:
+            years = currentYear - int(coverdate)
+            if years == 0:
+                years = 1
+            normalized_citations = cite/years
+        
+        c = [y for y in year if y-coverdate<=3]
+        citation_next = sum(Counter(c).values())
 
+        c = {'num_citations':cite,'normalized_citations':normalized_citations, 'citation_next':citation_next}
+        cite = pd.DataFrame(c,index = [0])
+
+        # Comparing open access flag
+        open1 = elsevier.loc[:,'openaccessFlag']
+        open1 = open1.fillna(0)
+        open1 = int(open1)
+        open2 = semantic.loc[:,'is_open_access']
+        open2 = open2.fillna(0)
+        open2 = int(open2)
+        open = []
+
+        if (open1 == open2):
+            open.append(open1)
+        elif (open1==1 or open2==1):
+            open.append('1')
+        else:
+            open.append('0')
+        
+        open = pd.DataFrame(data = open, columns = ['openaccessflag'])
         #Generating a single row output from both apis
-        elsevier = elsevier.drop(['prism:issn','prism:doi','source-id','prism:coverDate','citedby-count','dc:title'], axis=1)
+        elsevier = elsevier.drop(['prism:issn','prism:doi','source-id','prism:coverDate','citedby-count','dc:title','openaccessFlag'], axis=1)
         crossref = crossref.drop(['citedby-count-crossref'], axis = 1)
-        output = pd.concat([crossref,cite], axis =1)
+        semantic = semantic.drop(['doi','title','is_open_access'],axis = 1)
+        output = pd.concat([crossref,cite,open,semantic], axis =1)
         output = pd.concat([output,elsevier], axis =1)
         
         return output
 
-    elsevier = getelsevier(doi,title)
     crossref = getCrosref(doi,title)
-    final = comparecitations(elsevier,crossref)
+    elsevier = getelsevier(doi,title)
     
+    if type(doi) == str:
+        elsevier = getelsevier(doi,title)
+        semantic,year = getsemantic(doi)
+    else:
+        if doi and math.isnan(doi)==True:
+            doi = crossref.loc[0,'doi']
+        elsevier = getelsevier(doi,title)
+        semantic,year = getsemantic(doi)
+
+    final = comparecitations(elsevier,crossref,semantic,year)
+   
     return final
