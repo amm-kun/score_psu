@@ -5,6 +5,7 @@ from fuzzywuzzy import fuzz
 import os
 import math
 from datetime import datetime
+from collections import Counter
 
 _author_ = "Rajal Nivargi"
 _copyright_ = "Copyright 2020, Penn State University"
@@ -386,21 +387,23 @@ def getapi(doi,title):
                     row = {'title':query,'doi':'0','citedby-count-crossref':'0','coverdate': 0}
                     empty= pd.DataFrame(data = row, index = [0])
                 return empty
-
         
         if type(query)== str:
             URL = meta_url(query)
             r = requests.get(URL)
             row = get_row(r,query,'doi')
+            return row
         else:
             if query and math.isnan(query)==True:
                 URL = title_url(title)
                 r = requests.get(URL)
                 row = get_row(r,title,'title')
+                return row
             else:
                 row = {'doi':query,'title':title,'citedby-count-crossref':'0','coverdate':0}
                 row= pd.DataFrame(data = row, index = [0])
-    return row
+                return row
+    
 
     # Semantic scholor API
     def getsemantic(doi):
