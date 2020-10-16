@@ -8,6 +8,7 @@ import time
 import argparse
 import random
 import traceback
+import pandas as pd
 
 if __name__ == "__main__":
 
@@ -16,10 +17,11 @@ if __name__ == "__main__":
     parser.add_argument("-out", "--grobid_out",  help="grobid output path")
     parser.add_argument("-m", "--mode", default="extract-test", help="pipeline mode")
     parser.add_argument("-n", default=1, help="concurrency for service usage")
-    parser.add_argument("-f", "--file", help="DARPA tsv for test")
+    parser.add_argument("-f", "--file", help="DARPA tsv/csv for test")
     parser.add_argument("-csv", "--csv_out", default=getcwd(), help="CSV output path")
     parser.add_argument("-l", "--label", help="Assign y value | label for training set")
     parser.add_argument("-lr", "--label_range", help="Assign y value within range for training set | Ex: 0.7-1")
+
 
     args = parser.parse_args()
 
@@ -117,3 +119,47 @@ if __name__ == "__main__":
                 print(traceback.format_exc())
         end = time.time()
         print("Execution time: ", end-start)
+    elif args.mode == "2400set":
+        csv = pd.read_csv(args.file)
+        want = [ 'kw_cs_m5', 'kw_cs_m3', 'kw_cs_m10', 'um_cs_m1', 'um_cs_m2', 'um_cs_m3', 'um_cs_m4']
+        fields = ('doi', 'title', 'num_citations', 'author_count', 'sjr', 'u_rank','self_citations','subject','subject_code','citationVelocity','influentialCitationCount','references_count','openaccessflag','normalized_citations','influentialReferencesCount','reference_background','reference_result','reference_methodology','citations_background','citations_result','citations_methodology','citations_next','num_hypo_tested','real_p', 'real_p_sign', 'p_val_range', 'num_significant', 'sample_size', "extend_p", "funded")
+        fields = fields + tuple(want)
+        record = namedtuple('record', fields)
+        record.__new__.__defaults__ = (None,) * len(record._fields)
+        # CSV output file (Delete the file manually if you wish to generate fresh output, default appends
+        if path.isfile(args.csv_out + "/2400train.csv"):
+            write_head = False
+        else:
+            write_head = True
+        writer = csv_writer(r"{0}/{1}".format(args.csv_out, "2400train.csv"), append=True)
+        header = list(fields)
+        if write_head:
+            csv_write_field_header(writer, header)
+        # Run pipeline
+        xmls = listdir(args.grobid_out)
+        for xml in xmls:
+            try:
+                print("Processing ", xml)
+                extractor = TEIExtractor(args.grobid_out + '/' + xml)
+                extraction_stage = extractor.extract_paper_info()
+                p_val_stage = extract_p_values(args.pdf_input + '/' + xml.replace('.tei.xml', '.txt'))
+                features = dict(**extraction_stage, **p_val_stage)
+                if args.label_range:
+                    label_range = args.label_range.split('-')
+                    features['y'] = random.uniform(float(label_range[0]), float(label_range[1]))
+                else:
+                    #print("here")
+                    for i in want:
+                        #print("jjj",xml.replace('.tei.xml', '').strip())
+                        features[i] = csv[csv['pdf_filename']==xml.replace('.tei.xml', '').strip()][i].values[0]
+                    #print("here111")
+                try:
+                    #print(features)
+                    csv_write_record(writer, features, header)
+                except UnicodeDecodeError:
+                    print("CSV WRITE ERROR", features["ta3_pid"])
+                except UnicodeEncodeError:
+                    print("CSV WRITE ERROR", features["ta3_pid"])
+            except Exception as e:
+                print(str(e))
+                print(traceback.format_exc())
