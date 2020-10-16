@@ -65,7 +65,6 @@ def getapi(doi,title):
                 df = df_search['entry']
                 df = df.tolist()
                 entry = pd.json_normalize(df[0])
-                
                 # Selecting only necessary features
                 columns = ['prism:issn', 'prism:doi','source-id','prism:coverDate', 'citedby-count', 'openaccessFlag', 'dc:title','affiliation']
                 if set(columns).issubset(entry.columns):
