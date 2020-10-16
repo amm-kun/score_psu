@@ -273,7 +273,7 @@ class TEIExtractor:
             except:
                 cite_method = 0
             try: 
-                cite_next = api['citations_next'][0]
+                cite_next = api['citation_next'][0]
             except:
                 cite_next = 0
 
