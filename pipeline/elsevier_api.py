@@ -226,20 +226,8 @@ def getapi(doi,title):
                         sub_list = []
                         for i in range(len(list)):
                             subject= pd.json_normalize(list[i])
-                            subject = subject["@code"]
+                            subject = subject["$"]
                             sub_list.append(subject[0])
-                        subject = int(sub_list[0])
-                        if 1100<=subject<1200 or 1300<=subject<1400 or 2400<=subject<2500 or 2800<=subject<2900 or 3000<=subject<3100:
-                            s = 1 # Life sciences
-                        elif 1200<=subject<1300 or 1400<=subject<1500 or 1800<=subject<1900 or 2000<=subject<2100 or 3200<=subject<3400:
-                            s = 2 # Social science and Humanities
-                        elif 1500<=subject<1800 or 1900<=subject<2000 or 2100<=subject<2400 or 2500<=subject<2700 or 3100<=subject<3200:
-                            s = 3 #Physical Sciences
-                        elif 2700<=subject<2800 or 2900<=subject<3000 or 3400<=subject<3700:
-                            s = 4 # Health Sciences
-                        else:
-                            s = 5 # Multidisciplinary
-                        sub_list = {'subject' : s, 'subject_code':subject}
                         subject_row = pd.DataFrame(sub_list, index=[0])    
                         row = row.drop('subject-area', axis = 1)
                         row = pd.concat([row, subject_row],ignore_index=False, axis =1)
