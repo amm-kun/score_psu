@@ -51,7 +51,7 @@ if __name__ == "__main__":
     # Generate Training data
     elif args.mode == "generate-train":
 
-        fields = ('doi', 'title', 'num_citations', 'author_count', 'sjr', 'u_rank','self_citations','subject','subject_code','citationVelocity','influentialCitationCount','references_count','openaccessflag','normalized_citations','influentialReferencesCount','reference_background','reference_result','reference_methodology','citations_background','citations_result','citations_methodology','citations_next','num_hypo_tested','real_p', 'real_p_sign', 'p_val_range', 'num_significant', 'sample_size', "extend_p", "funded", "y")
+        fields = ('doi', 'title', 'num_citations', 'author_count', 'sjr', 'u_rank','self_citations','subject','subject_code','citationVelocity','influentialCitationCount','references_count','openaccessflag','normalized_citations','influentialReferencesCount','reference_background','reference_result','reference_methodology','citations_background','citations_result','citations_methodology','citations_next','abstract','country','num_hypo_tested','real_p', 'real_p_sign', 'p_val_range', 'num_significant', 'sample_size', "extend_p", "funded", "y")
 
         record = namedtuple('record', fields)
         record.__new__.__defaults__ = (None,) * len(record._fields)
@@ -148,13 +148,9 @@ if __name__ == "__main__":
                     label_range = args.label_range.split('-')
                     features['y'] = random.uniform(float(label_range[0]), float(label_range[1]))
                 else:
-                    #print("here")
                     for i in want:
-                        #print("jjj",xml.replace('.tei.xml', '').strip())
                         features[i] = csv[csv['pdf_filename']==xml.replace('.tei.xml', '').strip()][i].values[0]
-                    #print("here111")
                 try:
-                    #print(features)
                     csv_write_record(writer, features, header)
                 except UnicodeDecodeError:
                     print("CSV WRITE ERROR", features["ta3_pid"])

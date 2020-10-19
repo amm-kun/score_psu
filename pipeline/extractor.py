@@ -144,7 +144,7 @@ class TEIExtractor:
                 citation.source = elem_to_text(cited_journal.find("title"))
                 try:
                     citation.publish_year = cited_journal.imprint.date['when']
-                except TypeError:
+                except:
                     pass
             self.paper.citations.append(citation)
         # NER - Ack pairs - Funding status
@@ -178,7 +178,7 @@ class TEIExtractor:
         self.paper.self_citations = self.paper.set_self_citations()
         # return paper
         
-        return {"doi":self.paper.doi,"title":self.paper.title,"num_citations":self.paper.cited_by_count, "author_count": len(self.paper.authors),"sjr": self.paper.sjr, "u_rank": self.paper.uni_rank, "funded": self.paper.funded,"self_citations": self.paper.self_citations,"subject":self.paper.subject,"subject_code":self.paper.subject_code,"citationVelocity":self.paper.velocity,"influentialCitationCount":self.paper.influentialcitations,"references_count":self.paper.references,"openaccessflag":self.paper.flag,"normalized_citations":self.paper.normalized,"influentialReferencesCount":self.paper.influentialref, "reference_background": self.paper.ref_background, "reference_result":self.paper.ref_result,"reference_methodology":self.paper.ref_method,"citations_background":self.paper.cite_background,"citations_result":self.paper.cite_result,"citations_methodology":self.paper.cite_method, "citations_next":self.paper.cite_next}
+        return {"doi":self.paper.doi,"title":self.paper.title,"num_citations":self.paper.cited_by_count, "author_count": len(self.paper.authors),"sjr": self.paper.sjr, "u_rank": self.paper.uni_rank, "funded": self.paper.funded,"self_citations": self.paper.self_citations,"subject":self.paper.subject,"subject_code":self.paper.subject_code,"citationVelocity":self.paper.velocity,"influentialCitationCount":self.paper.influentialcitations,"references_count":self.paper.references,"openaccessflag":self.paper.flag,"normalized_citations":self.paper.normalized,"influentialReferencesCount":self.paper.influentialref, "reference_background": self.paper.ref_background, "reference_result":self.paper.ref_result,"reference_methodology":self.paper.ref_method,"citations_background":self.paper.cite_background,"citations_result":self.paper.cite_result,"citations_methodology":self.paper.cite_method, "citations_next":self.paper.cite_next, "abstract":api_resp["abstract"], "country":api_resp["country"]}
 
 
     @staticmethod
@@ -233,7 +233,6 @@ class TEIExtractor:
                 sjr_score = 0
             try: 
                 subject = api['subject'][0]
-
             except:
                 subject = 0
             try: 
@@ -276,8 +275,16 @@ class TEIExtractor:
                 cite_next = api['citation_next'][0]
             except:
                 cite_next = 0
+            try:
+                abstract = api['abstract'][0]
+            except:
+                abstract = ''
+            try:
+                country = api['affiliation-country'][0]
+            except:
+                country = ''
 
-        return {"sjr": sjr_score, "num_citations": cited_by,"subject":subject,"subject_code":subject_code,"normalized_citations":normalized,"citationVelocity":velocity,"influentialCitationCount":influentialcitations,"references_count":references,"openaccessflag":flag,"influentialReferencesCount":influentialref, "reference_background": ref_background, "reference_result":ref_result, "reference_methodology":ref_method,"citations_background":cite_background,"citations_result":cite_result,"citations_methodology":cite_method, "citations_next":cite_next}
+        return {"sjr": sjr_score, "num_citations": cited_by,"subject":subject,"subject_code":subject_code,"normalized_citations":normalized,"citationVelocity":velocity,"influentialCitationCount":influentialcitations,"references_count":references,"openaccessflag":flag,"influentialReferencesCount":influentialref, "reference_background": ref_background, "reference_result":ref_result, "reference_methodology":ref_method,"citations_background":cite_background,"citations_result":cite_result,"citations_methodology":cite_method, "citations_next":cite_next, "abstract":abstract, "country":country}
 
 if __name__ == "__main__":
 

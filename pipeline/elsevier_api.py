@@ -311,13 +311,13 @@ def getapi(doi,title):
                 if x == 'doi':
                     items = data['message']
                     data = pd.json_normalize(items)
-                    row = {'doi':query,'citedby-count-crossref':'0','coverdate':0}
+                    row = {'doi':query,'citedby-count-crossref':'0','coverdate':0,'cabstract': ''}
                     empty= pd.DataFrame(data = row, index = [0])
                 if x == 'title':
                     data = data['message']
                     items = data['items']
                     data = pd.json_normalize(items)
-                    row = {'title':query,'doi':'0','citedby-count-crossref':'0','coverdate':0}
+                    row = {'title':query,'doi':'0','citedby-count-crossref':'0','coverdate':0,'cabstract': ''}
                     empty= pd.DataFrame(data = row, index = [0])
                 if r.status_code!=200:
                     print('status-error')
@@ -373,17 +373,22 @@ def getapi(doi,title):
                     select = data.loc[index,'is-referenced-by-count']
                 else:
                     select = float('NaN')
+                ab_cross = ''
+                if 'abstract' in data.columns:
+                    ab_cross = data.loc[index,'abstract']
+                else:
+                    ab_cross = ''
 
-                d = {'doi': doi, 'title': title, 'coverdate': date, 'citedby-count-crossref': select}
+                d = {'doi': doi, 'title': title, 'coverdate': date, 'citedby-count-crossref': select, 'cabstract': ab_cross}
                 row = pd.DataFrame(data = d, index = [0])
                 return row
 
             except:
                 if x == 'doi':
-                    row = {'doi':query,'citedby-count-crossref':'0','coverdate':0}
+                    row = {'doi':query,'citedby-count-crossref':'0','coverdate':0,'cabstract':''}
                     empty= pd.DataFrame(data = row, index = [0])
                 if x == 'title':
-                    row = {'title':query,'doi':'0','citedby-count-crossref':'0','coverdate': 0}
+                    row = {'title':query,'doi':'0','citedby-count-crossref':'0','coverdate': 0,'cabstract':''}
                     empty= pd.DataFrame(data = row, index = [0])
                 return empty
         
@@ -399,7 +404,7 @@ def getapi(doi,title):
                 row = get_row(r,title,'title')
                 return row
             else:
-                row = {'doi':query,'title':title,'citedby-count-crossref':'0','coverdate':0}
+                row = {'doi':query,'title':title,'citedby-count-crossref':'0','coverdate':0,'cabstract':''}
                 row= pd.DataFrame(data = row, index = [0])
                 return row
     
@@ -412,7 +417,7 @@ def getapi(doi,title):
         r = requests.get(URL)
         data = r.json()
         data = pd.json_normalize(data)
-        row = {'doi': query, 'title': float('NaN'), 'citationVelocity': 0, 'influentialCitationCount': 0,'is_open_access':0,'references_count':0,'influentialReferencesCount':0,'reference_background':0,'reference_result':0,'reference_methodology':0,'citations_background':0,'citations_result':0,'citations_methodology':0}
+        row = {'doi': query, 'title': float('NaN'), 'citationVelocity': 0, 'influentialCitationCount': 0,'is_open_access':0,'references_count':0,'influentialReferencesCount':0,'reference_background':0,'reference_result':0,'reference_methodology':0,'citations_background':0,'citations_result':0,'citations_methodology':0,'sabstract':''}
         empty= pd.DataFrame(data = row, index = [0])
         if r.status_code!=200:
             return empty,[]
@@ -432,6 +437,11 @@ def getapi(doi,title):
         if flag==1:
             return empty
         # Selecting only necessary features
+        if 'abstract' in data.columns:
+            ab_ss = data.loc[index,'abstract']
+        else:
+            ab_ss = ''
+    
         if 'references' in data.columns:
             references = data.loc[index,'references']
             ref = pd.json_normalize(references)
@@ -497,7 +507,7 @@ def getapi(doi,title):
             cresult=0
             cmethodology= 0
         
-        d = {'doi': query, 'title': title, 'citationVelocity': velocity, 'influentialCitationCount': influentialcitation,'is_open_access':openaccess,'references_count':references_count,'influentialReferencesCount':ref_inf,'reference_background':background,'reference_result':result,'reference_methodology':methodology,'citations_background':cbackground,'citations_result':cresult,'citations_methodology':cmethodology}
+        d = {'doi': query, 'title': title, 'citationVelocity': velocity, 'influentialCitationCount': influentialcitation,'is_open_access':openaccess,'references_count':references_count,'influentialReferencesCount':ref_inf,'reference_background':background,'reference_result':result,'reference_methodology':methodology,'citations_background':cbackground,'citations_result':cresult,'citations_methodology':cmethodology, 'sabstract':ab_ss}
         row = pd.DataFrame(data = d, index = [0])
         
         return row,year
@@ -551,11 +561,20 @@ def getapi(doi,title):
             open.append('0')
         
         open = pd.DataFrame(data = open, columns = ['openaccessflag'])
+        #print(crossref.columns)
+        abs1 = crossref.loc[:,'cabstract'].values[0]
+        abs2 = semantic.loc[:,'sabstract'].values[0]
+        abs=[]
+        if abs1:
+            abs.append(abs1)
+        else:
+            abs.append(abs2)
+        abs = pd.DataFrame(data=abs, columns = ['abstract'])
         #Generating a single row output from both apis
         elsevier = elsevier.drop(['prism:issn','prism:doi','source-id','prism:coverDate','citedby-count','dc:title','openaccessFlag'], axis=1)
-        crossref = crossref.drop(['citedby-count-crossref'], axis = 1)
-        semantic = semantic.drop(['doi','title','is_open_access'],axis = 1)
-        output = pd.concat([crossref,cite,open,semantic], axis =1)
+        crossref = crossref.drop(['citedby-count-crossref','cabstract'], axis = 1)
+        semantic = semantic.drop(['doi','title','is_open_access','sabstract'],axis = 1)
+        output = pd.concat([crossref,cite,open,semantic,abs], axis =1)
         output = pd.concat([output,elsevier], axis =1)
         
         return output
