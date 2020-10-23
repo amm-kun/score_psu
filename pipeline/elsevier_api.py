@@ -25,19 +25,19 @@ def getapi(doi,title):
             # Example of DOI input: '10.1016/j.jesp.2018.04.001'
 
             doi = query.replace('/','%2F')  # For generating the URL correctly
-            url = 'https://api.elsevier.com/content/search/scopus?query=' + doi + '&apiKey=60eac67a00256938d498a1f2ac68dc68'
+            url = 'https://api.elsevier.com/content/search/scopus?query=' + doi + '&apiKey=02615e998b58ad33d273f7f683994fd2'
             return url
 
         def serial_title(query):
 
             # Example of ISSN input: '00221031'
             issn = query
-            url = 'https://api.elsevier.com/content/serial/title/issn/' + issn + '?apiKey=60eac67a00256938d498a1f2ac68dc68'
+            url = 'https://api.elsevier.com/content/serial/title/issn/' + issn + '?apiKey=02615e998b58ad33d273f7f683994fd2'
             return url
 
         def title_search(query):
             title = str(query).replace(' ','%2F')  # For generating the URL correctly
-            url = 'https://api.elsevier.com/content/search/scopus?query=' + str(title) + '&apiKey=60eac67a00256938d498a1f2ac68dc68'
+            url = 'https://api.elsevier.com/content/search/scopus?query=' + str(title) + '&apiKey=02615e998b58ad33d273f7f683994fd2'
             return url
 
         #Return result as row
@@ -226,20 +226,9 @@ def getapi(doi,title):
                         sub_list = []
                         for i in range(len(list)):
                             subject= pd.json_normalize(list[i])
-                            subject = subject["@code"]
+                            subject = subject["$"] #$ - subject
                             sub_list.append(subject[0])
-                        subject = int(sub_list[0])
-                        if 1100<=subject<1200 or 1300<=subject<1400 or 2400<=subject<2500 or 2800<=subject<2900 or 3000<=subject<3100:
-                            s = 1 # Life sciences
-                        elif 1200<=subject<1300 or 1400<=subject<1500 or 1800<=subject<1900 or 2000<=subject<2100 or 3200<=subject<3400:
-                            s = 2 # Social science and Humanities
-                        elif 1500<=subject<1800 or 1900<=subject<2000 or 2100<=subject<2400 or 2500<=subject<2700 or 3100<=subject<3200:
-                            s = 3 #Physical Sciences
-                        elif 2700<=subject<2800 or 2900<=subject<3000 or 3400<=subject<3700:
-                            s = 4 # Health Sciences
-                        else:
-                            s = 5 # Multidisciplinary
-                        sub_list = {'subject' : s, 'subject_code':subject}
+                        sub_list = {'subject' : str(sub_list[0])}
                         subject_row = pd.DataFrame(sub_list, index=[0])    
                         row = row.drop('subject-area', axis = 1)
                         row = pd.concat([row, subject_row],ignore_index=False, axis =1)
@@ -413,9 +402,17 @@ def getapi(doi,title):
     def getsemantic(doi):
 
         query = str(doi)
-        URL= 'https://api.semanticscholar.org/v1/paper/'+query
-        r = requests.get(URL)
+        """
+            url = 'https://partner.semanticscholar.org/v1/paper/' + DOI[k]
+            headers = {'x-api-key': 'I6SO5Ckndk67RitJNJOFR4d7jDiVpWOgaMFUhgkM'}
+
+            r = requests.get(url, headers=headers)
+        """
+        URL= 'https://partner.semanticscholar.org/v1/paper/' +query
+        headers = {'x-api-key': 'I6SO5Ckndk67RitJNJOFR4d7jDiVpWOgaMFUhgkM'}
+        r = requests.get(URL,headers=headers)
         data = r.json()
+        
         data = pd.json_normalize(data)
         row = {'doi': query, 'title': float('NaN'), 'citationVelocity': 0, 'influentialCitationCount': 0,'is_open_access':0,'references_count':0,'influentialReferencesCount':0,'reference_background':0,'reference_result':0,'reference_methodology':0,'citations_background':0,'citations_result':0,'citations_methodology':0,'sabstract':''}
         empty= pd.DataFrame(data = row, index = [0])

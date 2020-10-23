@@ -56,11 +56,11 @@ if __name__ == "__main__":
         record = namedtuple('record', fields)
         record.__new__.__defaults__ = (None,) * len(record._fields)
         # CSV output file (Delete the file manually if you wish to generate fresh output, default appends
-        if path.isfile(args.csv_out + "/train.csv"):
+        if path.isfile(args.csv_out + "/train1.csv"):
             write_head = False
         else:
             write_head = True
-        writer = csv_writer(r"{0}/{1}".format(args.csv_out, "train.csv"), append=True)
+        writer = csv_writer(r"{0}/{1}".format(args.csv_out, "train1.csv"), append=True)
         header = list(fields)
         if write_head:
             csv_write_field_header(writer, header)
