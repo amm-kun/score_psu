@@ -411,6 +411,7 @@ def getapi(doi,title):
         URL= 'https://api.semanticscholar.org/v1/paper/'+query
         r = requests.get(URL)
         """
+        query = str(doi)
         URL= 'https://partner.semanticscholar.org/v1/paper/' +query
         headers = {'x-api-key': 'I6SO5Ckndk67RitJNJOFR4d7jDiVpWOgaMFUhgkM'}
         r = requests.get(URL,headers=headers)
