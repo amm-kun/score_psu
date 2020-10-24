@@ -406,10 +406,15 @@ def getapi(doi,title):
 
     # Semantic scholor API
     def getsemantic(doi):
-
+        """
         query = str(doi)
         URL= 'https://api.semanticscholar.org/v1/paper/'+query
         r = requests.get(URL)
+        """
+        URL= 'https://partner.semanticscholar.org/v1/paper/' +query
+        headers = {'x-api-key': 'I6SO5Ckndk67RitJNJOFR4d7jDiVpWOgaMFUhgkM'}
+        r = requests.get(URL,headers=headers)
+        
         data = r.json()
         data = pd.json_normalize(data)
         row = {'doi': query, 'title': float('NaN'), 'citationVelocity': 0, 'influentialCitationCount': 0,'is_open_access':0,'references_count':0,'influentialReferencesCount':0,'reference_background':0,'reference_result':0,'reference_methodology':0,'citations_background':0,'citations_result':0,'citations_methodology':0}
