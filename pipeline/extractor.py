@@ -3,7 +3,9 @@ from fuzzywuzzy import process
 from utilities import elem_to_text
 from bs4 import BeautifulSoup
 from ack_pairs import *
-from elsevier_api import getapi
+from elsevier_api import getcrossref
+from elsevier_api import getelsevier
+from elsevier_api import getsemantic
 import pickle
 import pdb
 """
@@ -203,82 +205,15 @@ class TEIExtractor:
 
     @staticmethod
     def get_sjr(doi,title):
-        api = getapi(doi,title)
-        if api.empty:
-            return None
-        else:
-            try:
-                cited_by = api['num_citations'][0]
-            except KeyError:
-                cited_by = 0
-            try: 
-                normalized = api['normalized_citations'][0]
-            except:
-                normalized = 0.0
-            try: 
-                velocity = api['citationVelocity'][0]
-            except:
-                velocity = 0
-            try: 
-                influentialcitations = api['influentialCitationCount'][0]
-            except:
-                influentialcitations = 0
-            try: 
-                references  = api['references_count'][0]
-            except:
-                references = 0
-            try:
-                sjr_score = api['SJR'][0]
-            except KeyError:
-                sjr_score = 0
-            try: 
-                subject = api['subject'][0]
-
-            except:
-                subject = 0
-            try: 
-                subject_code = api['subject_code'][0]
-            except:
-                subject_code = 900
-            try: 
-                flag = api['openaccessflag'][0]
-            except:
-                flag = 0
-            try: 
-                influentialref = api['influentialReferencesCount'][0]
-            except:
-                influentialref = 0
-            try: 
-                ref_background = api['reference_background'][0]
-            except:
-                ref_background = 0
-            try: 
-                ref_result = api['reference_result'][0]
-            except:
-                ref_result = 0
-            try: 
-                ref_method = api['reference_methodology'][0]
-            except:
-                ref_method = 0
-            try: 
-                cite_background = api['citations_background'][0]
-            except:
-                cite_background = 0
-            try: 
-                cite_result = api['citations_result'][0]
-            except:
-                cite_result = 0
-            try: 
-                cite_method = api['citations_methodology'][0]
-            except:
-                cite_method = 0
-            try: 
-                cite_next = api['citation_next'][0]
-            except:
-                cite_next = 0
-
-        return {"sjr": sjr_score, "num_citations": cited_by,"subject":subject,"subject_code":subject_code,"normalized_citations":normalized,"citationVelocity":velocity,"influentialCitationCount":influentialcitations,"references_count":references,"openaccessflag":flag,"influentialReferencesCount":influentialref, "reference_background": ref_background, "reference_result":ref_result, "reference_methodology":ref_method,"citations_background":cite_background,"citations_result":cite_result,"citations_methodology":cite_method, "citations_next":cite_next}
-
+        
+        response = getsemantic(doi,title)
+        crossref = response.get_row()
+        scopus_search = response.return_search()
+        serial_title = response.return_serialtitle()
+        semantic = response.return_semantic()
+        final = {"doi":response.doi, "title":response.title, "sjr": response.sjr, "num_citations": response.citedby,"subject":response.subject,"subject_code":response.subject_code,"normalized_citations":response.normalized,"citationVelocity":response.velocity,"influentialCitationCount":response.incite,"references_count":response.refcount,"openaccessflag":response.openaccess,"influentialReferencesCount":response.inref, "reference_background": response.refback, "reference_result":response.refresult, "reference_methodology":response.refmeth,"citations_background":response.cback,"citations_result":response.cresult,"citations_methodology":response.cmeth, "citations_next":response.next}
+        return final
+    
 if __name__ == "__main__":
 
     uni_rank = ReadPickle('uni_rank.pickle')
