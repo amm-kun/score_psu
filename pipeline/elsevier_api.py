@@ -58,7 +58,6 @@ class getcrossref:
             dois = data['DOI']
             titles = data['title']
         except:
-            print(data)
             dois = data['doi']
             titles = data['title']
         flag=0
