@@ -14,9 +14,9 @@ class getcrossref:
     def __init__(self,doi,title):
         self.doi = doi
         self.title =title
-        self.refcount = -1
-        self.citedby = -1
-        self.coverdate = -1
+        self.refcount = 0
+        self.citedby = 0
+        self.coverdate = 0
 
     def get_row(self):
         query = self.doi
@@ -114,16 +114,16 @@ class getelsevier(getcrossref):
 
     def __init__(self,doi,title):
         super().__init__(doi,title)
-        self.issn = -1
-        self.source = -1
-        self.openaccess = -1
+        self.issn = 0
+        self.source = 0
+        self.openaccess = 0
         self.affilname = float('NaN')
         self.affilcountry = float('NaN')
-        self.sjr = -1
-        self.subject = -1
+        self.sjr = 0
+        self.subject = 0
         self.subject_code = 900
-        self.normalized = -1
-        self.next = -1
+        self.normalized = 0
+        self.next = 0
 
     def getaff(self,aff):
         try:
@@ -347,15 +347,15 @@ class getsemantic(getelsevier):
             years = currentYear - int(self.coverdate)
             self.normalized = int(self.citedby)/years
 
-        self.velocity = -1
-        self.incite = -1
-        self.inref = -1
-        self.refback = -1
-        self.refresult = -1
-        self.refmeth = -1
-        self.cback = -1
-        self.cresult = -1
-        self.cmeth = -1
+        self.velocity = 0
+        self.incite = 0
+        self.inref = 0
+        self.refback = 0
+        self.refresult = 0
+        self.refmeth = 0
+        self.cback = 0
+        self.cresult = 0
+        self.cmeth = 0
         self.years = []
 
     def return_semantic(self):
