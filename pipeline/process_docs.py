@@ -125,7 +125,7 @@ if __name__ == "__main__":
     elif args.mode == "2400set":
         csv = pd.read_csv(args.file)
         want = [ 'kw_cs_m5', 'kw_cs_m3', 'kw_cs_m10', 'um_cs_m1', 'um_cs_m2', 'um_cs_m3', 'um_cs_m4']
-        fields = ('ta3_pid', 'doi', 'title', 'num_citations', 'author_count', 'sjr', 'u_rank', 'self_citations','upstream_influential_methodology_count', 'subject','subject_code','citationVelocity','influentialCitationCount','references_count','openaccessflag', 'normalized_citations','influentialReferencesCount','reference_background','reference_result', 'reference_methodology','citations_background','citations_result','citations_methodology','citations_next','coCite2','coCite3','num_hypo_tested', 'real_p', 'real_p_sign', 'p_val_range', 'num_significant', 'sample_size',"extend_p", "funded")
+        fields = ('doi', 'title', 'num_citations', 'author_count', 'sjr', 'u_rank', 'self_citations','upstream_influential_methodology_count', 'subject','subject_code','citationVelocity','influentialCitationCount','references_count','openaccessflag', 'normalized_citations','influentialReferencesCount','reference_background','reference_result', 'reference_methodology','citations_background','citations_result','citations_methodology','citations_next','coCite2','coCite3','num_hypo_tested', 'real_p', 'real_p_sign', 'p_val_range', 'num_significant', 'sample_size',"extend_p", "funded")
         fields = fields + tuple(want)
         record = namedtuple('record', fields)
         record.__new__.__defaults__ = (None,) * len(record._fields)
