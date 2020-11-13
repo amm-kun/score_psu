@@ -151,11 +151,9 @@ if __name__ == "__main__":
                     label_range = args.label_range.split('-')
                     features['y'] = random.uniform(float(label_range[0]), float(label_range[1]))
                 else:
-                    #print("here")
                     for i in want:
-                        #print("jjj",xml.replace('.tei.xml', '').strip())
                         features[i] = csv[csv['pdf_filename']==xml.replace('.tei.xml', '').strip()][i].values[0]
-                    #print("here111")
+                 
                 try:
                     #print(features)
                     csv_write_record(writer, features, header)
