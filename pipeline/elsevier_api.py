@@ -1,4 +1,5 @@
 # %%
+# importing library 
 import requests 
 import pandas as pd
 from fuzzywuzzy import fuzz
@@ -14,9 +15,9 @@ class getcrossref:
     def __init__(self,doi,title):
         self.doi = doi
         self.title =title
-        self.refcount = 0
-        self.citedby = 0
-        self.coverdate = 0
+        self.refcount = -1
+        self.citedby = -1
+        self.coverdate = -1
 
     def get_row(self):
         query = self.doi
@@ -58,6 +59,7 @@ class getcrossref:
             dois = data['DOI']
             titles = data['title']
         except:
+            print(data)
             dois = data['doi']
             titles = data['title']
         flag=0
@@ -69,7 +71,7 @@ class getcrossref:
                     index = i
                     self.doi = dois[i]
                     title = titles[i]
-                    self.title = title[0]
+                    self.title = title
                     break
                 else:
                     flag=1
@@ -114,16 +116,16 @@ class getelsevier(getcrossref):
 
     def __init__(self,doi,title):
         super().__init__(doi,title)
-        self.issn = 0
-        self.source = 0
-        self.openaccess = 0
+        self.issn = -1
+        self.source = -1
+        self.openaccess = -1
         self.affilname = float('NaN')
         self.affilcountry = float('NaN')
-        self.sjr = 0
-        self.subject = 0
+        self.sjr = -1
+        self.subject = -1
         self.subject_code = 900
-        self.normalized = 0
-        self.next = 0
+        self.normalized = -1
+        self.next = -1
 
     def getaff(self,aff):
         try:
@@ -182,8 +184,13 @@ class getelsevier(getcrossref):
                 flag = 0
                 #Checking all entrys for the paper
                 for i in range(len(entry)):
+
                     if x =='doi':
-                        doi_check = str(doi_entry[i])
+                        if isinstance(doi_entry, list):  
+                            doi_check = str(doi_entry[i])
+                        else:
+                            flag =0
+                            break
                         if doi_check.lower()==query.lower():
                             row = entry.loc[i,:]
                             row = pd.DataFrame(row)
@@ -347,15 +354,15 @@ class getsemantic(getelsevier):
             years = currentYear - int(self.coverdate)
             self.normalized = int(self.citedby)/years
 
-        self.velocity = 0
-        self.incite = 0
-        self.inref = 0
-        self.refback = 0
-        self.refresult = 0
-        self.refmeth = 0
-        self.cback = 0
-        self.cresult = 0
-        self.cmeth = 0
+        self.velocity = -1
+        self.incite = -1
+        self.inref = -1
+        self.refback = -1
+        self.refresult = -1
+        self.refmeth = -1
+        self.cback = -1
+        self.cresult = -1
+        self.cmeth = -1
         self.years = []
 
     def return_semantic(self):
@@ -430,4 +437,3 @@ class getsemantic(getelsevier):
         row = {'doi': self.doi, 'title':self.title, 'citationVelocity':self.velocity, 'influentialCitationCount':self.incite,'openaccessFlag':self.openaccess,'references-count':self.refcount,'influentialReferencesCount':self.inref,'reference_background':self.refback,'reference_result':self.refresult,'reference_methodology':self.refmeth,'citations_background':self.cback,'citations_result':self.cresult,'citations_methodology':self.cmeth, "citation_next":self.next, "normalized_citations":self.normalized}
         
         return row
-   
