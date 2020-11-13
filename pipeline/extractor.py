@@ -6,6 +6,7 @@ from ack_pairs import *
 from elsevier_api import getapi
 import pickle
 import pdb
+from scripts.coCitation import coCite
 """
 Object models for the Processing Pipeline to generate features for the DARPA SCORE project
 -----------------Includes the pre-processing step for the Predition Market----------------
@@ -179,7 +180,8 @@ class TEIExtractor:
         # Set influential_methodology_references
         self.paper.influential_references_methodology = self.set_influential_references_methodology()
         # return paper
-        
+
+        t2,t3 = coCite(self.paper.doi)
         return {"doi": self.paper.doi, "title": self.paper.title, "num_citations": self.paper.cited_by_count,
                 "author_count": len(self.paper.authors),"sjr": self.paper.sjr, "u_rank": self.paper.uni_rank,
                 "funded": self.paper.funded,"self_citations": self.paper.self_citations, "subject": self.paper.subject,
@@ -190,7 +192,8 @@ class TEIExtractor:
                 "reference_result": self.paper.ref_result, "reference_methodology": self.paper.ref_method,
                 "citations_background": self.paper.cite_background, "citations_result": self.paper.cite_result,
                 "citations_methodology": self.paper.cite_method, "citations_next": self.paper.cite_next,
-                "upstream_influential_methodology_count": self.paper.influential_references_methodology}
+                "upstream_influential_methodology_count": self.paper.influential_references_methodology,
+                "coCite2":t2, "coCite3":t3}
 
 
     @staticmethod
