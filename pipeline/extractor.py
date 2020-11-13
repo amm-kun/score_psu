@@ -6,6 +6,7 @@ from ack_pairs import *
 from elsevier_api import getapi
 import pickle
 import pdb
+from scripts.coCitation import coCite
 """
 Object models for the Processing Pipeline to generate features for the DARPA SCORE project
 -----------------Includes the pre-processing step for the Predition Market----------------
@@ -177,8 +178,8 @@ class TEIExtractor:
         # Set self-citations
         self.paper.self_citations = self.paper.set_self_citations()
         # return paper
-        
-        return {"doi":self.paper.doi,"title":self.paper.title,"num_citations":self.paper.cited_by_count, "author_count": len(self.paper.authors),"sjr": self.paper.sjr, "u_rank": self.paper.uni_rank, "funded": self.paper.funded,"self_citations": self.paper.self_citations,"subject":self.paper.subject,"subject_code":self.paper.subject_code,"citationVelocity":self.paper.velocity,"influentialCitationCount":self.paper.influentialcitations,"references_count":self.paper.references,"openaccessflag":self.paper.flag,"normalized_citations":self.paper.normalized,"influentialReferencesCount":self.paper.influentialref, "reference_background": self.paper.ref_background, "reference_result":self.paper.ref_result,"reference_methodology":self.paper.ref_method,"citations_background":self.paper.cite_background,"citations_result":self.paper.cite_result,"citations_methodology":self.paper.cite_method, "citations_next":self.paper.cite_next}
+        t2,t3 = coCite(self.paper.doi)
+        return {"doi":self.paper.doi,"title":self.paper.title,"num_citations":self.paper.cited_by_count, "author_count": len(self.paper.authors),"sjr": self.paper.sjr, "u_rank": self.paper.uni_rank, "funded": self.paper.funded,"self_citations": self.paper.self_citations,"subject":self.paper.subject,"subject_code":self.paper.subject_code,"citationVelocity":self.paper.velocity,"influentialCitationCount":self.paper.influentialcitations,"references_count":self.paper.references,"openaccessflag":self.paper.flag,"normalized_citations":self.paper.normalized,"influentialReferencesCount":self.paper.influentialref, "reference_background": self.paper.ref_background, "reference_result":self.paper.ref_result,"reference_methodology":self.paper.ref_method,"citations_background":self.paper.cite_background,"citations_result":self.paper.cite_result,"citations_methodology":self.paper.cite_method, "citations_next":self.paper.cite_next, "coCite2":t2, "coCite3":t3}
 
 
     @staticmethod
