@@ -110,7 +110,6 @@ class getcrossref:
       
         return {'doi':self.doi,'title':self.title,'citedby':self.citedby,'coverdate':self.coverdate,'references-count':self.refcount}
 
-
 # %%
 class getelsevier(getcrossref):
 
@@ -373,6 +372,7 @@ class getsemantic(getelsevier):
 
         if r.status_code!=200:
             return row
+          
         data = r.json()
         data = pd.json_normalize(data)
         doi_api = data['doi']

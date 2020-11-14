@@ -8,6 +8,7 @@ from elsevier_api import getelsevier
 from elsevier_api import getsemantic
 import pickle
 import pdb
+from scripts.coCitation import coCite
 """
 Object models for the Processing Pipeline to generate features for the DARPA SCORE project
 -----------------Includes the pre-processing step for the Predition Market----------------
@@ -178,9 +179,23 @@ class TEIExtractor:
             self.paper.cite_next = api_resp["citations_next"]
         # Set self-citations
         self.paper.self_citations = self.paper.set_self_citations()
+        # Set influential_methodology_references
+        self.paper.influential_references_methodology = self.set_influential_references_methodology()
         # return paper
-        
-        return {"doi":self.paper.doi,"title":self.paper.title,"num_citations":self.paper.cited_by_count, "author_count": len(self.paper.authors),"sjr": self.paper.sjr, "u_rank": self.paper.uni_rank, "funded": self.paper.funded,"self_citations": self.paper.self_citations,"subject":self.paper.subject,"subject_code":self.paper.subject_code,"citationVelocity":self.paper.velocity,"influentialCitationCount":self.paper.influentialcitations,"references_count":self.paper.references,"openaccessflag":self.paper.flag,"normalized_citations":self.paper.normalized,"influentialReferencesCount":self.paper.influentialref, "reference_background": self.paper.ref_background, "reference_result":self.paper.ref_result,"reference_methodology":self.paper.ref_method,"citations_background":self.paper.cite_background,"citations_result":self.paper.cite_result,"citations_methodology":self.paper.cite_method, "citations_next":self.paper.cite_next}
+
+        t2,t3 = coCite(self.paper.doi)
+        return {"doi": self.paper.doi, "title": self.paper.title, "num_citations": self.paper.cited_by_count,
+                "author_count": len(self.paper.authors),"sjr": self.paper.sjr, "u_rank": self.paper.uni_rank,
+                "funded": self.paper.funded,"self_citations": self.paper.self_citations, "subject": self.paper.subject,
+                "subject_code": self.paper.subject_code, "citationVelocity": self.paper.velocity,
+                "influentialCitationCount": self.paper.influentialcitations, "references_count": self.paper.references,
+                "openaccessflag": self.paper.flag, "influentialReferencesCount": self.paper.influentialref,
+                "normalized_citations": self.paper.normalized, "reference_background": self.paper.ref_background,
+                "reference_result": self.paper.ref_result, "reference_methodology": self.paper.ref_method,
+                "citations_background": self.paper.cite_background, "citations_result": self.paper.cite_result,
+                "citations_methodology": self.paper.cite_method, "citations_next": self.paper.cite_next,
+                "upstream_influential_methodology_count": self.paper.influential_references_methodology,
+                "coCite2":t2, "coCite3":t3}
 
 
     @staticmethod
@@ -205,6 +220,7 @@ class TEIExtractor:
 
     @staticmethod
     def get_sjr(doi,title):
+
         
         response = getsemantic(doi,title)
         crossref = response.get_row()
@@ -213,7 +229,26 @@ class TEIExtractor:
         semantic = response.return_semantic()
         final = {"doi":response.doi, "title":response.title, "sjr": response.sjr, "num_citations": response.citedby,"subject":response.subject,"subject_code":response.subject_code,"normalized_citations":response.normalized,"citationVelocity":response.velocity,"influentialCitationCount":response.incite,"references_count":response.refcount,"openaccessflag":response.openaccess,"influentialReferencesCount":response.inref, "reference_background": response.refback, "reference_result":response.refresult, "reference_methodology":response.refmeth,"citations_background":response.cback,"citations_result":response.cresult,"citations_methodology":response.cmeth, "citations_next":response.next}
         return final
-    
+      
+    def set_influential_references_methodology(self):
+        # Counts the number of influential references in the paper in the context of methodology
+        count = 0
+        if self.paper.doi:
+            url = 'https://partner.semanticscholar.org/v1/paper/{0}'.format(self.paper.doi)
+            headers = {'x-api-key': 'I6SO5Ckndk67RitJNJOFR4d7jDiVpWOgaMFUhgkM'}
+            response_payload = requests.get(url, headers=headers).json()
+            try:
+                references = response_payload['references']
+                for reference in references:
+                    try:
+                        if 'methodology' in reference['intent'] and reference['isInfluential']:
+                            count += 1
+                    except KeyError:
+                        continue
+            except KeyError:
+                pass
+        return count
+      
 if __name__ == "__main__":
 
     uni_rank = ReadPickle('uni_rank.pickle')
