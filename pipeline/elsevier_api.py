@@ -362,18 +362,35 @@ class getsemantic(getelsevier):
         self.cback = -1
         self.cresult = -1
         self.cmeth = -1
+        self.upstream_influential_methodology_count = -1
         self.years = []
 
     def return_semantic(self):
         query = self.doi
         url = 'https://api.semanticscholar.org/v1/paper/'+str(query)
         r = requests.get(url)
-        row = {"normalized_citations":self.normalized, 'doi': self.doi, 'title':self.title, 'citationVelocity':self.velocity, 'influentialCitationCount':self.incite,'is_open_access':self.openaccess,'references_count':self.refcount,'influentialReferencesCount':self.inref,'reference_background':self.refback,'reference_result':self.refresult,'reference_methodology':self.refmeth,'citations_background':self.cback,'citations_result':self.cresult,'citations_methodology':self.cmeth}
+        row = {"upstream_influential_methodology_count": self.upstream_influential_methodology_count, "normalized_citations":self.normalized, 'doi': self.doi, 'title':self.title, 'citationVelocity':self.velocity, 'influentialCitationCount':self.incite,'is_open_access':self.openaccess,'references_count':self.refcount,'influentialReferencesCount':self.inref,'reference_background':self.refback,'reference_result':self.refresult,'reference_methodology':self.refmeth,'citations_background':self.cback,'citations_result':self.cresult,'citations_methodology':self.cmeth}
 
-        if r.status_code!=200:
+        if r.status_code != 200:
             return row
           
         data = r.json()
+
+        # Get influential_methodology_references
+        if self.doi:
+            inf_meth_ref_count = 0
+            try:
+                references = data['references']
+                for reference in references:
+                    try:
+                        if 'methodology' in reference['intent'] and reference['isInfluential']:
+                            inf_meth_ref_count += 1
+                    except KeyError:
+                        continue
+            except KeyError:
+                pass
+            self.upstream_influential_methodology_count = inf_meth_ref_count
+
         data = pd.json_normalize(data)
         doi_api = data['doi']
         title_api = data['title']
@@ -434,6 +451,13 @@ class getsemantic(getelsevier):
                 c = [y for y in year if y-self.coverdate<=3]
                 self.next = sum(Counter(c).values())
         
-        row = {'doi': self.doi, 'title':self.title, 'citationVelocity':self.velocity, 'influentialCitationCount':self.incite,'openaccessFlag':self.openaccess,'references-count':self.refcount,'influentialReferencesCount':self.inref,'reference_background':self.refback,'reference_result':self.refresult,'reference_methodology':self.refmeth,'citations_background':self.cback,'citations_result':self.cresult,'citations_methodology':self.cmeth, "citation_next":self.next, "normalized_citations":self.normalized}
+        row = {'doi': self.doi, 'title': self.title, 'citationVelocity': self.velocity,
+               'influentialCitationCount': self.incite,'openaccessFlag': self.openaccess,
+               'references-count': self.refcount, 'influentialReferencesCount': self.inref,
+               'reference_background': self.refback, 'reference_result': self.refresult,
+               'reference_methodology': self.refmeth, 'citations_background': self.cback,
+               'citations_result': self.cresult, 'citations_methodology': self.cmeth,
+               "citation_next": self.next, "normalized_citations": self.normalized,
+               "upstream_influential_methodology_count": self.upstream_influential_methodology_count}
         
         return row

@@ -158,7 +158,7 @@ class TEIExtractor:
         else:
             self.paper.funded = 0
         # SJR
-        api_resp = self.get_sjr(self.paper.doi,self.paper.title)
+        api_resp = self.get_sjr(self.paper.doi, self.paper.title)
         if api_resp:
             self.paper.cited_by_count = api_resp["num_citations"]
             self.paper.sjr = api_resp["sjr"]
@@ -177,10 +177,9 @@ class TEIExtractor:
             self.paper.cite_result = api_resp["citations_result"]
             self.paper.cite_method = api_resp["citations_methodology"]
             self.paper.cite_next = api_resp["citations_next"]
+            self.paper.influential_references_methodology = api_resp["upstream_influential_methodology_count"]
         # Set self-citations
         self.paper.self_citations = self.paper.set_self_citations()
-        # Set influential_methodology_references
-        self.paper.influential_references_methodology = self.set_influential_references_methodology()
         # return paper
 
         t2,t3 = coCite(self.paper.doi)
@@ -227,28 +226,10 @@ class TEIExtractor:
         scopus_search = response.return_search()
         serial_title = response.return_serialtitle()
         semantic = response.return_semantic()
-        final = {"doi":response.doi, "title":response.title, "sjr": response.sjr, "num_citations": response.citedby,"subject":response.subject,"subject_code":response.subject_code,"normalized_citations":response.normalized,"citationVelocity":response.velocity,"influentialCitationCount":response.incite,"references_count":response.refcount,"openaccessflag":response.openaccess,"influentialReferencesCount":response.inref, "reference_background": response.refback, "reference_result":response.refresult, "reference_methodology":response.refmeth,"citations_background":response.cback,"citations_result":response.cresult,"citations_methodology":response.cmeth, "citations_next":response.next}
+        final = {"doi":response.doi, "title":response.title, "sjr": response.sjr, "num_citations": response.citedby,"subject":response.subject,"subject_code":response.subject_code,"normalized_citations":response.normalized,"citationVelocity":response.velocity,"influentialCitationCount":response.incite,"references_count":response.refcount,"openaccessflag":response.openaccess,"influentialReferencesCount":response.inref, "reference_background": response.refback, "reference_result":response.refresult, "reference_methodology":response.refmeth,"citations_background":response.cback,"citations_result":response.cresult,"citations_methodology":response.cmeth, "citations_next":response.next, "upstream_influential_methodology_count": response.upstream_influential_methodology_count}
         return final
-      
-    def set_influential_references_methodology(self):
-        # Counts the number of influential references in the paper in the context of methodology
-        count = 0
-        if self.paper.doi:
-            url = 'https://partner.semanticscholar.org/v1/paper/{0}'.format(self.paper.doi)
-            headers = {'x-api-key': 'I6SO5Ckndk67RitJNJOFR4d7jDiVpWOgaMFUhgkM'}
-            response_payload = requests.get(url, headers=headers).json()
-            try:
-                references = response_payload['references']
-                for reference in references:
-                    try:
-                        if 'methodology' in reference['intent'] and reference['isInfluential']:
-                            count += 1
-                    except KeyError:
-                        continue
-            except KeyError:
-                pass
-        return count
-      
+
+
 if __name__ == "__main__":
 
     uni_rank = ReadPickle('uni_rank.pickle')
