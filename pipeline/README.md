@@ -39,3 +39,16 @@ You can run the pipeline using the below command:
 -csv: csv output directory
 
 For more details, refer to process_docs.py file.
+
+### Project Structure
+Important files for reference:
+
+| File        | Description     |   
+| ------------- |:------------- |
+| process_docs.py     | code execution starts here, there are 2 main modes (1) Preprocess (2) generate feature set | 
+| extractor.py      | grobid output gets torn down into various features and extracted information is used to call elsevier/crossref/semantic scholar api     | 
+| elsevier.py | Output from elsevier api/crossref/semantic scholar gets parsed and returned |
+| XIN.py | acknowlegement section is processed to identify funding information |
+
+**NOTE:** Elsevier api key may expire after certain number of hits. In case of batch processing, it is better to update api key details from elsevier developer [portal](https://dev.elsevier.com). Check the same for semantic scholar api.
+
