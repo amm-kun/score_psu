@@ -1,0 +1,49 @@
+feature_name,Name,Type,Description
+citationVelocity,Citation Velocity,Numerical-Ratio,weighted average citations of this paper  for the last 3 years  (fewer for publications published in the last year or two) 
+citationVelocity_cite,Average Citation Velocity of all downstream papers,Numerical-Ratio,average of weighted averages of citations of all the downstream papers for the last 3 years
+citations_count,Citation Count,Numerical-Ratio,number of times this paper has been cited.
+paper_age,Age of paper in years from the published year,Numerical-Ratio,current age of the paper
+citation_count_per_year,Citation count divided by age of paper,Numerical-Ratio,citation count per year of the paper
+citation_count_per_year_cite,Average value of citation count per age of paper for all downstream papers,Numerical-Ratio,average citation counts per year of all downstream papers
+inf_citation_count_per_year,Influential Citation count divided by age of paper,Numerical-Ratio,influential citation counts per year of this paper
+inf_citation_count_per_year_cite,Average value of influential citation count per age of paper for all downstream papers,Numerical-Ratio,average influential citation counts per year of all downstream papers
+fos_Physcology,Psychology,Categorical-Nominal,"the field of study of the paper among 36 different categories such as scociology, mathematics, economics, etc"
+fos_Business_Economics,Business & Economics,Categorical-Nominal,"the field of study of the paper among 36 different categories such as scociology, mathematics, economics, etc"
+fos_Government_Law,Government & Law,Categorical-Nominal,"the field of study of the paper among 36 different categories such as scociology, mathematics, economics, etc"
+fos_Sociology,Sociology,Categorical-Nominal,"the field of study of the paper among 36 different categories such as scociology, mathematics, economics, etc"
+fos_Education_Educational_Research,Education & Educational Research,Categorical-Nominal,"the field of study of the paper among 36 different categories such as scociology, mathematics, economics, etc"
+fos_International_Relations,International Relations,Categorical-Nominal,"the field of study of the paper among 36 different categories such as scociology, mathematics, economics, etc"
+fos_Public_Administration,Public Administration,Categorical-Nominal,"the field of study of the paper among 36 different categories such as scociology, mathematics, economics, etc"
+fos_Other,Other than common values seen,Categorical-Nominal,"the field of study of the paper among 36 different categories such as scociology, mathematics, economics, etc"
+fos_Psychology_Medicine_cite,Psychology & Medicine,Categorical-Nominal,"the field of study of the downstream papers among 36 different categories such as scociology, mathematics, economics, etc"
+fos_Psychology_cite,Psychology,Categorical-Nominal,"the field of study of the downstream papers among 36 different categories such as scociology, mathematics, economics, etc"
+fos_Other_cite,Other than common values seen,Categorical-Nominal,"the field of study of the downstream papers among 36 different categories such as scociology, mathematics, economics, etc"
+Venue Citation Count,Venue Citation Count,Numerical-Ratio,Venue Citation Count
+Venue Scholarly Output,Venue Scholarly Output,Numerical-Ratio,Venue Scholarly Output
+Venue Percent Cited,Venue Percent Cited,Numerical-Ratio,Venue Percent Cited
+Venue Cite Score,Venue Cite Score,Numerical-Ratio,Venue Cite Score
+Venue SNIP,SNIP,Numerical-Ratio,Venue SNIP
+Venue SJR,SJR,Numerical-Ratio,Venue SJR
+Venue Rank Ratio,Venue Rank Ratio,Numerical-Ratio,Venue Rank Ratio
+avg_hidx,Average of all author H-Indexes,Numerical-Ratio,the average h-index of all the authors
+max_hidx,Maximum among all author H-Indexes,Numerical-Ratio,maximum h-index among all the authors
+first_hidx,First author's H-Index,Numerical-Ratio,h-index of first author
+last_hidx,Last author's H-Index,Numerical-Ratio,h-index of last author
+avg_pub,Average no of publications of all authors,Numerical-Ratio,average number of publications of all the authors
+max_pub,Maximum no of publications among all authors,Numerical-Ratio,maximum number of publications among all the authors
+first_pub,No of publications of first author,Numerical-Ratio,number of publications of first author
+last_pub,No of publications of last author,Numerical-Ratio,number of publications of last author
+avg_auth_cites,Average no of citations of all Authors,Numerical-Ratio,average number of citations of all the authors
+max_auth_cites,Maximum no of citations among all Authors,Numerical-Ratio,maximum number of citations among all the authors
+first_auth_cites,No of citations of first author,Numerical-Ratio,number of citations of first author
+last_auth_cites,No of citations of last author,Numerical-Ratio,number of citations of last author
+avg_high_inf_cites,Average no of  highly influential citations of all Authors,Numerical-Ratio,average number of highly influential citations of all authors
+max_high_inf_cites,Maximum of Highly Influential citations among all authors,Numerical-Ratio,maximum number of highly influential citations among all authors
+first_high_inf_cites,Highly Influential citations of first author,Numerical-Ratio,number of highly influential citations of first authors
+last_high_inf_cites,Highly Influential citations of last author,Numerical-Ratio,number of highly influential citations of last authors
+abstract_embedding,abstract's embedding representation,Numerical-Embedding,its abstract
+title_embedding,title's embedding representation,Numerical-Embedding,its title
+claim3a,claim3a_concretehyp's embedding representation,Numerical-Embedding,its claim 3a
+claim3b,claim3b_concretehyp's embedding representation,Numerical-Embedding,its claim 3b
+claim2,claim2_abstract's embedding representation,Numerical-Embedding,its claim2
+claim4,claim4_inftest's embedding representation,Numerical-Embedding,its claim4

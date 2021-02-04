@@ -1,0 +1,49 @@
+﻿feature_name,Name
+citationVelocity,Citation Velocity
+citationVelocity_cite,Citation Velocity of downstream papers
+citations_count,Citation Count
+paper_age,Age of paper 
+citation_count_per_year,Citation count per year
+citation_count_per_year_cite,Citation count per year downstream
+inf_citation_count_per_year,Influential Citation count per year
+inf_citation_count_per_year_cite,Influential Citation count per year downstream
+fos_Physcology,Physcology
+fos_Business_Economics,Business & Economics
+fos_Government_Law,Government & Law
+fos_Sociology,Sociology
+fos_Education_Educational_Research,Education & Educational Research
+fos_International_Relations,International Relations
+fos_Public_Administration,Public Administration
+fos_Other,Other than common values seen
+fos_Psychology_Medicine_cite,Physcology & Medicine
+fos_Psychology_cite,Physcology
+fos_Other_cite,Other than common values seen
+Venue Citation Count,Venue Citation Count
+Venue Scholarly Output,Venue Scholarly Output
+Venue Percent Cited,Venue Percent Cited
+Venue CiteScore,Venue Cite Score
+Venue SNIP,SNIP
+Venue SJR,SJR
+Venue Rank Ratio,Venue Rank Ratio
+avg_hidx,Average author H-Indexes
+max_hidx,Maximum author H-Indexes
+first_hidx,First author's H-Index
+last_hidx,Last author's H-Index
+avg_pub,Average author publications
+max_pub,Maximum author publications
+first_pub,Publications of first author
+last_pub,Publications of last author
+avg_auth_cites,Average author citations
+max_auth_cites,Maximum author citations
+first_auth_cites,Citations of first author
+last_auth_cites,Citations of last author
+avg_high_inf_cites,Average author highly influential citations
+max_high_inf_cites,Maximum author highly influential citations
+first_high_inf_cites,Highly Influential citations of first author
+last_high_inf_cites,Highly Influential citations of last author
+abstract_embedding,Abstract's embedding score
+title_embedding,Title's embedding score
+claim3a,Claim3a embedding score
+claim3b,claim3b embedding score
+claim2,claim2 embedding score
+claim4,claim4 embedding score
