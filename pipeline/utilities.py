@@ -11,6 +11,10 @@ p_val_sign = {
 }
 
 
+tamu_select_features = ["Venue_Citation_Count", "Venue_Scholarly_Output", "Venue_Percent_Cited", "Venue_CiteScore",
+                        "Venue_SNIP", "Venue_Rank_Ratio", "avg_pub", "avg_hidx", "avg_auth_cites",
+                        "avg_high_inf_cites", "paper_age"]
+
 def remove_accents(text: str):
     text = re.sub('[âàäáãå]', 'a', text)
     text = re.sub('[êèëé]', 'e', text)
@@ -74,3 +78,15 @@ def csv_write_record(writer, record, header):
     nt_record = namedtuple('dis_features', header)
     sim_record = nt_record(**record)
     writer.writerow(list(sim_record))
+
+
+# Read selected values from dictionary
+def select_keys(input_data , projection=None):
+    output_projection = {}
+    for key in projection:
+        try:
+            output_projection[key] = input_data[key]
+        except KeyError:
+            output_projection[key] = 0
+    return output_projection
+
