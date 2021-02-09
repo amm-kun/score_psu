@@ -15,15 +15,16 @@ import pandas as pd
 if __name__ == "__main__":
 
     parser = argparse.ArgumentParser(description="Pipeline - Process PDFS - Market Pre-processing")
-    # parser.add_argument("-in", "--pdf_input", help="parent folder that contains all pdfs")
-    # parser.add_argument("-out", "--grobid_out",  help="grobid output path")
-    # parser.add_argument("-m", "--mode", default="extract-test", help="pipeline mode")
-    # parser.add_argument("-n", default=1, help="concurrency for service usage")
-    # parser.add_argument("-f", "--file", help="DARPA metadata tsv/csv for test")
-    # parser.add_argument("-csv", "--csv_out", default=getcwd(), help="CSV output path")
-    # parser.add_argument("-l", "--label", help="Assign y value | label for training set")
-    # parser.add_argument("-lr", "--label_range", help="Assign y value within range for training set | Ex: 0.7-1")
-    #
+    parser.add_argument("-in", "--pdf_input", help="parent folder that contains all pdfs")
+    parser.add_argument("-out", "--grobid_out",  help="grobid output path")
+    parser.add_argument("-m", "--mode", default="extract-test", help="pipeline mode")
+    parser.add_argument("-n", default=1, help="concurrency for service usage")
+    parser.add_argument("-f", "--file", help="DARPA metadata tsv/csv for test")
+    parser.add_argument("-csv", "--csv_out", default=getcwd(), help="CSV output path")
+    parser.add_argument("-l", "--label", help="Assign y value | label for training set")
+    parser.add_argument("-lr", "--label_range", help="Assign y value within range for training set | Ex: 0.7-1")
+    #python process_docs.py -out ../../tei10 -in ../../pdf10 -m generate-train" -csv ../
+
     args = parser.parse_args()
 
     # Debug parameters config
@@ -81,12 +82,14 @@ if __name__ == "__main__":
                 print("Processing ", xml)
                 extractor = TEIExtractor(args.grobid_out + '/' + xml)
                 extraction_stage = extractor.extract_paper_info()
+                issn = extraction_stage['ISSN']
+                auth = extraction_stage['authors']
                 p_val_stage = extract_p_values(args.pdf_input + '/' + xml.replace('.tei.xml', '.txt'))
                 features = dict(**extraction_stage, **p_val_stage)
 
                 # Get TAMU features
                 paper_id = xml.split('_')[-1].replace('.xml', '')
-                tamu_features, imputed_list = get_tamu_features(args.file, paper_id)
+                tamu_features, imputed_list = get_tamu_features(args.file, paper_id, issn, auth)
 
                 select_tamu_features = select_keys(tamu_features, tamu_select_features)
                 features.update(select_tamu_features)

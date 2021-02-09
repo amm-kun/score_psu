@@ -101,7 +101,7 @@ class PaperInfoCrawler:
         except:
             print("Exception occured while fetching author metadata.")
 
-    def fetchAuthData(self, df, paper_not_found=False):
+    def fetchAuthData(self,df, auth, paper_not_found=False):
         if paper_not_found:
             return self.fetch_auth_data_google_scholar()
         if self.verbose:
@@ -110,7 +110,7 @@ class PaperInfoCrawler:
         start_time = time.time()
         BASE_URL = 'https://www.semanticscholar.org/author/'
         authorIds = []
-        for auth_list in list(df['authors']):
+        for auth_list in list(auth):
             authorIds = [int(s) for s in ast.literal_eval(str(auth_list)) if s is not None]
         auth_dict = []
         for authId in authorIds:
@@ -133,8 +133,9 @@ class PaperInfoCrawler:
             "\nFetched " + str(len(authorIds)) + " author details in %s seconds." % (time.time() - start_time))
         return pd.DataFrame(auth_dict)
 
-    def addVenueFeatures(self, df):
-        df['ISSN'] = df['ISSN'].apply(lambda x: x.replace('-', '') if 'X' in x else x.lstrip('0').replace('-', ''))
+    def addVenueFeatures(self, df, issn):
+        #df['ISSN'] = df['ISSN'].apply(lambda x: x.replace('-', '') if 'X' in x else x.lstrip('0').replace('-', ''))
+        df['ISSN'] = issn
         columns = ['Print ISSN', 'Citation Count', 'Scholarly Output', 'Percent Cited', 'CiteScore', 'SNIP', 'SJR',
                    'RANK', 'Rank Out Of']
         all_venues = pd.read_csv(self.VENUE_METADATA_FILE)
@@ -312,3 +313,14 @@ class PaperInfoCrawler:
             # downstream_df = self.fetchDownStreamData(df)
         # return df, auth_df, downstream_df, notFoundList
         return df, auth_df, notFoundList
+
+def simple_crawl(self, p_id, issn, auth):
+        #df with ISSN hopefully
+        df = pd.DataFrame()
+        df = self.addVenueFeatures(df, issn)
+        paper_not_found = False
+        df = self.addVenueFeatures(df, issn)
+        auth_df = self.fetchAuthData(df,auth , paper_not_found)
+        #downstream_df = self.fetchDownStreamData(df)
+        #return df,auth_df,downstream_df
+        return df, auth_df

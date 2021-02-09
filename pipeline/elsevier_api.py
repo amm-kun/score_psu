@@ -157,9 +157,9 @@ class getelsevier(getcrossref):
                         else:
                             status = 900
                     else:
-                        return {"doi":self.doi,"title":self.title,"issn":self.issn,"source-id":self.source,"coverDate":self.coverdate,"citedby":self.citedby,"openaccessFlag":self.openaccess}
+                        return {"doi":self.doi,"title":self.title,"ISSN":self.issn,"source-id":self.source,"coverDate":self.coverdate,"citedby":self.citedby,"openaccessFlag":self.openaccess}
                 if status!=200:
-                    return {"doi":self.doi,"title":self.title,"issn":self.issn,"source-id":self.source,"coverDate":self.coverdate,"citedby":self.citedby,"openaccessFlag":self.openaccess}
+                    return {"doi":self.doi,"title":self.title,"ISSN":self.issn,"source-id":self.source,"coverDate":self.coverdate,"citedby":self.citedby,"openaccessFlag":self.openaccess}
 
                 query = str(query)
                 # Interpretating the Json response to give a dataframe
@@ -168,7 +168,7 @@ class getelsevier(getcrossref):
                 df_search = pd.json_normalize(search_results)
                 results = df_search['opensearch:totalResults']
                 if results[0]=='0':
-                    return {"doi":self.doi,"title":self.title,"issn":self.issn,"source-id":self.source,"coverDate":self.coverdate,"citedby":self.citedby,"openaccessFlag":self.openaccess}
+                    return {"doi":self.doi,"title":self.title,"ISSN":self.issn,"source-id":self.source,"coverDate":self.coverdate,"citedby":self.citedby,"openaccessFlag":self.openaccess}
                 df = df_search['entry']
                 df = df.tolist()
                 entry = pd.json_normalize(df[0])
@@ -209,7 +209,7 @@ class getelsevier(getcrossref):
                                 flag =1
                                 break
                 if flag == 0:
-                    return {"doi":self.doi,"title":self.title,"issn":self.issn,"source-id":self.source,"coverDate":self.coverdate,"citedby":self.citedby,"openaccessFlag":self.openaccess}
+                    return {"doi":self.doi,"title":self.title,"ISSN":self.issn,"source-id":self.source,"coverDate":self.coverdate,"citedby":self.citedby,"openaccessFlag":self.openaccess}
                 
                 # Selecting only necessary features
                 columns = ['prism:issn', 'prism:doi','source-id','prism:coverDate', 'citedby-count', 'openaccessFlag', 'dc:title','affiliation','citedby-count']
@@ -238,7 +238,7 @@ class getelsevier(getcrossref):
                 if 'prism:doi' in entry.columns:
                     self.doi = entry.loc[i,'prism:doi']
 
-                return {"doi":self.doi,"title":self.title,"issn":self.issn,"source-id":self.source,"coverDate":self.coverdate,"citedby":self.citedby, "openaccessFlag":self.openaccess, "affilname":self.affilname,"affiliation-country":self.affilcountry}
+                return {"doi":self.doi,"title":self.title,"ISSN":self.issn,"source-id":self.source,"coverDate":self.coverdate,"citedby":self.citedby, "openaccessFlag":self.openaccess, "affilname":self.affilname,"affiliation-country":self.affilcountry}
 
     def check_dict(self,source):
         dict = pd.read_csv('journal_dictionary.csv')
@@ -291,7 +291,7 @@ class getelsevier(getcrossref):
         if l!=8:
             issn=issn.ljust(8, '0')
         source = self.source
-        
+        self.issn = issn
         query =issn
         url = 'https://api.elsevier.com/content/serial/title/issn/' + issn + '?apiKey=60eac67a00256938d498a1f2ac68dc68'
         r = requests.get(url)
@@ -364,7 +364,8 @@ class getsemantic(getelsevier):
         self.cmeth = -1
         self.upstream_influential_methodology_count = -1
         self.years = []
-
+        self.auth = [] 
+        
     def return_semantic(self):
         query = self.doi
         url = 'https://api.semanticscholar.org/v1/paper/'+str(query)
@@ -450,6 +451,13 @@ class getsemantic(getelsevier):
                 year = [num for num in year if num]
                 c = [y for y in year if y-self.coverdate<=3]
                 self.next = sum(Counter(c).values())
+        if 'authors' in data.columns:
+            author_list = data.loc[index,'authors']
+            id_list = list()
+            for data in author_list:
+              id_list.append(data['authorId'])
+            author_id_list = id_list
+            self.auth = author_id_list
         
         row = {'doi': self.doi, 'title': self.title, 'citationVelocity': self.velocity,
                'influentialCitationCount': self.incite,'openaccessFlag': self.openaccess,
@@ -458,6 +466,6 @@ class getsemantic(getelsevier):
                'reference_methodology': self.refmeth, 'citations_background': self.cback,
                'citations_result': self.cresult, 'citations_methodology': self.cmeth,
                "citation_next": self.next, "normalized_citations": self.normalized,
-               "upstream_influential_methodology_count": self.upstream_influential_methodology_count}
+               "upstream_influential_methodology_count": self.upstream_influential_methodology_count, "authors":self.auth}
         
         return row

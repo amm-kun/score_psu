@@ -178,6 +178,8 @@ class TEIExtractor:
             self.paper.cite_method = api_resp["citations_methodology"]
             self.paper.cite_next = api_resp["citations_next"]
             self.paper.influential_references_methodology = api_resp["upstream_influential_methodology_count"]
+            self.paper.issn = api_resp["ISSN"]
+            self.paper.auth = api_resp["authors"]
         # Set self-citations
         self.paper.self_citations = self.paper.set_self_citations()
         # return paper
@@ -194,7 +196,7 @@ class TEIExtractor:
                 "citations_background": self.paper.cite_background, "citations_result": self.paper.cite_result,
                 "citations_methodology": self.paper.cite_method, "citations_next": self.paper.cite_next,
                 "upstream_influential_methodology_count": self.paper.influential_references_methodology,
-                "coCite2":t2, "coCite3":t3}
+                "coCite2":t2, "coCite3":t3, "ISSN":self.paper.issn, "authors":self.paper.auth}
 
 
     @staticmethod
@@ -226,7 +228,7 @@ class TEIExtractor:
         scopus_search = response.return_search()
         serial_title = response.return_serialtitle()
         semantic = response.return_semantic()
-        final = {"doi":response.doi, "title":response.title, "sjr": response.sjr, "num_citations": response.citedby,"subject":response.subject,"subject_code":response.subject_code,"normalized_citations":response.normalized,"citationVelocity":response.velocity,"influentialCitationCount":response.incite,"references_count":response.refcount,"openaccessflag":response.openaccess,"influentialReferencesCount":response.inref, "reference_background": response.refback, "reference_result":response.refresult, "reference_methodology":response.refmeth,"citations_background":response.cback,"citations_result":response.cresult,"citations_methodology":response.cmeth, "citations_next":response.next, "upstream_influential_methodology_count": response.upstream_influential_methodology_count}
+        final = {"doi":response.doi, "title":response.title, "sjr": response.sjr, "num_citations": response.citedby,"subject":response.subject,"subject_code":response.subject_code,"normalized_citations":response.normalized,"citationVelocity":response.velocity,"influentialCitationCount":response.incite,"references_count":response.refcount,"openaccessflag":response.openaccess,"influentialReferencesCount":response.inref, "reference_background": response.refback, "reference_result":response.refresult, "reference_methodology":response.refmeth,"citations_background":response.cback,"citations_result":response.cresult,"citations_methodology":response.cmeth, "citations_next":response.next, "upstream_influential_methodology_count": response.upstream_influential_methodology_count, "ISSN": response.issn, "authors":response.auth}
         return final
 
 if __name__ == "__main__":
