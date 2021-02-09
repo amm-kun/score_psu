@@ -109,11 +109,11 @@ class PaperInfoCrawler:
             print("--------------------------")
         start_time = time.time()
         BASE_URL = 'https://www.semanticscholar.org/author/'
-        authorIds = []
-        for auth_list in list(auth):
-            authorIds = [int(s) for s in ast.literal_eval(str(auth_list)) if s is not None]
+        #authorIds = []
+        #for auth_list in list(auth):
+        #    authorIds = [int(s) for s in ast.literal_eval(str(auth_list)) if s is not None]
         auth_dict = []
-        for authId in authorIds:
+        for authId in auth:
             d = {}
             d['authorId'] = authId
             authUrl = BASE_URL + str(authId)
@@ -130,7 +130,7 @@ class PaperInfoCrawler:
             print("Author Meta: ", frontEndInfo)
         # time.sleep(1)
         if self.verbose: print(
-            "\nFetched " + str(len(authorIds)) + " author details in %s seconds." % (time.time() - start_time))
+            "\nFetched " + str(len(auth)) + " author details in %s seconds." % (time.time() - start_time))
         return pd.DataFrame(auth_dict)
 
     def addVenueFeatures(self, df, issn):
@@ -158,16 +158,16 @@ class PaperInfoCrawler:
                     for col, val in venue_info.mean().iteritems():
                         df_with_venue[col][index] = val
         df_with_venue['Venue Rank Ratio'] = df_with_venue['RANK'] / df_with_venue['Rank Out Of']
-        frontEndInfo = {'meta': 'venue_meta', 'citation_count': str(int(df_with_venue['Citation Count'][0])),
-                        'scholarly_output': str(int(df_with_venue['Scholarly Output'][0])),
-                        'percent_cited': str(round(df_with_venue['Percent Cited'][0], 2)),
-                        'cite_score': str(round(df_with_venue['CiteScore'][0], 2)),
-                        'snip': str(round(df_with_venue['SNIP'][0], 2)),
-                        'sjr': str(round(df_with_venue['SJR'][0], 2)),
-                        'rank_ratio': str(round(df_with_venue['Venue Rank Ratio'][0], 2))}
-        if not imputed:
+        #frontEndInfo = {'meta': 'venue_meta', 'citation_count': str(int(df_with_venue['Citation Count'][0])),
+        #                'scholarly_output': str(int(df_with_venue['Scholarly Output'][0])),
+        #                'percent_cited': str(round(df_with_venue['Percent Cited'][0], 2)),
+        #                'cite_score': str(round(df_with_venue['CiteScore'][0], 2)),
+        #                'snip': str(round(df_with_venue['SNIP'][0], 2)),
+        #                'sjr': str(round(df_with_venue['SJR'][0], 2)),
+        #                'rank_ratio': str(round(df_with_venue['Venue Rank Ratio'][0], 2))}
+        #if not imputed:
             # self.socketio.emit('server_response', frontEndInfo, namespace='')
-            print("Venue Features: ", frontEndInfo)
+        #    print("Venue Features: ", frontEndInfo)
         df_with_venue = df_with_venue.drop(['ISSN', 'Print ISSN', 'RANK', 'Rank Out Of'], axis=1)
         venue_name_dict = {'Citation Count': 'Venue_Citation_Count', 'Scholarly Output': 'Venue_Scholarly_Output',
                            'Percent Cited': 'Venue_Percent_Cited', 'CiteScore': 'Venue_CiteScore', 'SNIP': 'Venue_SNIP',
@@ -319,8 +319,8 @@ def simple_crawl(self, p_id, issn, auth):
         df = pd.DataFrame()
         df = self.addVenueFeatures(df, issn)
         paper_not_found = False
-        df = self.addVenueFeatures(df, issn)
         auth_df = self.fetchAuthData(df,auth , paper_not_found)
         #downstream_df = self.fetchDownStreamData(df)
         #return df,auth_df,downstream_df
-        return df, auth_df
+        notFoundList = []
+        return df, auth_df,notFoundList

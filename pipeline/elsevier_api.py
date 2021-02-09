@@ -59,7 +59,6 @@ class getcrossref:
             dois = data['DOI']
             titles = data['title']
         except:
-            print(data)
             dois = data['doi']
             titles = data['title']
         flag=0
@@ -183,13 +182,8 @@ class getelsevier(getcrossref):
                 flag = 0
                 #Checking all entrys for the paper
                 for i in range(len(entry)):
-
                     if x =='doi':
-                        if isinstance(doi_entry, list):  
-                            doi_check = str(doi_entry[i])
-                        else:
-                            flag =0
-                            break
+                        doi_check = str(doi_entry[i])
                         if doi_check.lower()==query.lower():
                             row = entry.loc[i,:]
                             row = pd.DataFrame(row)
@@ -201,7 +195,7 @@ class getelsevier(getcrossref):
                     if x == 'title':
                             title_check = str(title_entry[i])
                             ratio = fuzz.partial_ratio(query.lower(),title_check.lower())
-                            if ratio ==100:
+                            if ratio ==90:
                                 row = entry.iloc[i,:]
                                 row = pd.DataFrame(row)
                                 entry = row.transpose()
@@ -215,8 +209,20 @@ class getelsevier(getcrossref):
                 columns = ['prism:issn', 'prism:doi','source-id','prism:coverDate', 'citedby-count', 'openaccessFlag', 'dc:title','affiliation','citedby-count']
                 if 'prism:issn' in entry.columns:
                     self.issn = entry.loc[index,"prism:issn"]
+                    issn = self.issn
+                    issn = str(issn)
+                    l = len(issn)
+                    if l!=8:
+                        issn=issn.ljust(8, '0')
+                    self.issn = issn
                 elif 'prism:eIssn' in entry.columns:
                     self.issn = entry.loc[index,'prism:eIssn']
+                    issn = self.issn
+                    issn = str(issn)
+                    l = len(issn)
+                    if l!=8:
+                        issn=issn.ljust(8, '0')
+                    self.issn = issn
                 if 'source-id' in entry.columns:
                     self.source = entry.loc[index,"source-id"]
                 if 'prism:coverDate' in entry.columns:
@@ -285,14 +291,9 @@ class getelsevier(getcrossref):
     # Response from serial-title api
     def return_serialtitle(self):
         # Add 0's in the beginning of output from Scopus Search API
-        issn = self.issn
-        issn = str(issn)
-        l = len(issn)
-        if l!=8:
-            issn=issn.ljust(8, '0')
+        issn = str(self.issn)
         source = self.source
-        self.issn = issn
-        query =issn
+        query = issn
         url = 'https://api.elsevier.com/content/serial/title/issn/' + issn + '?apiKey=60eac67a00256938d498a1f2ac68dc68'
         r = requests.get(url)
         status = r.status_code
@@ -376,7 +377,6 @@ class getsemantic(getelsevier):
             return row
           
         data = r.json()
-
         # Get influential_methodology_references
         if self.doi:
             inf_meth_ref_count = 0
