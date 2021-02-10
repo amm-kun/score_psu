@@ -87,7 +87,7 @@ if __name__ == "__main__":
                 auth = extraction_stage['authors']
                 p_val_stage = extract_p_values(args.pdf_input + '/' + xml.replace('.tei.xml', '.txt'))
                 features = dict(**extraction_stage, **p_val_stage)
-                #pdb.set_trace()
+                pdb.set_trace()
                 # Get TAMU features
                 paper_id = xml.split('_')[-1].replace('.xml', '')
                 tamu_features, imputed_list = get_tamu_features(args.file, paper_id, issn, auth)
