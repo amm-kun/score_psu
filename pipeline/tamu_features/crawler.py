@@ -114,6 +114,7 @@ class PaperInfoCrawler:
         #    authorIds = [int(s) for s in ast.literal_eval(str(auth_list)) if s is not None]
         auth_dict = []
         for authId in auth:
+            authId.replace("'", '')
             d = {}
             d['authorId'] = authId
             authUrl = BASE_URL + str(authId)
@@ -134,8 +135,6 @@ class PaperInfoCrawler:
         return pd.DataFrame(auth_dict)
 
     def addVenueFeatures(self, df, issn):
-        #df['ISSN'] = df['ISSN'].apply(lambda x: x.replace('-', '') if 'X' in x else x.lstrip('0').replace('-', ''))
-        df['ISSN'] = issn
         columns = ['Print ISSN', 'Citation Count', 'Scholarly Output', 'Percent Cited', 'CiteScore', 'SNIP', 'SJR',
                    'RANK', 'Rank Out Of']
         all_venues = pd.read_csv(self.VENUE_METADATA_FILE)
@@ -167,7 +166,7 @@ class PaperInfoCrawler:
         #                'rank_ratio': str(round(df_with_venue['Venue Rank Ratio'][0], 2))}
         #if not imputed:
             # self.socketio.emit('server_response', frontEndInfo, namespace='')
-        #    print("Venue Features: ", frontEndInfo)
+            # print("Venue Features: ", frontEndInfo)
         df_with_venue = df_with_venue.drop(['ISSN', 'Print ISSN', 'RANK', 'Rank Out Of'], axis=1)
         venue_name_dict = {'Citation Count': 'Venue_Citation_Count', 'Scholarly Output': 'Venue_Scholarly_Output',
                            'Percent Cited': 'Venue_Percent_Cited', 'CiteScore': 'Venue_CiteScore', 'SNIP': 'Venue_SNIP',
@@ -314,13 +313,14 @@ class PaperInfoCrawler:
         # return df, auth_df, downstream_df, notFoundList
         return df, auth_df, notFoundList
 
-def simple_crawl(self, p_id, issn, auth):
+    def simple_crawl(self, p_id, issn, auth):
         #df with ISSN hopefully
-        df = pd.DataFrame()
-        df = self.addVenueFeatures(df, issn)
+        data = {'ISSN':issn}
+        df = pd.DataFrame(data,index = [0])
+        venue_df = self.addVenueFeatures(df, issn)
         paper_not_found = False
         auth_df = self.fetchAuthData(df,auth , paper_not_found)
         #downstream_df = self.fetchDownStreamData(df)
         #return df,auth_df,downstream_df
         notFoundList = []
-        return df, auth_df,notFoundList
+        return venue_df, auth_df,notFoundList
