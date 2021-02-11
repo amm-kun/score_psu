@@ -9,6 +9,7 @@ import requests
 import warnings
 import json
 import ast
+import pdb
 
 
 class DataProcessor:
@@ -22,16 +23,15 @@ class DataProcessor:
 
     def accumulate_author_stats(self, author_data, authors):
         author_ids = [s for s in ast.literal_eval(str(authors)) if s is not None]
-        if not self.google_scholar_data:
-            author_ids = [int(s) for s in author_ids]
+        #if not self.google_scholar_data:
+        #   author_ids = [int(s) for s in author_ids]
         author_mat = []
         auth_columns = ['Publications', 'h-index', 'Citations']
         if not self.google_scholar_data:
             auth_columns.append('Highly Influential Citations')
         for author_id in author_ids:
             if not self.google_scholar_data:
-                publication, h_index, citations, high_inf_citations = \
-                    (author_data.loc[author_data['authorId'] == author_id][auth_columns]).iloc[0]
+                publication, h_index, citations, high_inf_citations = (author_data.loc[author_data['authorId'] == author_id][auth_columns]).iloc[0]
                 if str(publication) == 'nan':
                     continue
                 author_mat.append([int(publication), int(h_index), int(citations), int(high_inf_citations)])
@@ -117,6 +117,9 @@ class DataProcessor:
         return df
 
     def process_auth_data(self, df, author_data):
+        pdb.set_trace()
+        if len(author_data)==0:
+            return pd.DataFrame()
         if self.google_scholar_data:
             return self.process_auth_data_google_scholar(df, author_data)
         # Adding author stats
@@ -124,9 +127,10 @@ class DataProcessor:
         df['max_pub'], df['max_hidx'], df['max_auth_cites'], df['max_high_inf_cites'] = '', '', '', ''
         df['first_pub'], df['first_hidx'], df['first_auth_cites'], df['first_high_inf_cites'] = '', '', '', ''
         df['last_pub'], df['last_hidx'], df['last_auth_cites'], df['last_high_inf_cites'] = '', '', '', ''
+        authors = str(list(author_data['authorId']))
         for index, row in df.iterrows():
             if df['avg_pub'][index] == '':
-                author_mat = self.accumulate_author_stats(author_data, row['authors'])
+                author_mat = self.accumulate_author_stats(author_data, authors)
                 df['avg_pub'][index], df['avg_hidx'][index], df['avg_auth_cites'][index], df['avg_high_inf_cites'][
                     index] = self.get_average_stats(author_mat)
                 df['max_pub'][index], df['max_hidx'][index], df['max_auth_cites'][index], df['max_high_inf_cites'][
@@ -143,11 +147,11 @@ class DataProcessor:
                         "first_high_inf_cites": float,
                         "last_pub": float, "last_hidx": float, "last_auth_cites": float, "last_high_inf_cites": float})
         # Adding citation count per year
-        current_year = date.today().year
-        df['citation_count_per_year'] = df['citations_count'] / (current_year - df['year'] + 1)
+        #current_year = date.today().year
+        #df['citation_count_per_year'] = df['citations_count'] / (current_year - df['year'] + 1)
         # Adding influential citation count per year
-        current_year = date.today().year
-        df['inf_citation_count_per_year'] = df['influentialCitationCount'] / (current_year - df['year'] + 1)
+        #current_year = date.today().year
+        #df['inf_citation_count_per_year'] = df['influentialCitationCount'] / (current_year - df['year'] + 1)
         return df
 
     def processFieldOfStudy(self, df):
@@ -184,9 +188,9 @@ class DataProcessor:
 
     def processData(self, df, auth_df, downstream_df=None):
         df_intermediate = self.process_auth_data(df, auth_df)
-        df_intermediate = self.processFieldOfStudy(df_intermediate)
+        #df_intermediate = self.processFieldOfStudy(df_intermediate)
         # if not self.google_scholar_data:
         #     df_intermediate = self.processDownstreamData(df_intermediate, downstream_df)
         # df_intermediate = self.processTextData(df_intermediate)
-        processed_df = self.processMiscFeatures(df_intermediate)
-        return processed_df, self.imputed_list
+        #processed_df = self.processMiscFeatures(df_intermediate)
+        return df_intermediate, self.imputed_list

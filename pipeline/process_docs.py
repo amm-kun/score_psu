@@ -85,16 +85,17 @@ if __name__ == "__main__":
                 extraction_stage = extractor.extract_paper_info()
                 issn = extraction_stage['ISSN']
                 auth = extraction_stage['authors']
+                del extraction_stage['ISSN']
+                del extraction_stage['authors']
                 p_val_stage = extract_p_values(args.pdf_input + '/' + xml.replace('.tei.xml', '.txt'))
                 features = dict(**extraction_stage, **p_val_stage)
                 #pdb.set_trace()
                 # Get TAMU features
                 paper_id = xml.split('_')[-1].replace('.xml', '')
-                tamu_features, imputed_list = get_tamu_features(args.file, paper_id, issn, auth)
-
+                tamu_features = get_tamu_features(args.file, paper_id, issn, auth)
                 select_tamu_features = select_keys(tamu_features, tamu_select_features)
                 features.update(select_tamu_features)
-
+                print(features)
                 if args.label_range:
                     label_range = args.label_range.split('-')
                     features['y'] = random.uniform(float(label_range[0]), float(label_range[1]))

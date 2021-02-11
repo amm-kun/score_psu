@@ -85,7 +85,7 @@ def select_keys(input_data , projection=None):
     output_projection = {}
     for key in projection:
         try:
-            output_projection[key] = input_data[key]
+            output_projection[key] = input_data[key].values[0]
         except KeyError:
             output_projection[key] = 0
     return output_projection

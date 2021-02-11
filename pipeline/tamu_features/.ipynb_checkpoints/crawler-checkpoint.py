@@ -9,7 +9,7 @@ import requests
 import time
 import ast
 import re
-
+import pdb
 
 class PaperInfoCrawler:
     def __init__(self, input_file, venue_metadata_file, verbose=0):
@@ -114,6 +114,7 @@ class PaperInfoCrawler:
         #    authorIds = [int(s) for s in ast.literal_eval(str(auth_list)) if s is not None]
         auth_dict = []
         for authId in auth:
+            authId.replace("'", '')
             d = {}
             d['authorId'] = authId
             authUrl = BASE_URL + str(authId)
@@ -131,11 +132,11 @@ class PaperInfoCrawler:
         # time.sleep(1)
         if self.verbose: print(
             "\nFetched " + str(len(auth)) + " author details in %s seconds." % (time.time() - start_time))
+        if len(auth_dict) == 0:
+            return None
         return pd.DataFrame(auth_dict)
 
     def addVenueFeatures(self, df, issn):
-        #df['ISSN'] = df['ISSN'].apply(lambda x: x.replace('-', '') if 'X' in x else x.lstrip('0').replace('-', ''))
-        df['ISSN'] = issn
         columns = ['Print ISSN', 'Citation Count', 'Scholarly Output', 'Percent Cited', 'CiteScore', 'SNIP', 'SJR',
                    'RANK', 'Rank Out Of']
         all_venues = pd.read_csv(self.VENUE_METADATA_FILE)
@@ -167,7 +168,7 @@ class PaperInfoCrawler:
         #                'rank_ratio': str(round(df_with_venue['Venue Rank Ratio'][0], 2))}
         #if not imputed:
             # self.socketio.emit('server_response', frontEndInfo, namespace='')
-        #    print("Venue Features: ", frontEndInfo)
+            # print("Venue Features: ", frontEndInfo)
         df_with_venue = df_with_venue.drop(['ISSN', 'Print ISSN', 'RANK', 'Rank Out Of'], axis=1)
         venue_name_dict = {'Citation Count': 'Venue_Citation_Count', 'Scholarly Output': 'Venue_Scholarly_Output',
                            'Percent Cited': 'Venue_Percent_Cited', 'CiteScore': 'Venue_CiteScore', 'SNIP': 'Venue_SNIP',
@@ -315,15 +316,22 @@ class PaperInfoCrawler:
         return df, auth_df, notFoundList
 
     def simple_crawl(self, p_id, issn, auth):
-            if not issn:
-                input_file = pd.read_csv(self.INPUT_FILE, sep='\t')
+        #pdb.set_trace()
+        if issn == '-1':
+            input_file = pd.read_csv(self.INPUT_FILE)
+            if input_file[input_file['DOI_CR'] == p_id]['ISSN_CR'].values:
                 issn = input_file[input_file['DOI_CR'] == p_id]['ISSN_CR'].values[0]
-            #df with ISSN hopefully
-            df = pd.DataFrame()
-            df = self.addVenueFeatures(df, issn)
+        #df with ISSN hopefully
+        venue_df,auth_df = pd.DataFrame(), pd.DataFrame()
+        print(issn,type(issn))
+        if issn!='-1':
+            data = {'ISSN':issn}
+            df = pd.DataFrame(data,index = [0])
+            venue_df = self.addVenueFeatures(df, issn)
+        if auth:
             paper_not_found = False
-            auth_df = self.fetchAuthData(df,auth , paper_not_found)
-            #downstream_df = self.fetchDownStreamData(df)
-            #return df,auth_df,downstream_df
-            notFoundList = []
-            return df, auth_df,notFoundList
+            auth_df = self.fetchAuthData(venue_df ,auth , paper_not_found)
+        #downstream_df = self.fetchDownStreamData(df)
+        #return df,auth_df,downstream_df
+        notFoundList = []
+        return venue_df, auth_df,notFoundList

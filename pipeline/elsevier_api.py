@@ -114,7 +114,7 @@ class getelsevier(getcrossref):
 
     def __init__(self,doi,title):
         super().__init__(doi,title)
-        self.issn = -1
+        self.issn = '-1'
         self.source = -1
         self.openaccess = -1
         self.affilname = float('NaN')
