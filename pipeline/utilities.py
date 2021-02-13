@@ -10,10 +10,12 @@ p_val_sign = {
     '>': 1
 }
 
-
+#{'Citation Count': 'Venue_Citation_Count', 'Scholarly Output': 'Venue_Scholarly_Output',
+#                           'Percent Cited': 'Venue_Percent_Cited', 'CiteScore': 'Venue_CiteScore', 'SNIP': 'Venue_SNIP',
+ #                          'SJR': 'Venue_SJR'}
 tamu_select_features = ["Venue_Citation_Count", "Venue_Scholarly_Output", "Venue_Percent_Cited", "Venue_CiteScore",
-                        "Venue_SNIP", "Venue_Rank_Ratio", "avg_pub", "avg_hidx", "avg_auth_cites",
-                        "avg_high_inf_cites", "paper_age"]
+                        "Venue_SNIP", "Venue_SJR", "avg_pub", "avg_hidx", "avg_auth_cites",
+                        "avg_high_inf_cites","sentiment_agg", "paper_age"]
 
 def remove_accents(text: str):
     text = re.sub('[âàäáãå]', 'a', text)
@@ -86,7 +88,7 @@ def select_keys(input_data , projection=None):
     for key in projection:
         try:
             output_projection[key] = input_data[key].values[0]
-        except KeyError:
+        except:
             output_projection[key] = 0
     return output_projection
 

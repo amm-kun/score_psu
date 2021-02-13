@@ -6,7 +6,8 @@ from fuzzywuzzy import fuzz
 import os
 import math
 from datetime import datetime
-from collections import Counter 
+from collections import Counter
+import pickledb
 
 
 # %%
@@ -342,7 +343,7 @@ class getelsevier(getcrossref):
 # %%
 class getsemantic(getelsevier):
     
-    def __init__(self,doi,title):
+    def __init__(self,doi,title,db):
         super().__init__(doi,title)
         
         currentYear = datetime.now().year
@@ -366,17 +367,24 @@ class getsemantic(getelsevier):
         self.upstream_influential_methodology_count = -1
         self.years = []
         self.auth = [] 
-        
+        self.citations = []
+        #self.paperid_database = pickledb.load(db + '/paperid.db',True)
+        self.paperid_database = None
     def return_semantic(self):
         query = self.doi
-        url = 'https://api.semanticscholar.org/v1/paper/'+str(query)
-        r = requests.get(url)
-        row = {"upstream_influential_methodology_count": self.upstream_influential_methodology_count, "normalized_citations":self.normalized, 'doi': self.doi, 'title':self.title, 'citationVelocity':self.velocity, 'influentialCitationCount':self.incite,'is_open_access':self.openaccess,'references_count':self.refcount,'influentialReferencesCount':self.inref,'reference_background':self.refback,'reference_result':self.refresult,'reference_methodology':self.refmeth,'citations_background':self.cback,'citations_result':self.cresult,'citations_methodology':self.cmeth}
+        if False and self.paperid_database.get(query):
+            data = self.paperid_database.get(query)
+        else:
+            url = 'https://api.semanticscholar.org/v1/paper/'+str(query)
+            r = requests.get(url)
+            row = {"upstream_influential_methodology_count": self.upstream_influential_methodology_count, "normalized_citations":self.normalized, 'doi': self.doi, 'title':self.title, 'citationVelocity':self.velocity, 'influentialCitationCount':self.incite,'is_open_access':self.openaccess,'references_count':self.refcount,'influentialReferencesCount':self.inref,'reference_background':self.refback,'reference_result':self.refresult,'reference_methodology':self.refmeth,'citations_background':self.cback,'citations_result':self.cresult,'citations_methodology':self.cmeth}
 
-        if r.status_code != 200:
-            return row
-          
-        data = r.json()
+            if r.status_code != 200:
+                return row
+
+            data = r.json()
+            #self.paperid_database.set(query,r.json())
+            
         # Get influential_methodology_references
         if self.doi:
             inf_meth_ref_count = 0
@@ -436,8 +444,8 @@ class getsemantic(getelsevier):
             if openaccess>int(self.openaccess):
                 self.openaccess = int(openaccess)
         if 'citations' in data.columns:
-            citations = data.loc[index,'citations']
-            cit = pd.json_normalize(citations)
+            self.citations = data.loc[index,'citations']
+            cit = pd.json_normalize(self.citations)
             if 'intent' in cit.columns:
                 cintent = cit['intent']
                 cintent = cintent.tolist()
@@ -466,6 +474,6 @@ class getsemantic(getelsevier):
                'reference_methodology': self.refmeth, 'citations_background': self.cback,
                'citations_result': self.cresult, 'citations_methodology': self.cmeth,
                "citation_next": self.next, "normalized_citations": self.normalized,
-               "upstream_influential_methodology_count": self.upstream_influential_methodology_count, "authors":self.auth}
+               "upstream_influential_methodology_count": self.upstream_influential_methodology_count, "authors":self.auth,"citations":self.citations}
         
         return row

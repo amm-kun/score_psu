@@ -9,13 +9,18 @@ import requests
 import time
 import ast
 import re
+import pickledb
 import pdb
 
 class PaperInfoCrawler:
-    def __init__(self, input_file, venue_metadata_file, verbose=0):
+    def __init__(self, input_file, venue_metadata_file, database, verbose=0):
         self.INPUT_FILE = input_file
         self.VENUE_METADATA_FILE = venue_metadata_file
-        self.verbose = verbose
+        #self.paperid_database = pickledb.load(database + '/paperid.db',True)
+        #self.author_database =  pickledb.load(database + '/author.db',True)
+        self.paperid_database = False
+        self.author_database = False
+        self.verbose = False
         # self.socketio = socketio
         self.topN = 50
 
@@ -27,10 +32,15 @@ class PaperInfoCrawler:
         return id_list
 
     def fetch_paper(self, search_query, data_row=None):
-        api_url = 'https://partner.semanticscholar.org/v1/paper/'
-        headers = {'x-api-key': 'I6SO5Ckndk67RitJNJOFR4d7jDiVpWOgaMFUhgkM'}
-        result = requests.get(api_url + search_query, headers=headers)
-        paper = result.json()
+        if False and self.paperid_database.get(search_query):
+            paper=self.paperid_database.get(search_query)
+        else:
+            api_url = 'https://partner.semanticscholar.org/v1/paper/'
+            headers = {'x-api-key': 'I6SO5Ckndk67RitJNJOFR4d7jDiVpWOgaMFUhgkM'}
+            result = requests.get(api_url + search_query, headers=headers)
+            paper = result.json()
+            #self.paperid_database.set(search_query,result.json())
+            #self.paperid_database.dump()
         if 'error' in paper.keys():
             if paper['error'] == 'Paper not found':
                 return None
@@ -39,6 +49,8 @@ class PaperInfoCrawler:
                 time.sleep(300)
                 result = requests.get(api_url + search_query)
                 paper = result.json()
+                #self.paperid_database.set(search_query,result.json())
+                #self.paperid_database.dump()
         author_list = paper['authors']
         citations_list = paper['citations']
         author_id_list = self.get_list(author_list, 'authorId')
@@ -117,21 +129,21 @@ class PaperInfoCrawler:
             authId.replace("'", '')
             d = {}
             d['authorId'] = authId
-            authUrl = BASE_URL + str(authId)
-            stats, name = self.fetchAuthorMetadata(authUrl)
+            if False and self.author_database.get(authId):
+                stats, name = self.author_database.get(authId)
+            else:
+                authUrl = BASE_URL + str(authId)
+                stats, name = self.fetchAuthorMetadata(authUrl)
+                #self.author_database.set(authId,(stats,name))
             data = re.findall('.*?[0-9,]+', stats)
             for info in data:
                 info_detail = re.split(r'([\d+,]*\d+)', info)
                 d[info_detail[0]] = int(info_detail[1].replace(",", ""))
             auth_dict.append(d)
-            frontEndInfo = {'meta': 'auth_meta', 'name': name, 'publications': d['Publications'], 'url': authUrl,
-                            'citations': d['Citations'], 'h_citations': d['Highly Influential Citations'],
-                            'h_index': d['h-index']}
             # self.socketio.emit('server_response', frontEndInfo, namespace='')
-            print("Author Meta: ", frontEndInfo)
         # time.sleep(1)
-        if self.verbose: print(
-            "\nFetched " + str(len(auth)) + " author details in %s seconds." % (time.time() - start_time))
+        if self.verbose: 
+            print("\nFetched " + str(len(auth)) + " author details in %s seconds." % (time.time() - start_time))
         if len(auth_dict) == 0:
             return None
         return pd.DataFrame(auth_dict)
@@ -177,20 +189,18 @@ class PaperInfoCrawler:
         df_with_venue.rename(columns=venue_name_dict, inplace=True)
         return df_with_venue
 
-    def fetchDownStreamData(self, df):
+    def fetchDownStreamData(self, citations):
         if self.verbose:
             print("\nFETCHING DOWNSTREAM PAPERS")
             print("--------------------------")
         start_time = time.time()
         fetchedPapers = []
-        downstreamPapersIds = set()
-        for citation_list in list(df['citations']):
-            downstreamPapersIds.update([s for s in ast.literal_eval(str(citation_list)) if s is not None])
+        citations = self.get_list(citations, 'paperId')
+        downstreamPapersIds = set(citations)
         p_count = 0
         if len(downstreamPapersIds) == 0:
             frontEndInfo = {'meta': 'downstream_meta', 'no_citations_found': '1'}
             # self.socketio.emit('server_response', frontEndInfo, namespace='')
-            print("Downstream: ", frontEndInfo)
         for paperId in downstreamPapersIds:
             if p_count == self.topN: break
             search_attempt = 1
@@ -208,7 +218,6 @@ class PaperInfoCrawler:
                     if 'abstract' in paper and paper['abstract'] is not None:
                         frontEndInfo['abstract'] = paper['abstract'][:min(350, len(paper['abstract']))] + '...'
                     # self.socketio.emit('server_response', frontEndInfo, namespace='')
-                    print("Downstream: ", frontEndInfo)
                     if self.verbose: print(str(paperId) + ' done.')
                     p_count += 1
                     break
@@ -315,15 +324,13 @@ class PaperInfoCrawler:
         # return df, auth_df, downstream_df, notFoundList
         return df, auth_df, notFoundList
 
-    def simple_crawl(self, p_id, issn, auth):
-        #pdb.set_trace()
+    def simple_crawl(self, p_id, issn, auth, citations):
         if issn == '-1':
             input_file = pd.read_csv(self.INPUT_FILE)
             if input_file[input_file['DOI_CR'] == p_id]['ISSN_CR'].values:
                 issn = input_file[input_file['DOI_CR'] == p_id]['ISSN_CR'].values[0]
         #df with ISSN hopefully
         venue_df,auth_df = pd.DataFrame(), pd.DataFrame()
-        print(issn,type(issn))
         if issn!='-1':
             data = {'ISSN':issn}
             df = pd.DataFrame(data,index = [0])
@@ -331,7 +338,9 @@ class PaperInfoCrawler:
         if auth:
             paper_not_found = False
             auth_df = self.fetchAuthData(venue_df ,auth , paper_not_found)
-        #downstream_df = self.fetchDownStreamData(df)
+        downstream_df=pd.DataFrame()
+        if len(citations)>0:
+            downstream_df = self.fetchDownStreamData(citations)
         #return df,auth_df,downstream_df
         notFoundList = []
-        return venue_df, auth_df,notFoundList
+        return venue_df, auth_df, downstream_df

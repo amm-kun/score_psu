@@ -10,7 +10,8 @@ import warnings
 import json
 import ast
 import pdb
-
+from tamu_features.sentiment_model import Sentiment
+from collections import defaultdict
 
 class DataProcessor:
     def __init__(self, training_dir, google_scholar_data, verbose=0):
@@ -20,6 +21,7 @@ class DataProcessor:
         self.TRAINING_DIR = training_dir
         self.imputed_list = []
         self.training_data = pd.read_csv(self.TRAINING_DIR + r"/processed_gold_data.csv")
+        self.classify = Sentiment()
 
     def accumulate_author_stats(self, author_data, authors):
         author_ids = [s for s in ast.literal_eval(str(authors)) if s is not None]
@@ -117,7 +119,6 @@ class DataProcessor:
         return df
 
     def process_auth_data(self, df, author_data):
-        pdb.set_trace()
         if len(author_data)==0:
             return pd.DataFrame()
         if self.google_scholar_data:
@@ -185,7 +186,25 @@ class DataProcessor:
                                      'claim2_abstract', 'claim4_inftest', 'claim3a_concretehyp', 'claim3b_testspec']
         df = df.drop(columns_to_be_dropped, axis=1)
         return df
-
+    def processDownstreamData(self,base_df,downstream):
+        di=defaultdict()
+        di[-1] = -1
+        for i,row in downstream.iterrows():
+            try:
+                if isinstance(row.abstract,str):
+                    label=self.classify.classify(row.abstract)
+                    if label in di.keys():
+                        di[label]+=1
+                    else:
+                        di[label]=1
+            except:
+                continue
+        if 'Target Sentiment Not Found' in di.keys():
+            del di['Target Sentiment Not Found']
+        base_df['sentiment_agg'] = max(di, key=di.get)
+        return base_df
+        
+        
     def processData(self, df, auth_df, downstream_df=None):
         df_intermediate = self.process_auth_data(df, auth_df)
         #df_intermediate = self.processFieldOfStudy(df_intermediate)
@@ -193,4 +212,5 @@ class DataProcessor:
         #     df_intermediate = self.processDownstreamData(df_intermediate, downstream_df)
         # df_intermediate = self.processTextData(df_intermediate)
         #processed_df = self.processMiscFeatures(df_intermediate)
+        df_intermediate = self.processDownstreamData(df_intermediate,downstream_df)
         return df_intermediate, self.imputed_list

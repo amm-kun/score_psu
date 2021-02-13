@@ -41,7 +41,7 @@ class ReadPickle:
 
 
 class TEIExtractor:
-    def __init__(self, file, test_tsv=None):
+    def __init__(self, file, db, test_tsv=None):
         self.file = file
         self.uni_rank = ReadPickle('uni_rank.pickle')
         self.sjr = ReadPickle('journal_dictionary.pkl')
@@ -49,7 +49,7 @@ class TEIExtractor:
         self.paper = Paper()
         with open(file, 'rb') as tei:
             self.soup = BeautifulSoup(tei, features="lxml")
-
+        self.db=db
     # TODO: return paper | redesign extractor to make it more modular to test individual components
 
     def get_self_citations(self):
@@ -158,7 +158,7 @@ class TEIExtractor:
         else:
             self.paper.funded = 0
         # SJR
-        api_resp = self.get_sjr(self.paper.doi, self.paper.title)
+        api_resp = self.get_sjr(self.paper.doi, self.paper.title,self.db)
         if api_resp:
             self.paper.cited_by_count = api_resp["num_citations"]
             self.paper.sjr = api_resp["sjr"]
@@ -184,7 +184,7 @@ class TEIExtractor:
         self.paper.self_citations = self.paper.set_self_citations()
         # return paper
 
-        t2,t3 = coCite(self.paper.doi)
+        t2,t3 = coCite(self.paper.doi, self.db)
         return {"doi": self.paper.doi, "title": self.paper.title, "num_citations": self.paper.cited_by_count,
                 "author_count": len(self.paper.authors),"sjr": self.paper.sjr, "u_rank": self.paper.uni_rank,
                 "funded": self.paper.funded,"self_citations": self.paper.self_citations, "subject": self.paper.subject,
@@ -196,7 +196,7 @@ class TEIExtractor:
                 "citations_background": self.paper.cite_background, "citations_result": self.paper.cite_result,
                 "citations_methodology": self.paper.cite_method, "citations_next": self.paper.cite_next,
                 "upstream_influential_methodology_count": self.paper.influential_references_methodology,
-                "coCite2":t2, "coCite3":t3, "ISSN":self.paper.issn, "authors":self.paper.auth}
+                "coCite2":t2, "coCite3":t3, "ISSN":self.paper.issn, "authors":self.paper.auth,"citations":api_resp["citations"]}
 
 
     @staticmethod
@@ -220,15 +220,15 @@ class TEIExtractor:
         return pairs
 
     @staticmethod
-    def get_sjr(doi,title):
+    def get_sjr(doi,title,db):
 
         
-        response = getsemantic(doi,title)
+        response = getsemantic(doi,title,db)
         crossref = response.get_row()
         scopus_search = response.return_search()
         serial_title = response.return_serialtitle()
         semantic = response.return_semantic()
-        final = {"doi":response.doi, "title":response.title, "sjr": response.sjr, "num_citations": response.citedby,"subject":response.subject,"subject_code":response.subject_code,"normalized_citations":response.normalized,"citationVelocity":response.velocity,"influentialCitationCount":response.incite,"references_count":response.refcount,"openaccessflag":response.openaccess,"influentialReferencesCount":response.inref, "reference_background": response.refback, "reference_result":response.refresult, "reference_methodology":response.refmeth,"citations_background":response.cback,"citations_result":response.cresult,"citations_methodology":response.cmeth, "citations_next":response.next, "upstream_influential_methodology_count": response.upstream_influential_methodology_count, "ISSN": response.issn, "authors":response.auth}
+        final = {"doi":response.doi, "title":response.title, "sjr": response.sjr, "num_citations": response.citedby,"subject":response.subject,"subject_code":response.subject_code,"normalized_citations":response.normalized,"citationVelocity":response.velocity,"influentialCitationCount":response.incite,"references_count":response.refcount,"openaccessflag":response.openaccess,"influentialReferencesCount":response.inref, "reference_background": response.refback, "reference_result":response.refresult, "reference_methodology":response.refmeth,"citations_background":response.cback,"citations_result":response.cresult,"citations_methodology":response.cmeth, "citations_next":response.next, "upstream_influential_methodology_count": response.upstream_influential_methodology_count, "ISSN": response.issn, "authors":response.auth, "citations":response.citations}
         return final
 
 if __name__ == "__main__":

@@ -13,9 +13,10 @@ import json
 import csv
 import time
 import numpy as np
+import pickledb
 from ratelimit import limits, sleep_and_retry
 
-
+cocite_db = None
 #===============================================================================================
 # Main part, Construct cocitation
 #===============================================================================================
@@ -32,19 +33,25 @@ def call_api(query):
     if r.status_code != 200:
         print('API response: {}'.format(r.status_code))
         raise Exception('API response: {}'.format(r.status_code))
-    return r
+    return r.json()
         
-def coCite(doi) :   
+def coCite(doi,db) :   
+    global cocite_db
     cocitationsAll = {}
     YearGap = 3          # change this to control the publish time of papers that cited the source paper
     counter_sourceDOI = 0
     dt2={}
     dt3={}
+    if cocite_db == None:
+        print('loading db')
+        cocite_db  = pickledb.load(db + '/cocite.db', True)
+    if cocite_db.get(doi):
+        return cocite_db.get(doi)
     try:
         if isinstance(doi,str):
 
-            r = call_api(doi)
-            dataapi = r.json()   # a dictionary for the source paper
+            dataapi = call_api(doi,db)
+            #dataapi = r.json()   # a dictionary for the source paper
 
             citations = dataapi.get('citations')
             pubYear = dataapi.get('year')
@@ -101,6 +108,7 @@ def coCite(doi) :
                 cnt2 = 0
                 cnt2 = sum(1 for k,v in dict.items() if int(v)>=2)
                 #print(row.doi, cnt2, cnt3 , r.status_code)
+                cocite_db.set(doi, (cnt2,cnt3))
                 return cnt2,cnt3
         else:
             return 0,0
