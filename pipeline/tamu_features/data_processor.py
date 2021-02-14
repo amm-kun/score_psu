@@ -187,21 +187,34 @@ class DataProcessor:
         df = df.drop(columns_to_be_dropped, axis=1)
         return df
     def processDownstreamData(self,base_df,downstream):
+        toKey={'Target Sentiment Not Found':0,'Positive-Consistent':1,'Negative-Inconsistent':2}
         di=defaultdict()
         di[-1] = -1
-        for i,row in downstream.iterrows():
-            try:
-                if isinstance(row.abstract,str):
-                    label=self.classify.classify(row.abstract)
-                    if label in di.keys():
-                        di[label]+=1
-                    else:
-                        di[label]=1
-            except:
-                continue
-        if 'Target Sentiment Not Found' in di.keys():
-            del di['Target Sentiment Not Found']
-        base_df['sentiment_agg'] = max(di, key=di.get)
+        try:
+            for i,row in downstream.iterrows():
+                try:
+                    if isinstance(row.abstract,str):
+                        label=self.classify.classify(row.abstract)
+                        if label in di.keys():
+                            di[label]+=1
+                        else:
+                            di[label]=1
+                except:
+                    continue
+            pdb.set_trace()
+            if 'Target Sentiment Not Found' in di.keys():
+                del di['Target Sentiment Not Found']
+            key = max(di, key=di.get)
+            if key == -1:
+                key = 'Target Sentiment Not Found'
+            if key in toKey.keys():
+                base_df['sentiment_agg'] = int(toKey[key])
+            else:
+                base_df['sentiment_agg'] = -1
+        except Exception as e:
+            print(str(e))
+            base_df['sentiment_agg'] = -1
+            return base_df
         return base_df
         
         
