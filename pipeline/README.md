@@ -52,3 +52,5 @@ Important files for reference:
 
 **NOTE:** Elsevier api key may expire after certain number of hits. In case of batch processing, it is better to update api key details from elsevier developer [portal](https://dev.elsevier.com). Check the same for semantic scholar api.
 
+
+**NOTE** Place the citation sentiment model under pipeline/tamu_features/rec_model/pytorch_model.bin from the [link](https://drive.google.com/file/d/1Yd_x-65bCqu8kJlo6QaIltoNv2CCEU0w/view?usp=sharing)
