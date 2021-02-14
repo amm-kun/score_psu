@@ -31,14 +31,14 @@ if __name__ == "__main__":
     args = parser.parse_args()
     logcontrol.register_logger(timelogger.logger, "timelogger")
     logcontrol.set_level(logcontrol.DEBUG, group="timelogger")
-    logcontrol.log_to_console(group="timelogger")
+    #logcontrol.log_to_console(group="timelogger")
     logcontrol.set_log_file(args.csv_out + '/main_log.txt')
 
     # Debug parameters config
     #args.mode = "extract-test"
     #args.grobid_out = r"C:\Users\arjun\dev\GROBID_processed\test"
     #args.pdf_input = r"C:\Users\arjun\dev\test\pdfs"
-    args.file = r"~/data/2400set/data.csv"
+    args.data_file = r"~/data/2400set/data.csv"
     #args.csv_out = r"C:\Users\arjun\dev"
 
     # Process PDFS -> Generate XMLs and txt files
@@ -100,7 +100,7 @@ if __name__ == "__main__":
                 #pdb.set_trace()
                 # Get TAMU features
                 paper_id = xml.split('_')[-1].replace('.xml', '')
-                tamu_features = get_tamu_features(args.file, paper_id, issn, auth, citations,database)
+                tamu_features = get_tamu_features(args.data_file, paper_id, issn, auth, citations,database)
                 select_tamu_features = select_keys(tamu_features, tamu_select_features)
                 features.update(select_tamu_features)
                 print(features)
@@ -197,7 +197,7 @@ if __name__ == "__main__":
                 timelogger.start("overall")
                 print("Processing ", xml)
                 timelogger.start("metadata_apis")
-                extractor = TEIExtractor(args.grobid_out + '/' + xml)
+                extractor = TEIExtractor(args.grobid_out + '/' + xml,database)
                 extraction_stage = extractor.extract_paper_info()
                 issn = extraction_stage['ISSN']
                 auth = extraction_stage['authors']
@@ -215,12 +215,11 @@ if __name__ == "__main__":
                 # Get TAMU features
                 timelogger.start("tamu")
                 paper_id = xml.split('_')[-1].replace('.xml', '')
-                tamu_features = get_tamu_features(args.file, paper_id, issn, auth, citations,database)
+                tamu_features = get_tamu_features(args.data_file, paper_id, issn, auth, citations,database)
                 select_tamu_features = select_keys(tamu_features, tamu_select_features)
                 features.update(select_tamu_features)
                 timelogger.stop("tamu")
                 print(features)
-
                 if args.label_range:
                     label_range = args.label_range.split('-')
                     features['y'] = random.uniform(float(label_range[0]), float(label_range[1]))

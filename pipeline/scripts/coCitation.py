@@ -50,7 +50,7 @@ def coCite(doi,db) :
     try:
         if isinstance(doi,str):
 
-            dataapi = call_api(doi,db)
+            dataapi = call_api(doi)
             #dataapi = r.json()   # a dictionary for the source paper
 
             citations = dataapi.get('citations')
