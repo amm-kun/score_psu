@@ -1,0 +1,23 @@
+﻿S.No,Feature Name,Feature Description
+1,Citation Velocity,Weighted average citations of the paper for the last 3 years  (fewer for publications published in the last year or two) 
+2,Citation Count,Number of times a paper has been cited. 
+3,Age of Paper,How old is the paper in years
+4,Influential Citation Count,Number of citations that are tagged as highly influential by semantic scholar website
+5,Category/Field of Study,"The field of study of paper, such as Physcology, Medicine, Economics, etc."
+6,Venue's Citation Count,Total citation count (in past one year) of a venue
+7,Venue's Scholarly Output,Total count of research outputs from the venue
+8,Venue's Percent Cited,Percentage of publications that gets cited atleast once in past 3 years from a venue
+9,Venue's Cite Score,Number of citations of the venue from past 3 years for every publications in past 3 years.
+10,Venue's Rank Ratio,Ratio of venue's rank vs. total venues ranked in the order of their CiteScore listed in Scopus repository
+11,SNIP,Contextual citation impact of the venue by weighting citations based on the total number of citations in a subject field
+12,SJR,Prestige metric which is a size-independent indicator and ranks paper's journal by their 'average prestige per article'
+13,Author's Citations,Number of citations of the author
+14,Author's Publications,Number of publications of the author
+15,Author's h-index,The h-index of the author
+16,Author's Highly Influential Citations,Number of citatins of the author that are tagged as highly influential by Semantic Scholar website
+17,Abstract Embedding score,Abstract's representation score (calculated using SciBert embeddings)
+18,Title's embedding score,Title's representation score (calculated using SciBert embeddings)
+19,Claim3a embedding score,Representation score of claim 3a (calculated using SciBert embeddings) which states the concrete hypothesis
+20,Claim3b embedding score,Representation score of claim 3b (calculated using SciBert embeddings) which covers the test specifications
+21,Claim2 embedding score,Representation score of claim2 abstract (calculated using SciBert embeddings)
+22,Claim4 embedding score,Representation score of claim4 (calculated using SciBert embeddings) which covers the test inference

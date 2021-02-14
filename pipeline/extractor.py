@@ -3,7 +3,9 @@ from fuzzywuzzy import process
 from utilities import elem_to_text
 from bs4 import BeautifulSoup
 from ack_pairs import *
-from elsevier_api import getapi
+from elsevier_api import getcrossref
+from elsevier_api import getelsevier
+from elsevier_api import getsemantic
 import pickle
 import pdb
 from scripts.coCitation import coCite
@@ -39,7 +41,7 @@ class ReadPickle:
 
 
 class TEIExtractor:
-    def __init__(self, file, test_tsv=None):
+    def __init__(self, file, db, test_tsv=None):
         self.file = file
         self.uni_rank = ReadPickle('uni_rank.pickle')
         self.sjr = ReadPickle('journal_dictionary.pkl')
@@ -47,7 +49,7 @@ class TEIExtractor:
         self.paper = Paper()
         with open(file, 'rb') as tei:
             self.soup = BeautifulSoup(tei, features="lxml")
-
+        self.db=db
     # TODO: return paper | redesign extractor to make it more modular to test individual components
 
     def get_self_citations(self):
@@ -156,7 +158,7 @@ class TEIExtractor:
         else:
             self.paper.funded = 0
         # SJR
-        api_resp = self.get_sjr(self.paper.doi,self.paper.title)
+        api_resp = self.get_sjr(self.paper.doi, self.paper.title,self.db)
         if api_resp:
             self.paper.cited_by_count = api_resp["num_citations"]
             self.paper.sjr = api_resp["sjr"]
@@ -175,13 +177,14 @@ class TEIExtractor:
             self.paper.cite_result = api_resp["citations_result"]
             self.paper.cite_method = api_resp["citations_methodology"]
             self.paper.cite_next = api_resp["citations_next"]
+            self.paper.influential_references_methodology = api_resp["upstream_influential_methodology_count"]
+            self.paper.issn = api_resp["ISSN"]
+            self.paper.auth = api_resp["authors"]
         # Set self-citations
         self.paper.self_citations = self.paper.set_self_citations()
-        # Set influential_methodology_references
-        self.paper.influential_references_methodology = self.set_influential_references_methodology()
         # return paper
 
-        t2,t3 = coCite(self.paper.doi)
+        t2,t3 = coCite(self.paper.doi, self.db)
         return {"doi": self.paper.doi, "title": self.paper.title, "num_citations": self.paper.cited_by_count,
                 "author_count": len(self.paper.authors),"sjr": self.paper.sjr, "u_rank": self.paper.uni_rank,
                 "funded": self.paper.funded,"self_citations": self.paper.self_citations, "subject": self.paper.subject,
@@ -193,7 +196,7 @@ class TEIExtractor:
                 "citations_background": self.paper.cite_background, "citations_result": self.paper.cite_result,
                 "citations_methodology": self.paper.cite_method, "citations_next": self.paper.cite_next,
                 "upstream_influential_methodology_count": self.paper.influential_references_methodology,
-                "coCite2":t2, "coCite3":t3}
+                "coCite2":t2, "coCite3":t3, "ISSN":self.paper.issn, "authors":self.paper.auth,"citations":api_resp["citations"]}
 
 
     @staticmethod
@@ -217,102 +220,16 @@ class TEIExtractor:
         return pairs
 
     @staticmethod
-    def get_sjr(doi,title):
-        api = getapi(doi,title)
-        if api.empty:
-            return None
-        else:
-            try:
-                cited_by = api['num_citations'][0]
-            except KeyError:
-                cited_by = 0
-            try: 
-                normalized = api['normalized_citations'][0]
-            except:
-                normalized = 0.0
-            try: 
-                velocity = api['citationVelocity'][0]
-            except:
-                velocity = 0
-            try: 
-                influentialcitations = api['influentialCitationCount'][0]
-            except:
-                influentialcitations = 0
-            try: 
-                references  = api['references_count'][0]
-            except:
-                references = 0
-            try:
-                sjr_score = api['SJR'][0]
-            except KeyError:
-                sjr_score = 0
-            try: 
-                subject = api['subject'][0]
+    def get_sjr(doi,title,db):
 
-            except:
-                subject = 0
-            try: 
-                subject_code = api['subject_code'][0]
-            except:
-                subject_code = 900
-            try: 
-                flag = api['openaccessflag'][0]
-            except:
-                flag = 0
-            try: 
-                influentialref = api['influentialReferencesCount'][0]
-            except:
-                influentialref = 0
-            try: 
-                ref_background = api['reference_background'][0]
-            except:
-                ref_background = 0
-            try: 
-                ref_result = api['reference_result'][0]
-            except:
-                ref_result = 0
-            try: 
-                ref_method = api['reference_methodology'][0]
-            except:
-                ref_method = 0
-            try: 
-                cite_background = api['citations_background'][0]
-            except:
-                cite_background = 0
-            try: 
-                cite_result = api['citations_result'][0]
-            except:
-                cite_result = 0
-            try: 
-                cite_method = api['citations_methodology'][0]
-            except:
-                cite_method = 0
-            try: 
-                cite_next = api['citation_next'][0]
-            except:
-                cite_next = 0
-
-        return {"sjr": sjr_score, "num_citations": cited_by,"subject":subject,"subject_code":subject_code,"normalized_citations":normalized,"citationVelocity":velocity,"influentialCitationCount":influentialcitations,"references_count":references,"openaccessflag":flag,"influentialReferencesCount":influentialref, "reference_background": ref_background, "reference_result":ref_result, "reference_methodology":ref_method,"citations_background":cite_background,"citations_result":cite_result,"citations_methodology":cite_method, "citations_next":cite_next}
-
-    def set_influential_references_methodology(self):
-        # Counts the number of influential references in the paper in the context of methodology
-        count = 0
-        if self.paper.doi:
-            url = 'https://partner.semanticscholar.org/v1/paper/{0}'.format(self.paper.doi)
-            headers = {'x-api-key': 'I6SO5Ckndk67RitJNJOFR4d7jDiVpWOgaMFUhgkM'}
-            response_payload = requests.get(url, headers=headers).json()
-            try:
-                references = response_payload['references']
-                for reference in references:
-                    try:
-                        if 'methodology' in reference['intent'] and reference['isInfluential']:
-                            count += 1
-                    except KeyError:
-                        continue
-            except KeyError:
-                pass
-        return count
-
+        
+        response = getsemantic(doi,title,db)
+        crossref = response.get_row()
+        scopus_search = response.return_search()
+        serial_title = response.return_serialtitle()
+        semantic = response.return_semantic()
+        final = {"doi":response.doi, "title":response.title, "sjr": response.sjr, "num_citations": response.citedby,"subject":response.subject,"subject_code":response.subject_code,"normalized_citations":response.normalized,"citationVelocity":response.velocity,"influentialCitationCount":response.incite,"references_count":response.refcount,"openaccessflag":response.openaccess,"influentialReferencesCount":response.inref, "reference_background": response.refback, "reference_result":response.refresult, "reference_methodology":response.refmeth,"citations_background":response.cback,"citations_result":response.cresult,"citations_methodology":response.cmeth, "citations_next":response.next, "upstream_influential_methodology_count": response.upstream_influential_methodology_count, "ISSN": response.issn, "authors":response.auth, "citations":response.citations}
+        return final
 
 if __name__ == "__main__":
 
