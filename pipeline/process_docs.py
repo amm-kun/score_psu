@@ -6,6 +6,7 @@ from p_value import extract_p_values
 from tamu_features.adapter import get_tamu_features
 from collections import namedtuple
 from os import listdir, rename, system, name, path, getcwd
+from databases import Database
 import time
 import argparse
 import random
@@ -14,6 +15,7 @@ import pandas as pd
 import logcontrol
 import timelogger
 import pdb
+
 
 if __name__ == "__main__":
 
@@ -26,7 +28,11 @@ if __name__ == "__main__":
     parser.add_argument("-csv", "--csv_out", default=getcwd(), help="CSV output path")
     parser.add_argument("-l", "--label", help="Assign y value | label for training set")
     parser.add_argument("-lr", "--label_range", help="Assign y value within range for training set | Ex: 0.7-1")
-    database = '~/data/database'
+
+    #python process_docs.py -out ../../tei10 -in ../../pdf10 -m generate-train" -csv ../
+    database_path = '~/data/database'
+    database = Database(database_path)
+
     args = parser.parse_args()
     logcontrol.register_logger(timelogger.logger, "timelogger")
     logcontrol.set_level(logcontrol.DEBUG, group="timelogger")

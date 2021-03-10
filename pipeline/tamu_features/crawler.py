@@ -31,14 +31,15 @@ class PaperInfoCrawler:
             id_list.append(data[key])
         return id_list
 
-    def fetch_paper(self, search_query, data_row=None):
-        if False and self.paperid_database.get(search_query):
-            paper=self.paperid_database.get(search_query)
+    def fetch_paper(self, search_query, data_row=None,db):
+        if db.papers.get(search_query,False):
+            paper=db.papers.get(search_query,False)
         else:
             api_url = 'https://partner.semanticscholar.org/v1/paper/'
             headers = {'x-api-key': 'I6SO5Ckndk67RitJNJOFR4d7jDiVpWOgaMFUhgkM'}
             result = requests.get(api_url + search_query, headers=headers)
             paper = result.json()
+            db.papers[search_query] = paper
             #self.paperid_database.set(search_query,result.json())
             #self.paperid_database.dump()
         if 'error' in paper.keys():
@@ -49,6 +50,7 @@ class PaperInfoCrawler:
                 time.sleep(300)
                 result = requests.get(api_url + search_query)
                 paper = result.json()
+                db.papers[search_query] = paper
                 #self.paperid_database.set(search_query,result.json())
                 #self.paperid_database.dump()
         author_list = paper['authors']
@@ -113,7 +115,7 @@ class PaperInfoCrawler:
         except:
             print("Exception occured while fetching author metadata.")
 
-    def fetchAuthData(self,df, auth, paper_not_found=False):
+    def fetchAuthData(self,df, auth, paper_not_found=False,db):
         if paper_not_found:
             return self.fetch_auth_data_google_scholar()
         if self.verbose:
@@ -129,11 +131,12 @@ class PaperInfoCrawler:
             authId.replace("'", '')
             d = {}
             d['authorId'] = authId
-            if False and self.author_database.get(authId):
-                stats, name = self.author_database.get(authId)
+            if db.authors.get(authId,False):
+                stats, name = db.authors.get(authId,False)
             else:
                 authUrl = BASE_URL + str(authId)
-                stats, name = self.fetchAuthorMetadata(authUrl)
+                stats, name = self.fetchAuthorMetadata(authUrl,db)
+                db.authors[authId] = (stats,name)
                 #self.author_database.set(authId,(stats,name))
             data = re.findall('.*?[0-9,]+', stats)
             for info in data:
@@ -189,7 +192,7 @@ class PaperInfoCrawler:
         df_with_venue.rename(columns=venue_name_dict, inplace=True)
         return df_with_venue
 
-    def fetchDownStreamData(self, citations):
+    def fetchDownStreamData(self, citations, db):
         if self.verbose:
             print("\nFETCHING DOWNSTREAM PAPERS")
             print("--------------------------")
@@ -206,7 +209,7 @@ class PaperInfoCrawler:
             search_attempt = 1
             while True:
                 try:
-                    paper = self.fetch_paper(paperId)
+                    paper = self.fetch_paper(paperId,db)
                     if paper == None:
                         print("Paper not found for query: ", paperId)
                         break
@@ -324,7 +327,7 @@ class PaperInfoCrawler:
         # return df, auth_df, downstream_df, notFoundList
         return df, auth_df, notFoundList
 
-    def simple_crawl(self, p_id, issn, auth, citations):
+    def simple_crawl(self, p_id, issn, auth, citations,db):
         if issn == '-1':
             input_file = pd.read_csv(self.INPUT_FILE)
             if input_file[input_file['DOI_CR'] == p_id]['ISSN_CR'].values:
@@ -337,10 +340,10 @@ class PaperInfoCrawler:
             venue_df = self.addVenueFeatures(df, issn)
         if auth:
             paper_not_found = False
-            auth_df = self.fetchAuthData(venue_df ,auth , paper_not_found)
+            auth_df = self.fetchAuthData(venue_df ,auth , paper_not_found, db)
         downstream_df=pd.DataFrame()
         if len(citations)>0:
-            downstream_df = self.fetchDownStreamData(citations)
+            downstream_df = self.fetchDownStreamData(citations,db)
         #return df,auth_df,downstream_df
         notFoundList = []
         return venue_df, auth_df, downstream_df

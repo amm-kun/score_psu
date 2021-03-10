@@ -8,6 +8,10 @@ from elsevier_api import getelsevier
 from elsevier_api import getsemantic
 import pickle
 import pdb
+import textstat
+from textblob import TextBlob
+from allennlp.predictors.predictor import Predictor
+import allennlp_models.tagging
 from scripts.coCitation import coCite
 """
 Object models for the Processing Pipeline to generate features for the DARPA SCORE project
@@ -20,6 +24,13 @@ _license_ = ""
 _version_ = "1.0"
 _maintainer_ = "Arjun Menon"
 _email_ = "amm8987@psu.edu"
+
+predictor=None
+try:
+    predictor = Predictor.from_path("https://storage.googleapis.com/allennlp-public-models/sst-roberta-large-2020.06.08.tar.gz")
+    print("Sentiment Roberta Model Success!!!")
+catch Exception as e:
+    print(e)
 
 
 class ReadPickle:
@@ -89,6 +100,24 @@ class TEIExtractor:
         self.paper.set_self_citations()
         return {'doi': self.paper.doi, 'title': self.paper.title, 'total_citations': len(self.paper.citations),
                 'self_citations': self.paper.self_citations}
+    
+    def get_reading_score(self, abstract):
+        if isinstance(abstract,str):
+            return textstat.flesch_reading_ease
+        return 0
+    
+    def get_subjectivity(self, abstract):
+        if isinstance(abstract,str):
+            txtblob = TextBlob(abstract)
+            return txtblob.sentiment.subjectivity
+        return 0
+    
+    def get_sentiment(self, abstract):
+        if isinstance(abstract,str):
+            label = predictor.predict(abstract)['label']
+            return int(label)
+        return 2
+        
 
     def extract_paper_info(self):
         # DOI

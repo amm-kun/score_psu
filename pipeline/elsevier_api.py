@@ -373,9 +373,24 @@ class getsemantic(getelsevier):
             self.age = years
             self.normalized = int(self.citedby)/years
 
+        self.velocity = -1
+        self.incite = -1
+        self.inref = -1
+        self.refback = -1
+        self.refresult = -1
+        self.refmeth = -1
+        self.cback = -1
+        self.cresult = -1
+        self.cmeth = -1
+        self.upstream_influential_methodology_count = -1
+        self.years = []
+        self.auth = [] 
+        self.citations = []
+        self.db=db
+    def return_semantic(self):
         query = self.doi
-        if False and self.paperid_database.get(query):
-            data = self.paperid_database.get(query)
+        if self.db.papers.get(query,False):
+            data = self.db.papers.get(query)
         else:
             url = 'https://api.semanticscholar.org/v1/paper/'+str(query)
             r = requests.get(url)
@@ -385,7 +400,7 @@ class getsemantic(getelsevier):
                 return row
 
             data = r.json()
-            #self.paperid_database.set(query,r.json())
+            self.self.db.papers[query] = r.json()
             
         # Get influential_methodology_references
         if self.doi:
