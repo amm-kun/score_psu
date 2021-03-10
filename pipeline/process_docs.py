@@ -28,9 +28,11 @@ if __name__ == "__main__":
     parser.add_argument("-csv", "--csv_out", default=getcwd(), help="CSV output path")
     parser.add_argument("-l", "--label", help="Assign y value | label for training set")
     parser.add_argument("-lr", "--label_range", help="Assign y value within range for training set | Ex: 0.7-1")
+
     #python process_docs.py -out ../../tei10 -in ../../pdf10 -m generate-train" -csv ../
     database_path = '~/data/database'
-    database = Database(path)
+    database = Database(database_path)
+
     args = parser.parse_args()
     logcontrol.register_logger(timelogger.logger, "timelogger")
     logcontrol.set_level(logcontrol.DEBUG, group="timelogger")
@@ -72,7 +74,7 @@ if __name__ == "__main__":
                   'coCite3','num_hypo_tested','real_p', 'real_p_sign', 'p_val_range', 'num_significant', 'sample_size',
                   "extend_p", "funded", "Venue_Citation_Count", "Venue_Scholarly_Output",
                   "Venue_Percent_Cited", "Venue_CiteScore", "Venue_SNIP", "Venue_SJR", "avg_pub", "avg_hidx",
-                  "avg_auth_cites", "avg_high_inf_cites","sentiment_agg", "paper_age", "y")
+                  "avg_auth_cites", "avg_high_inf_cites","sentiment_agg", "age", "y")
 
         record = namedtuple('record', fields)
         record.__new__.__defaults__ = (None,) * len(record._fields)
@@ -134,7 +136,7 @@ if __name__ == "__main__":
                   'coCite3','num_hypo_tested', 'real_p', 'real_p_sign', 'p_val_range', 'num_significant',
                   'sample_size',"extend_p", "funded", "Venue_Citation_Count", "Venue_Scholarly_Output",
                   "Venue_Percent_Cited", "Venue_CiteScore", "Venue_SNIP", "Venue_SJR", "avg_pub", "avg_hidx",
-                  "avg_auth_cites", "avg_high_inf_cites","sentiment_agg", "paper_age")
+                  "avg_auth_cites", "avg_high_inf_cites","sentiment_agg", "age")
 
         record = namedtuple('record', fields)
         record.__new__.__defaults__ = (None,) * len(record._fields)
@@ -180,7 +182,7 @@ if __name__ == "__main__":
                   'coCite3','num_hypo_tested', 'real_p', 'real_p_sign', 'p_val_range', 'num_significant',
                   'sample_size',"extend_p", "funded", "Venue_Citation_Count", "Venue_Scholarly_Output",
                   "Venue_Percent_Cited", "Venue_CiteScore", "Venue_SNIP", "Venue_SJR", "avg_pub", "avg_hidx",
-                  "avg_auth_cites", "avg_high_inf_cites","sentiment_agg", "paper_age")
+                  "avg_auth_cites", "avg_high_inf_cites","sentiment_agg", "age")
         fields = fields + tuple(want)
         record = namedtuple('record', fields)
         record.__new__.__defaults__ = (None,) * len(record._fields)
