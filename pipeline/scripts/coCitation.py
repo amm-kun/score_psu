@@ -16,7 +16,6 @@ import numpy as np
 import pickledb
 from ratelimit import limits, sleep_and_retry
 
-cocite_db = None
 #===============================================================================================
 # Main part, Construct cocitation
 #===============================================================================================
@@ -36,17 +35,13 @@ def call_api(query):
     return r.json()
         
 def coCite(doi,db) :   
-    global cocite_db
     cocitationsAll = {}
     YearGap = 3          # change this to control the publish time of papers that cited the source paper
     counter_sourceDOI = 0
     dt2={}
     dt3={}
-    if cocite_db == None:
-        print('loading db')
-        cocite_db  = pickledb.load(db + '/cocite.db', True)
-    if cocite_db.get(doi):
-        return cocite_db.get(doi)
+    if db.cocite.get(doi,False):
+        return db.cocite.get(doi,False)
     try:
         if isinstance(doi,str):
 
@@ -108,7 +103,8 @@ def coCite(doi,db) :
                 cnt2 = 0
                 cnt2 = sum(1 for k,v in dict.items() if int(v)>=2)
                 #print(row.doi, cnt2, cnt3 , r.status_code)
-                cocite_db.set(doi, (cnt2,cnt3))
+                #cocite_db.set(doi, (cnt2,cnt3))
+                db.cocite[doi] = (cnt2,cnt3)
                 return cnt2,cnt3
         else:
             return 0,0
