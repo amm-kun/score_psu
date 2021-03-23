@@ -1,5 +1,5 @@
-# SCORE_PSU
-## Repository for Python scripts pertaining to the DARPA SCORE project effort by PSU ##
+# FREX: Feature Representation Extraction Framework for Claim Reproducibility Prediction
+## Repository for Feature extraction Framework pertaining to the DARPA SCORE project effort by PSU ##
 
 (#ingest_WoS)
 
