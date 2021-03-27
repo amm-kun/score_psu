@@ -29,7 +29,7 @@ predictor=None
 try:
     predictor = Predictor.from_path("https://storage.googleapis.com/allennlp-public-models/sst-roberta-large-2020.06.08.tar.gz")
     print("Sentiment Roberta Model Success!!!")
-catch Exception as e:
+except Exception as e:
     print(e)
 
 
@@ -78,6 +78,8 @@ class TEIExtractor:
         authors = self.get_authors(self.soup.analytic.find_all('author'))
         if authors:
             self.paper.authors = authors
+        if self.soup.abstract:
+            self.paper.abstract = elem_to_text(self.soup.abstract)
         # Citations
         bibliography = self.soup.listbibl.find_all('biblstruct')
         for bibl in bibliography:
@@ -99,24 +101,27 @@ class TEIExtractor:
             self.paper.citations.append(citation)
         self.paper.set_self_citations()
         return {'doi': self.paper.doi, 'title': self.paper.title, 'total_citations': len(self.paper.citations),
-                'self_citations': self.paper.self_citations}
+                'self_citations': self.paper.self_citations, 'abstract': self.paper.abstract}
     
     def get_reading_score(self, abstract):
         if isinstance(abstract,str):
-            return textstat.flesch_reading_ease
+            if not abstract: return 0
+            return textstat.flesch_reading_ease(abstract)
         return 0
     
     def get_subjectivity(self, abstract):
         if isinstance(abstract,str):
+            if len(abstract)<10: return -1
             txtblob = TextBlob(abstract)
             return txtblob.sentiment.subjectivity
-        return 0
+        return -1
     
     def get_sentiment(self, abstract):
         if isinstance(abstract,str):
+            if len(abstract)<10: return -1
             label = predictor.predict(abstract)['label']
             return int(label)
-        return 2
+        return -1
         
 
     def extract_paper_info(self):
@@ -134,6 +139,8 @@ class TEIExtractor:
         authors = self.get_authors(self.soup.analytic.find_all('author'))
         if authors:
             self.paper.authors = authors
+        if self.soup.abstract:
+            self.paper.abstract = elem_to_text(self.soup.abstract)
         # Year
         published = self.soup.analytic.find("publicationstmt")
         if published:
@@ -210,11 +217,17 @@ class TEIExtractor:
             self.paper.issn = api_resp["ISSN"]
             self.paper.auth = api_resp["authors"]
             self.paper.age = api_resp["age"]
+            if api_resp["abstract"]:
+                self.paper.abstract = api_resp["abstract"]
         # Set self-citations
         self.paper.self_citations = self.paper.set_self_citations()
         # return paper
-
+        #calculate coCitations
         t2,t3 = coCite(self.paper.doi, self.db)
+        #calculate NLP features
+        reading_score = self.get_reading_score(self.paper.abstract)
+        subjectivity = self.get_subjectivity(self.paper.abstract)
+        sentiment = self.get_sentiment(self.paper.abstract)
         return {"doi": self.paper.doi, "title": self.paper.title, "num_citations": self.paper.cited_by_count,
                 "author_count": len(self.paper.authors),"sjr": self.paper.sjr, "u_rank": self.paper.uni_rank,
                 "funded": self.paper.funded,"self_citations": self.paper.self_citations, "subject": self.paper.subject,
@@ -226,7 +239,8 @@ class TEIExtractor:
                 "citations_background": self.paper.cite_background, "citations_result": self.paper.cite_result,
                 "citations_methodology": self.paper.cite_method, "citations_next": self.paper.cite_next,
                 "upstream_influential_methodology_count": self.paper.influential_references_methodology,
-                "coCite2":t2, "coCite3":t3, "ISSN":self.paper.issn, "authors":self.paper.auth,"citations":api_resp["citations"],"age":self.paper.age}
+                "coCite2":t2, "coCite3":t3, "ISSN":self.paper.issn, "authors":self.paper.auth,"citations":api_resp["citations"],"age":self.paper.age,
+                "reading_score":reading_score, "subjectivity":subjectivity, "sentiment":sentiment}
 
 
     @staticmethod
@@ -258,7 +272,8 @@ class TEIExtractor:
         scopus_search = response.return_search()
         serial_title = response.return_serialtitle()
         semantic = response.return_semantic()
-        final = {"doi":response.doi, "title":response.title, "sjr": response.sjr, "num_citations": response.citedby,"subject":response.subject,"subject_code":response.subject_code,"normalized_citations":response.normalized,"citationVelocity":response.velocity,"influentialCitationCount":response.incite,"references_count":response.refcount,"openaccessflag":response.openaccess,"influentialReferencesCount":response.inref, "reference_background": response.refback, "reference_result":response.refresult, "reference_methodology":response.refmeth,"citations_background":response.cback,"citations_result":response.cresult,"citations_methodology":response.cmeth, "citations_next":response.next, "upstream_influential_methodology_count": response.upstream_influential_methodology_count, "ISSN": response.issn, "authors":response.auth, "citations":response.citations,"age":response.age}
+        #pdb.set_trace()
+        final = {"doi":response.doi, "title":response.title, "sjr": response.sjr, "num_citations": response.citedby,"subject":response.subject,"subject_code":response.subject_code,"normalized_citations":response.normalized,"citationVelocity":response.velocity,"influentialCitationCount":response.incite,"references_count":response.refcount,"openaccessflag":response.openaccess,"influentialReferencesCount":response.inref, "reference_background": response.refback, "reference_result":response.refresult, "reference_methodology":response.refmeth,"citations_background":response.cback,"citations_result":response.cresult,"citations_methodology":response.cmeth, "citations_next":response.next, "upstream_influential_methodology_count": response.upstream_influential_methodology_count, "ISSN": response.issn, "authors":response.auth, "citations":response.citations,"age":response.age,"abstract":response.ab}
         return final
 
 if __name__ == "__main__":

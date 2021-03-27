@@ -31,7 +31,7 @@ class PaperInfoCrawler:
             id_list.append(data[key])
         return id_list
 
-    def fetch_paper(self, search_query, data_row=None,db):
+    def fetch_paper(self, search_query, db, data_row=None):
         if db.papers.get(search_query,False):
             paper=db.papers.get(search_query,False)
         else:
@@ -47,7 +47,7 @@ class PaperInfoCrawler:
                 return None
         if 'message' in paper.keys():
             if paper['message'] == 'Forbidden':
-                time.sleep(300)
+                #time.sleep(300)
                 result = requests.get(api_url + search_query)
                 paper = result.json()
                 db.papers[search_query] = paper
@@ -115,7 +115,7 @@ class PaperInfoCrawler:
         except:
             print("Exception occured while fetching author metadata.")
 
-    def fetchAuthData(self,df, auth, paper_not_found=False,db):
+    def fetchAuthData(self,df, auth, db, paper_not_found=False):
         if paper_not_found:
             return self.fetch_auth_data_google_scholar()
         if self.verbose:
@@ -135,7 +135,7 @@ class PaperInfoCrawler:
                 stats, name = db.authors.get(authId,False)
             else:
                 authUrl = BASE_URL + str(authId)
-                stats, name = self.fetchAuthorMetadata(authUrl,db)
+                stats, name = self.fetchAuthorMetadata(authUrl)
                 db.authors[authId] = (stats,name)
                 #self.author_database.set(authId,(stats,name))
             data = re.findall('.*?[0-9,]+', stats)
@@ -225,10 +225,10 @@ class PaperInfoCrawler:
                     p_count += 1
                     break
                 except Exception as e:
-                    print("\nException for query: ", paperId + " " + e)
+                    print("\nException for query: ", paperId + " " + str(e))
                     if search_attempt == 3:
                         print("Failed paper with paperId: ", paperId)
-                        time.sleep(90)
+                        time.sleep(10)
                         break
                     search_attempt += 1
         if self.verbose: print(
@@ -281,7 +281,7 @@ class PaperInfoCrawler:
                     print("\nException for query: ", DOI)
                     if search_attempt == 3:
                         # print("Failed paper with DOI: ", DOI)
-                        time.sleep(120)
+                        #time.sleep(120)
                         break
                     search_attempt += 1
         downstream_df = None
@@ -329,21 +329,32 @@ class PaperInfoCrawler:
 
     def simple_crawl(self, p_id, issn, auth, citations,db):
         if issn == '-1':
-            input_file = pd.read_csv(self.INPUT_FILE)
-            if input_file[input_file['DOI_CR'] == p_id]['ISSN_CR'].values:
-                issn = input_file[input_file['DOI_CR'] == p_id]['ISSN_CR'].values[0]
+            try:
+                input_file = None
+                if 'tsv' in self.INPUT_FILE:
+                    input_file = pd.read_csv(self.INPUT_FILE, sep='\t')
+                else:
+                    input_file = pd.read_csv(self.INPUT_FILE)
+                if input_file and input_file[input_file['DOI_CR'] == p_id]['ISSN_CR'].values:
+                    issn = input_file[input_file['DOI_CR'] == p_id]['ISSN_CR'].values[0]
+            except Exception as e:
+                print(e)
         #df with ISSN hopefully
-        venue_df,auth_df = pd.DataFrame(), pd.DataFrame()
-        if issn!='-1':
-            data = {'ISSN':issn}
-            df = pd.DataFrame(data,index = [0])
-            venue_df = self.addVenueFeatures(df, issn)
-        if auth:
-            paper_not_found = False
-            auth_df = self.fetchAuthData(venue_df ,auth , paper_not_found, db)
-        downstream_df=pd.DataFrame()
-        if len(citations)>0:
-            downstream_df = self.fetchDownStreamData(citations,db)
-        #return df,auth_df,downstream_df
-        notFoundList = []
-        return venue_df, auth_df, downstream_df
+        print("*****ISSN ", issn )
+        venue_df,auth_df,downstream_df = pd.DataFrame(), pd.DataFrame(), pd.DataFrame()
+        try:
+            if issn!='-1':
+                data = {'ISSN':issn}
+                df = pd.DataFrame(data,index = [0])
+                venue_df = self.addVenueFeatures(df, issn)
+            if auth:
+                paper_not_found = False
+                auth_df = self.fetchAuthData(venue_df ,auth , db, paper_not_found)
+            if len(citations)>0:
+                downstream_df = self.fetchDownStreamData(citations,db)
+            #return df,auth_df,downstream_df
+            notFoundList = []
+            return venue_df, auth_df, downstream_df
+        except Exception as e:
+            print(traceback.format_exc())
+            return venue_df, auth_df, downstream_df

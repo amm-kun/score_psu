@@ -30,6 +30,7 @@ class Paper:
         self.ack_pairs = []
         self.subject = ''
         self.subject_code = ''
+        self.abstract = ''
         self.influential_references_methodology = 0
 
     def set_self_citations(self):
