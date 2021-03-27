@@ -15,6 +15,7 @@ import time
 import numpy as np
 import pickledb
 from ratelimit import limits, sleep_and_retry
+import pdb
 
 #===============================================================================================
 # Main part, Construct cocitation
@@ -44,7 +45,6 @@ def coCite(doi,db) :
         return db.cocite.get(doi,False)
     try:
         if isinstance(doi,str):
-
             dataapi = call_api(doi)
             #dataapi = r.json()   # a dictionary for the source paper
 
@@ -73,8 +73,7 @@ def coCite(doi,db) :
                         year_becited = citations[i].get('year')    # about year
                         if year_becited != None and year_becited-pubYear <= YearGap:       # Select the papers publishes less than or equal to 3 years after the original paper
                             ciID.append(id)
-                            r1 = call_api(id)
-                            data_cite = r1.json()
+                            data_cite = call_api(id)
                             references_cite = data_cite.get('references')
                             if references_cite is None or len(references_cite) == 0:
                                 counter +=1
@@ -102,8 +101,7 @@ def coCite(doi,db) :
                 cnt3 = sum(1 for k,v in dict.items() if int(v)>=3)
                 cnt2 = 0
                 cnt2 = sum(1 for k,v in dict.items() if int(v)>=2)
-                #print(row.doi, cnt2, cnt3 , r.status_code)
-                #cocite_db.set(doi, (cnt2,cnt3))
+                print("*****WRITING COCITE", doi, cnt2,cnt3)
                 db.cocite[doi] = (cnt2,cnt3)
                 return cnt2,cnt3
         else:

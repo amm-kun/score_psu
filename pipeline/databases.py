@@ -5,4 +5,4 @@ class Database():
         self.path = path
         self.authors = SqliteDict(path + '/authors.db', autocommit=True)
         self.papers =  SqliteDict(path + '/papers.db', autocommit=True)
-        self.cocite =  SqliteDict(path + '/cocite.bd', autocommit=True)
+        self.cocite =  SqliteDict(path + '/cocite.db', autocommit=True)
