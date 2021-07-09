@@ -1,0 +1,1486 @@
+[1477 140426734638912] 2021-05-11 21:32:19,710 INFO - (MainThread) - core.py:__init__:87 - Loading these models for language: en (English):
+=======================
+| Processor | Package |
+-----------------------
+| tokenize  | ewt     |
+=======================
+
+[1477 140426734638912] 2021-05-11 21:32:19,710 INFO - (MainThread) - core.py:__init__:98 - Use device: cpu
+[1477 140426734638912] 2021-05-11 21:32:19,711 INFO - (MainThread) - core.py:__init__:104 - Loading: tokenize
+[1477 140426734638912] 2021-05-11 21:32:19,719 INFO - (MainThread) - core.py:__init__:126 - Done loading processors!
+[1477 140426734638912] 2021-05-11 21:32:24,236 INFO - (MainThread) - core.py:__init__:87 - Loading these models for language: en (English):
+=======================
+| Processor | Package |
+-----------------------
+| tokenize  | ewt     |
+=======================
+
+[1477 140426734638912] 2021-05-11 21:32:24,237 INFO - (MainThread) - core.py:__init__:98 - Use device: cpu
+[1477 140426734638912] 2021-05-11 21:32:24,237 INFO - (MainThread) - core.py:__init__:104 - Loading: tokenize
+[1477 140426734638912] 2021-05-11 21:32:24,244 INFO - (MainThread) - core.py:__init__:126 - Done loading processors!
+[6105 140011780572992] 2021-05-11 21:34:09,419 INFO - (MainThread) - core.py:__init__:87 - Loading these models for language: en (English):
+=======================
+| Processor | Package |
+-----------------------
+| tokenize  | ewt     |
+=======================
+
+[6105 140011780572992] 2021-05-11 21:34:09,420 INFO - (MainThread) - core.py:__init__:98 - Use device: cpu
+[6105 140011780572992] 2021-05-11 21:34:09,420 INFO - (MainThread) - core.py:__init__:104 - Loading: tokenize
+[6105 140011780572992] 2021-05-11 21:34:09,432 INFO - (MainThread) - core.py:__init__:126 - Done loading processors!
+[6105 140011780572992] 2021-05-11 21:34:25,562 INFO - (MainThread) - core.py:__init__:87 - Loading these models for language: en (English):
+=======================
+| Processor | Package |
+-----------------------
+| tokenize  | ewt     |
+=======================
+
+[6105 140011780572992] 2021-05-11 21:34:25,563 INFO - (MainThread) - core.py:__init__:98 - Use device: cpu
+[6105 140011780572992] 2021-05-11 21:34:25,563 INFO - (MainThread) - core.py:__init__:104 - Loading: tokenize
+[6105 140011780572992] 2021-05-11 21:34:25,571 INFO - (MainThread) - core.py:__init__:126 - Done loading processors!
+[12844 140387349325632] 2021-05-11 21:35:15,403 INFO - (MainThread) - core.py:__init__:87 - Loading these models for language: en (English):
+=======================
+| Processor | Package |
+-----------------------
+| tokenize  | ewt     |
+=======================
+
+[12844 140387349325632] 2021-05-11 21:35:15,404 INFO - (MainThread) - core.py:__init__:98 - Use device: cpu
+[12844 140387349325632] 2021-05-11 21:35:15,404 INFO - (MainThread) - core.py:__init__:104 - Loading: tokenize
+[12844 140387349325632] 2021-05-11 21:35:15,412 INFO - (MainThread) - core.py:__init__:126 - Done loading processors!
+[14967 140068093257536] 2021-05-11 21:39:33,568 INFO - (MainThread) - core.py:__init__:87 - Loading these models for language: en (English):
+=======================
+| Processor | Package |
+-----------------------
+| tokenize  | ewt     |
+=======================
+
+[14967 140068093257536] 2021-05-11 21:39:33,568 INFO - (MainThread) - core.py:__init__:98 - Use device: cpu
+[14967 140068093257536] 2021-05-11 21:39:33,569 INFO - (MainThread) - core.py:__init__:104 - Loading: tokenize
+[14967 140068093257536] 2021-05-11 21:39:33,576 INFO - (MainThread) - core.py:__init__:126 - Done loading processors!
+[14967 140068093257536] 2021-05-11 21:39:50,465 INFO - (MainThread) - core.py:__init__:87 - Loading these models for language: en (English):
+=======================
+| Processor | Package |
+-----------------------
+| tokenize  | ewt     |
+=======================
+
+[14967 140068093257536] 2021-05-11 21:39:50,466 INFO - (MainThread) - core.py:__init__:98 - Use device: cpu
+[14967 140068093257536] 2021-05-11 21:39:50,466 INFO - (MainThread) - core.py:__init__:104 - Loading: tokenize
+[14967 140068093257536] 2021-05-11 21:39:50,475 INFO - (MainThread) - core.py:__init__:126 - Done loading processors!
+[23917 140683130574656] 2021-05-11 21:41:36,189 INFO - (MainThread) - core.py:__init__:87 - Loading these models for language: en (English):
+=======================
+| Processor | Package |
+-----------------------
+| tokenize  | ewt     |
+=======================
+
+[23917 140683130574656] 2021-05-11 21:41:36,189 INFO - (MainThread) - core.py:__init__:98 - Use device: cpu
+[23917 140683130574656] 2021-05-11 21:41:36,190 INFO - (MainThread) - core.py:__init__:104 - Loading: tokenize
+[23917 140683130574656] 2021-05-11 21:41:36,197 INFO - (MainThread) - core.py:__init__:126 - Done loading processors!
+[23917 140683130574656] 2021-05-11 21:41:52,228 INFO - (MainThread) - core.py:__init__:87 - Loading these models for language: en (English):
+=======================
+| Processor | Package |
+-----------------------
+| tokenize  | ewt     |
+=======================
+
+[23917 140683130574656] 2021-05-11 21:41:52,229 INFO - (MainThread) - core.py:__init__:98 - Use device: cpu
+[23917 140683130574656] 2021-05-11 21:41:52,229 INFO - (MainThread) - core.py:__init__:104 - Loading: tokenize
+[23917 140683130574656] 2021-05-11 21:41:52,239 INFO - (MainThread) - core.py:__init__:126 - Done loading processors!
+[30393 139754176083776] 2021-05-11 21:42:41,144 INFO - (MainThread) - core.py:__init__:87 - Loading these models for language: en (English):
+=======================
+| Processor | Package |
+-----------------------
+| tokenize  | ewt     |
+=======================
+
+[30393 139754176083776] 2021-05-11 21:42:41,144 INFO - (MainThread) - core.py:__init__:98 - Use device: cpu
+[30393 139754176083776] 2021-05-11 21:42:41,145 INFO - (MainThread) - core.py:__init__:104 - Loading: tokenize
+[30393 139754176083776] 2021-05-11 21:42:41,152 INFO - (MainThread) - core.py:__init__:126 - Done loading processors!
+[30393 139754176083776] 2021-05-11 21:50:17,372 INFO - (MainThread) - core.py:__init__:87 - Loading these models for language: en (English):
+=======================
+| Processor | Package |
+-----------------------
+| tokenize  | ewt     |
+=======================
+
+[30393 139754176083776] 2021-05-11 21:50:17,373 INFO - (MainThread) - core.py:__init__:98 - Use device: cpu
+[30393 139754176083776] 2021-05-11 21:50:17,373 INFO - (MainThread) - core.py:__init__:104 - Loading: tokenize
+[30393 139754176083776] 2021-05-11 21:50:17,382 INFO - (MainThread) - core.py:__init__:126 - Done loading processors!
+[30393 139754176083776] 2021-05-11 21:51:02,728 INFO - (MainThread) - core.py:__init__:87 - Loading these models for language: en (English):
+=======================
+| Processor | Package |
+-----------------------
+| tokenize  | ewt     |
+=======================
+
+[30393 139754176083776] 2021-05-11 21:51:02,730 INFO - (MainThread) - core.py:__init__:98 - Use device: cpu
+[30393 139754176083776] 2021-05-11 21:51:02,730 INFO - (MainThread) - core.py:__init__:104 - Loading: tokenize
+[30393 139754176083776] 2021-05-11 21:51:02,739 INFO - (MainThread) - core.py:__init__:126 - Done loading processors!
+[30393 139754176083776] 2021-05-11 21:51:44,805 INFO - (MainThread) - core.py:__init__:87 - Loading these models for language: en (English):
+=======================
+| Processor | Package |
+-----------------------
+| tokenize  | ewt     |
+=======================
+
+[30393 139754176083776] 2021-05-11 21:51:44,806 INFO - (MainThread) - core.py:__init__:98 - Use device: cpu
+[30393 139754176083776] 2021-05-11 21:51:44,806 INFO - (MainThread) - core.py:__init__:104 - Loading: tokenize
+[30393 139754176083776] 2021-05-11 21:51:44,815 INFO - (MainThread) - core.py:__init__:126 - Done loading processors!
+[30393 139754176083776] 2021-05-11 21:52:22,953 INFO - (MainThread) - core.py:__init__:87 - Loading these models for language: en (English):
+=======================
+| Processor | Package |
+-----------------------
+| tokenize  | ewt     |
+=======================
+
+[30393 139754176083776] 2021-05-11 21:52:22,954 INFO - (MainThread) - core.py:__init__:98 - Use device: cpu
+[30393 139754176083776] 2021-05-11 21:52:22,954 INFO - (MainThread) - core.py:__init__:104 - Loading: tokenize
+[30393 139754176083776] 2021-05-11 21:52:22,963 INFO - (MainThread) - core.py:__init__:126 - Done loading processors!
+[30393 139754176083776] 2021-05-11 21:53:04,067 INFO - (MainThread) - core.py:__init__:87 - Loading these models for language: en (English):
+=======================
+| Processor | Package |
+-----------------------
+| tokenize  | ewt     |
+=======================
+
+[30393 139754176083776] 2021-05-11 21:53:04,067 INFO - (MainThread) - core.py:__init__:98 - Use device: cpu
+[30393 139754176083776] 2021-05-11 21:53:04,067 INFO - (MainThread) - core.py:__init__:104 - Loading: tokenize
+[30393 139754176083776] 2021-05-11 21:53:04,076 INFO - (MainThread) - core.py:__init__:126 - Done loading processors!
+[30393 139754176083776] 2021-05-11 21:53:48,014 INFO - (MainThread) - core.py:__init__:87 - Loading these models for language: en (English):
+=======================
+| Processor | Package |
+-----------------------
+| tokenize  | ewt     |
+=======================
+
+[30393 139754176083776] 2021-05-11 21:53:48,014 INFO - (MainThread) - core.py:__init__:98 - Use device: cpu
+[30393 139754176083776] 2021-05-11 21:53:48,015 INFO - (MainThread) - core.py:__init__:104 - Loading: tokenize
+[30393 139754176083776] 2021-05-11 21:53:48,022 INFO - (MainThread) - core.py:__init__:126 - Done loading processors!
+[30393 139754176083776] 2021-05-11 21:54:35,145 INFO - (MainThread) - core.py:__init__:87 - Loading these models for language: en (English):
+=======================
+| Processor | Package |
+-----------------------
+| tokenize  | ewt     |
+=======================
+
+[30393 139754176083776] 2021-05-11 21:54:35,145 INFO - (MainThread) - core.py:__init__:98 - Use device: cpu
+[30393 139754176083776] 2021-05-11 21:54:35,145 INFO - (MainThread) - core.py:__init__:104 - Loading: tokenize
+[30393 139754176083776] 2021-05-11 21:54:35,150 INFO - (MainThread) - core.py:__init__:126 - Done loading processors!
+[30393 139754176083776] 2021-05-11 21:55:04,320 INFO - (MainThread) - core.py:__init__:87 - Loading these models for language: en (English):
+=======================
+| Processor | Package |
+-----------------------
+| tokenize  | ewt     |
+=======================
+
+[30393 139754176083776] 2021-05-11 21:55:04,320 INFO - (MainThread) - core.py:__init__:98 - Use device: cpu
+[30393 139754176083776] 2021-05-11 21:55:04,321 INFO - (MainThread) - core.py:__init__:104 - Loading: tokenize
+[30393 139754176083776] 2021-05-11 21:55:04,330 INFO - (MainThread) - core.py:__init__:126 - Done loading processors!
+[30393 139754176083776] 2021-05-11 21:55:34,605 INFO - (MainThread) - core.py:__init__:87 - Loading these models for language: en (English):
+=======================
+| Processor | Package |
+-----------------------
+| tokenize  | ewt     |
+=======================
+
+[30393 139754176083776] 2021-05-11 21:55:34,606 INFO - (MainThread) - core.py:__init__:98 - Use device: cpu
+[30393 139754176083776] 2021-05-11 21:55:34,606 INFO - (MainThread) - core.py:__init__:104 - Loading: tokenize
+[30393 139754176083776] 2021-05-11 21:55:34,614 INFO - (MainThread) - core.py:__init__:126 - Done loading processors!
+[5692 140329095694144] 2021-05-12 09:09:04,885 INFO - (MainThread) - core.py:__init__:87 - Loading these models for language: en (English):
+=======================
+| Processor | Package |
+-----------------------
+| tokenize  | ewt     |
+=======================
+
+[5692 140329095694144] 2021-05-12 09:09:04,885 INFO - (MainThread) - core.py:__init__:98 - Use device: cpu
+[5692 140329095694144] 2021-05-12 09:09:04,885 INFO - (MainThread) - core.py:__init__:104 - Loading: tokenize
+[5692 140329095694144] 2021-05-12 09:09:04,893 INFO - (MainThread) - core.py:__init__:126 - Done loading processors!
+[12386 140144561125184] 2021-05-12 09:51:35,768 INFO - (MainThread) - core.py:__init__:87 - Loading these models for language: en (English):
+=======================
+| Processor | Package |
+-----------------------
+| tokenize  | ewt     |
+=======================
+
+[12386 140144561125184] 2021-05-12 09:51:35,768 INFO - (MainThread) - core.py:__init__:98 - Use device: cpu
+[12386 140144561125184] 2021-05-12 09:51:35,769 INFO - (MainThread) - core.py:__init__:104 - Loading: tokenize
+[12386 140144561125184] 2021-05-12 09:51:35,777 INFO - (MainThread) - core.py:__init__:126 - Done loading processors!
+[12386 140144561125184] 2021-05-12 09:52:12,996 INFO - (MainThread) - core.py:__init__:87 - Loading these models for language: en (English):
+=======================
+| Processor | Package |
+-----------------------
+| tokenize  | ewt     |
+=======================
+
+[12386 140144561125184] 2021-05-12 09:52:12,997 INFO - (MainThread) - core.py:__init__:98 - Use device: cpu
+[12386 140144561125184] 2021-05-12 09:52:12,997 INFO - (MainThread) - core.py:__init__:104 - Loading: tokenize
+[12386 140144561125184] 2021-05-12 09:52:13,006 INFO - (MainThread) - core.py:__init__:126 - Done loading processors!
+[19278 139664190183232] 2021-05-12 09:53:42,721 INFO - (MainThread) - core.py:__init__:87 - Loading these models for language: en (English):
+=======================
+| Processor | Package |
+-----------------------
+| tokenize  | ewt     |
+=======================
+
+[19278 139664190183232] 2021-05-12 09:53:42,721 INFO - (MainThread) - core.py:__init__:98 - Use device: cpu
+[19278 139664190183232] 2021-05-12 09:53:42,722 INFO - (MainThread) - core.py:__init__:104 - Loading: tokenize
+[19278 139664190183232] 2021-05-12 09:53:42,730 INFO - (MainThread) - core.py:__init__:126 - Done loading processors!
+[19278 139664190183232] 2021-05-12 09:54:19,756 INFO - (MainThread) - core.py:__init__:87 - Loading these models for language: en (English):
+=======================
+| Processor | Package |
+-----------------------
+| tokenize  | ewt     |
+=======================
+
+[19278 139664190183232] 2021-05-12 09:54:19,757 INFO - (MainThread) - core.py:__init__:98 - Use device: cpu
+[19278 139664190183232] 2021-05-12 09:54:19,757 INFO - (MainThread) - core.py:__init__:104 - Loading: tokenize
+[19278 139664190183232] 2021-05-12 09:54:19,766 INFO - (MainThread) - core.py:__init__:126 - Done loading processors!
+[26001 140310234502976] 2021-05-12 09:56:00,739 INFO - (MainThread) - core.py:__init__:87 - Loading these models for language: en (English):
+=======================
+| Processor | Package |
+-----------------------
+| tokenize  | ewt     |
+=======================
+
+[26001 140310234502976] 2021-05-12 09:56:00,739 INFO - (MainThread) - core.py:__init__:98 - Use device: cpu
+[26001 140310234502976] 2021-05-12 09:56:00,739 INFO - (MainThread) - core.py:__init__:104 - Loading: tokenize
+[26001 140310234502976] 2021-05-12 09:56:00,747 INFO - (MainThread) - core.py:__init__:126 - Done loading processors!
+[26001 140310234502976] 2021-05-12 09:56:21,929 INFO - (MainThread) - core.py:__init__:87 - Loading these models for language: en (English):
+=======================
+| Processor | Package |
+-----------------------
+| tokenize  | ewt     |
+=======================
+
+[26001 140310234502976] 2021-05-12 09:56:21,929 INFO - (MainThread) - core.py:__init__:98 - Use device: cpu
+[26001 140310234502976] 2021-05-12 09:56:21,930 INFO - (MainThread) - core.py:__init__:104 - Loading: tokenize
+[26001 140310234502976] 2021-05-12 09:56:21,938 INFO - (MainThread) - core.py:__init__:126 - Done loading processors!
+[32745 140623264450368] 2021-05-12 10:00:50,363 INFO - (MainThread) - core.py:__init__:87 - Loading these models for language: en (English):
+=======================
+| Processor | Package |
+-----------------------
+| tokenize  | ewt     |
+=======================
+
+[32745 140623264450368] 2021-05-12 10:00:50,364 INFO - (MainThread) - core.py:__init__:98 - Use device: cpu
+[32745 140623264450368] 2021-05-12 10:00:50,364 INFO - (MainThread) - core.py:__init__:104 - Loading: tokenize
+[32745 140623264450368] 2021-05-12 10:00:50,373 INFO - (MainThread) - core.py:__init__:126 - Done loading processors!
+[32745 140623264450368] 2021-05-12 10:01:07,508 INFO - (MainThread) - core.py:__init__:87 - Loading these models for language: en (English):
+=======================
+| Processor | Package |
+-----------------------
+| tokenize  | ewt     |
+=======================
+
+[32745 140623264450368] 2021-05-12 10:01:07,509 INFO - (MainThread) - core.py:__init__:98 - Use device: cpu
+[32745 140623264450368] 2021-05-12 10:01:07,509 INFO - (MainThread) - core.py:__init__:104 - Loading: tokenize
+[32745 140623264450368] 2021-05-12 10:01:07,518 INFO - (MainThread) - core.py:__init__:126 - Done loading processors!
+[8831 140597323745088] 2021-05-12 10:02:07,351 INFO - (MainThread) - core.py:__init__:87 - Loading these models for language: en (English):
+=======================
+| Processor | Package |
+-----------------------
+| tokenize  | ewt     |
+=======================
+
+[8831 140597323745088] 2021-05-12 10:02:07,352 INFO - (MainThread) - core.py:__init__:98 - Use device: cpu
+[8831 140597323745088] 2021-05-12 10:02:07,352 INFO - (MainThread) - core.py:__init__:104 - Loading: tokenize
+[8831 140597323745088] 2021-05-12 10:02:07,360 INFO - (MainThread) - core.py:__init__:126 - Done loading processors!
+[15342 139685347399488] 2021-05-12 10:03:01,132 INFO - (MainThread) - core.py:__init__:87 - Loading these models for language: en (English):
+=======================
+| Processor | Package |
+-----------------------
+| tokenize  | ewt     |
+=======================
+
+[15342 139685347399488] 2021-05-12 10:03:01,132 INFO - (MainThread) - core.py:__init__:98 - Use device: cpu
+[15342 139685347399488] 2021-05-12 10:03:01,132 INFO - (MainThread) - core.py:__init__:104 - Loading: tokenize
+[15342 139685347399488] 2021-05-12 10:03:01,141 INFO - (MainThread) - core.py:__init__:126 - Done loading processors!
+[15342 139685347399488] 2021-05-12 10:03:17,232 INFO - (MainThread) - core.py:__init__:87 - Loading these models for language: en (English):
+=======================
+| Processor | Package |
+-----------------------
+| tokenize  | ewt     |
+=======================
+
+[15342 139685347399488] 2021-05-12 10:03:17,232 INFO - (MainThread) - core.py:__init__:98 - Use device: cpu
+[15342 139685347399488] 2021-05-12 10:03:17,233 INFO - (MainThread) - core.py:__init__:104 - Loading: tokenize
+[15342 139685347399488] 2021-05-12 10:03:17,241 INFO - (MainThread) - core.py:__init__:126 - Done loading processors!
+[21845 140156898649920] 2021-05-12 10:12:37,439 INFO - (MainThread) - core.py:__init__:87 - Loading these models for language: en (English):
+=======================
+| Processor | Package |
+-----------------------
+| tokenize  | ewt     |
+=======================
+
+[21845 140156898649920] 2021-05-12 10:12:37,439 INFO - (MainThread) - core.py:__init__:98 - Use device: cpu
+[21845 140156898649920] 2021-05-12 10:12:37,439 INFO - (MainThread) - core.py:__init__:104 - Loading: tokenize
+[21845 140156898649920] 2021-05-12 10:12:37,448 INFO - (MainThread) - core.py:__init__:126 - Done loading processors!
+[21845 140156898649920] 2021-05-12 10:13:13,008 INFO - (MainThread) - core.py:__init__:87 - Loading these models for language: en (English):
+=======================
+| Processor | Package |
+-----------------------
+| tokenize  | ewt     |
+=======================
+
+[21845 140156898649920] 2021-05-12 10:13:13,009 INFO - (MainThread) - core.py:__init__:98 - Use device: cpu
+[21845 140156898649920] 2021-05-12 10:13:13,009 INFO - (MainThread) - core.py:__init__:104 - Loading: tokenize
+[21845 140156898649920] 2021-05-12 10:13:13,018 INFO - (MainThread) - core.py:__init__:126 - Done loading processors!
+[15228 140472147932992] 2021-05-12 11:19:40,983 INFO - (MainThread) - core.py:__init__:104 - Loading these models for language: en (English):
+========================
+| Processor | Package  |
+------------------------
+| tokenize  | combined |
+========================
+
+[15228 140472147932992] 2021-05-12 11:19:40,984 INFO - (MainThread) - core.py:__init__:115 - Use device: cpu
+[15228 140472147932992] 2021-05-12 11:19:40,984 INFO - (MainThread) - core.py:__init__:121 - Loading: tokenize
+[15228 140472147932992] 2021-05-12 11:19:40,993 INFO - (MainThread) - core.py:__init__:166 - Done loading processors!
+[26136 140717122725696] 2021-05-12 11:22:09,920 INFO - (MainThread) - core.py:__init__:104 - Loading these models for language: en (English):
+========================
+| Processor | Package  |
+------------------------
+| tokenize  | combined |
+========================
+
+[26136 140717122725696] 2021-05-12 11:22:09,921 INFO - (MainThread) - core.py:__init__:115 - Use device: cpu
+[26136 140717122725696] 2021-05-12 11:22:09,921 INFO - (MainThread) - core.py:__init__:121 - Loading: tokenize
+[26136 140717122725696] 2021-05-12 11:22:09,931 INFO - (MainThread) - core.py:__init__:166 - Done loading processors!
+[26136 140717122725696] 2021-05-12 11:23:14,948 INFO - (MainThread) - core.py:__init__:104 - Loading these models for language: en (English):
+========================
+| Processor | Package  |
+------------------------
+| tokenize  | combined |
+========================
+
+[26136 140717122725696] 2021-05-12 11:23:14,948 INFO - (MainThread) - core.py:__init__:115 - Use device: cpu
+[26136 140717122725696] 2021-05-12 11:23:14,949 INFO - (MainThread) - core.py:__init__:121 - Loading: tokenize
+[26136 140717122725696] 2021-05-12 11:23:14,957 INFO - (MainThread) - core.py:__init__:166 - Done loading processors!
+[4903 140343955687232] 2021-05-12 11:23:51,937 INFO - (MainThread) - core.py:__init__:104 - Loading these models for language: en (English):
+========================
+| Processor | Package  |
+------------------------
+| tokenize  | combined |
+========================
+
+[4903 140343955687232] 2021-05-12 11:23:51,938 INFO - (MainThread) - core.py:__init__:115 - Use device: cpu
+[4903 140343955687232] 2021-05-12 11:23:51,938 INFO - (MainThread) - core.py:__init__:121 - Loading: tokenize
+[4903 140343955687232] 2021-05-12 11:23:51,947 INFO - (MainThread) - core.py:__init__:166 - Done loading processors!
+[15869 140274037741376] 2021-05-12 11:26:59,536 INFO - (MainThread) - core.py:__init__:104 - Loading these models for language: en (English):
+========================
+| Processor | Package  |
+------------------------
+| tokenize  | combined |
+========================
+
+[15869 140274037741376] 2021-05-12 11:26:59,537 INFO - (MainThread) - core.py:__init__:115 - Use device: cpu
+[15869 140274037741376] 2021-05-12 11:26:59,537 INFO - (MainThread) - core.py:__init__:121 - Loading: tokenize
+[15869 140274037741376] 2021-05-12 11:26:59,548 INFO - (MainThread) - core.py:__init__:166 - Done loading processors!
+[15869 140274037741376] 2021-05-12 11:27:59,611 INFO - (MainThread) - core.py:__init__:104 - Loading these models for language: en (English):
+========================
+| Processor | Package  |
+------------------------
+| tokenize  | combined |
+========================
+
+[15869 140274037741376] 2021-05-12 11:27:59,612 INFO - (MainThread) - core.py:__init__:115 - Use device: cpu
+[15869 140274037741376] 2021-05-12 11:27:59,612 INFO - (MainThread) - core.py:__init__:121 - Loading: tokenize
+[15869 140274037741376] 2021-05-12 11:27:59,620 INFO - (MainThread) - core.py:__init__:166 - Done loading processors!
+[26782 140135635126080] 2021-05-12 11:28:50,735 INFO - (MainThread) - core.py:__init__:104 - Loading these models for language: en (English):
+========================
+| Processor | Package  |
+------------------------
+| tokenize  | combined |
+========================
+
+[26782 140135635126080] 2021-05-12 11:28:50,736 INFO - (MainThread) - core.py:__init__:115 - Use device: cpu
+[26782 140135635126080] 2021-05-12 11:28:50,736 INFO - (MainThread) - core.py:__init__:121 - Loading: tokenize
+[26782 140135635126080] 2021-05-12 11:28:50,747 INFO - (MainThread) - core.py:__init__:166 - Done loading processors!
+[26782 140135635126080] 2021-05-12 11:29:52,509 INFO - (MainThread) - core.py:__init__:104 - Loading these models for language: en (English):
+========================
+| Processor | Package  |
+------------------------
+| tokenize  | combined |
+========================
+
+[26782 140135635126080] 2021-05-12 11:29:52,510 INFO - (MainThread) - core.py:__init__:115 - Use device: cpu
+[26782 140135635126080] 2021-05-12 11:29:52,510 INFO - (MainThread) - core.py:__init__:121 - Loading: tokenize
+[26782 140135635126080] 2021-05-12 11:29:52,519 INFO - (MainThread) - core.py:__init__:166 - Done loading processors!
+[5608 140127340406592] 2021-05-12 11:30:52,216 INFO - (MainThread) - core.py:__init__:104 - Loading these models for language: en (English):
+========================
+| Processor | Package  |
+------------------------
+| tokenize  | combined |
+========================
+
+[5608 140127340406592] 2021-05-12 11:30:52,217 INFO - (MainThread) - core.py:__init__:115 - Use device: cpu
+[5608 140127340406592] 2021-05-12 11:30:52,217 INFO - (MainThread) - core.py:__init__:121 - Loading: tokenize
+[5608 140127340406592] 2021-05-12 11:30:52,228 INFO - (MainThread) - core.py:__init__:166 - Done loading processors!
+[5608 140127340406592] 2021-05-12 11:31:52,971 INFO - (MainThread) - core.py:__init__:104 - Loading these models for language: en (English):
+========================
+| Processor | Package  |
+------------------------
+| tokenize  | combined |
+========================
+
+[5608 140127340406592] 2021-05-12 11:31:52,972 INFO - (MainThread) - core.py:__init__:115 - Use device: cpu
+[5608 140127340406592] 2021-05-12 11:31:52,972 INFO - (MainThread) - core.py:__init__:121 - Loading: tokenize
+[5608 140127340406592] 2021-05-12 11:31:52,981 INFO - (MainThread) - core.py:__init__:166 - Done loading processors!
+[16918 140705619629888] 2021-05-12 11:34:44,129 INFO - (MainThread) - core.py:__init__:104 - Loading these models for language: en (English):
+========================
+| Processor | Package  |
+------------------------
+| tokenize  | combined |
+========================
+
+[16918 140705619629888] 2021-05-12 11:34:44,130 INFO - (MainThread) - core.py:__init__:115 - Use device: cpu
+[16918 140705619629888] 2021-05-12 11:34:44,130 INFO - (MainThread) - core.py:__init__:121 - Loading: tokenize
+[16918 140705619629888] 2021-05-12 11:34:44,139 INFO - (MainThread) - core.py:__init__:166 - Done loading processors!
+[16918 140705619629888] 2021-05-12 11:35:44,374 INFO - (MainThread) - core.py:__init__:104 - Loading these models for language: en (English):
+========================
+| Processor | Package  |
+------------------------
+| tokenize  | combined |
+========================
+
+[16918 140705619629888] 2021-05-12 11:35:44,375 INFO - (MainThread) - core.py:__init__:115 - Use device: cpu
+[16918 140705619629888] 2021-05-12 11:35:44,375 INFO - (MainThread) - core.py:__init__:121 - Loading: tokenize
+[16918 140705619629888] 2021-05-12 11:35:44,385 INFO - (MainThread) - core.py:__init__:166 - Done loading processors!
+[16918 140705619629888] 2021-05-12 11:36:50,772 INFO - (MainThread) - core.py:__init__:104 - Loading these models for language: en (English):
+========================
+| Processor | Package  |
+------------------------
+| tokenize  | combined |
+========================
+
+[16918 140705619629888] 2021-05-12 11:36:50,773 INFO - (MainThread) - core.py:__init__:115 - Use device: cpu
+[16918 140705619629888] 2021-05-12 11:36:50,773 INFO - (MainThread) - core.py:__init__:121 - Loading: tokenize
+[16918 140705619629888] 2021-05-12 11:36:50,783 INFO - (MainThread) - core.py:__init__:166 - Done loading processors!
+[16918 140705619629888] 2021-05-12 11:38:11,351 INFO - (MainThread) - core.py:__init__:104 - Loading these models for language: en (English):
+========================
+| Processor | Package  |
+------------------------
+| tokenize  | combined |
+========================
+
+[16918 140705619629888] 2021-05-12 11:38:11,351 INFO - (MainThread) - core.py:__init__:115 - Use device: cpu
+[16918 140705619629888] 2021-05-12 11:38:11,352 INFO - (MainThread) - core.py:__init__:121 - Loading: tokenize
+[16918 140705619629888] 2021-05-12 11:38:11,362 INFO - (MainThread) - core.py:__init__:166 - Done loading processors!
+[16918 140705619629888] 2021-05-12 11:39:32,889 INFO - (MainThread) - core.py:__init__:104 - Loading these models for language: en (English):
+========================
+| Processor | Package  |
+------------------------
+| tokenize  | combined |
+========================
+
+[16918 140705619629888] 2021-05-12 11:39:32,889 INFO - (MainThread) - core.py:__init__:115 - Use device: cpu
+[16918 140705619629888] 2021-05-12 11:39:32,890 INFO - (MainThread) - core.py:__init__:121 - Loading: tokenize
+[16918 140705619629888] 2021-05-12 11:39:32,899 INFO - (MainThread) - core.py:__init__:166 - Done loading processors!
+[16918 140705619629888] 2021-05-12 11:40:36,703 INFO - (MainThread) - core.py:__init__:104 - Loading these models for language: en (English):
+========================
+| Processor | Package  |
+------------------------
+| tokenize  | combined |
+========================
+
+[16918 140705619629888] 2021-05-12 11:40:36,704 INFO - (MainThread) - core.py:__init__:115 - Use device: cpu
+[16918 140705619629888] 2021-05-12 11:40:36,704 INFO - (MainThread) - core.py:__init__:121 - Loading: tokenize
+[16918 140705619629888] 2021-05-12 11:40:36,713 INFO - (MainThread) - core.py:__init__:166 - Done loading processors!
+[16918 140705619629888] 2021-05-12 11:42:11,943 INFO - (MainThread) - core.py:__init__:104 - Loading these models for language: en (English):
+========================
+| Processor | Package  |
+------------------------
+| tokenize  | combined |
+========================
+
+[16918 140705619629888] 2021-05-12 11:42:11,943 INFO - (MainThread) - core.py:__init__:115 - Use device: cpu
+[16918 140705619629888] 2021-05-12 11:42:11,944 INFO - (MainThread) - core.py:__init__:121 - Loading: tokenize
+[16918 140705619629888] 2021-05-12 11:42:11,952 INFO - (MainThread) - core.py:__init__:166 - Done loading processors!
+[16918 140705619629888] 2021-05-12 11:43:26,475 INFO - (MainThread) - core.py:__init__:104 - Loading these models for language: en (English):
+========================
+| Processor | Package  |
+------------------------
+| tokenize  | combined |
+========================
+
+[16918 140705619629888] 2021-05-12 11:43:26,476 INFO - (MainThread) - core.py:__init__:115 - Use device: cpu
+[16918 140705619629888] 2021-05-12 11:43:26,476 INFO - (MainThread) - core.py:__init__:121 - Loading: tokenize
+[16918 140705619629888] 2021-05-12 11:43:26,484 INFO - (MainThread) - core.py:__init__:166 - Done loading processors!
+[16918 140705619629888] 2021-05-12 11:45:10,929 INFO - (MainThread) - core.py:__init__:104 - Loading these models for language: en (English):
+========================
+| Processor | Package  |
+------------------------
+| tokenize  | combined |
+========================
+
+[16918 140705619629888] 2021-05-12 11:45:10,930 INFO - (MainThread) - core.py:__init__:115 - Use device: cpu
+[16918 140705619629888] 2021-05-12 11:45:10,930 INFO - (MainThread) - core.py:__init__:121 - Loading: tokenize
+[16918 140705619629888] 2021-05-12 11:45:10,938 INFO - (MainThread) - core.py:__init__:166 - Done loading processors!
+[16918 140705619629888] 2021-05-12 11:46:26,484 INFO - (MainThread) - core.py:__init__:104 - Loading these models for language: en (English):
+========================
+| Processor | Package  |
+------------------------
+| tokenize  | combined |
+========================
+
+[16918 140705619629888] 2021-05-12 11:46:26,485 INFO - (MainThread) - core.py:__init__:115 - Use device: cpu
+[16918 140705619629888] 2021-05-12 11:46:26,485 INFO - (MainThread) - core.py:__init__:121 - Loading: tokenize
+[16918 140705619629888] 2021-05-12 11:46:26,494 INFO - (MainThread) - core.py:__init__:166 - Done loading processors!
+[16918 140705619629888] 2021-05-12 11:47:36,139 INFO - (MainThread) - core.py:__init__:104 - Loading these models for language: en (English):
+========================
+| Processor | Package  |
+------------------------
+| tokenize  | combined |
+========================
+
+[16918 140705619629888] 2021-05-12 11:47:36,139 INFO - (MainThread) - core.py:__init__:115 - Use device: cpu
+[16918 140705619629888] 2021-05-12 11:47:36,140 INFO - (MainThread) - core.py:__init__:121 - Loading: tokenize
+[16918 140705619629888] 2021-05-12 11:47:36,149 INFO - (MainThread) - core.py:__init__:166 - Done loading processors!
+[26299 140238842783552] 2021-05-24 13:11:20,580 INFO - (MainThread) - core.py:__init__:104 - Loading these models for language: en (English):
+========================
+| Processor | Package  |
+------------------------
+| tokenize  | combined |
+========================
+
+[26299 140238842783552] 2021-05-24 13:11:20,580 INFO - (MainThread) - core.py:__init__:115 - Use device: cpu
+[26299 140238842783552] 2021-05-24 13:11:20,580 INFO - (MainThread) - core.py:__init__:121 - Loading: tokenize
+[26299 140238842783552] 2021-05-24 13:11:20,591 INFO - (MainThread) - core.py:__init__:166 - Done loading processors!
+[26299 140238842783552] 2021-05-24 13:12:21,598 INFO - (MainThread) - core.py:__init__:104 - Loading these models for language: en (English):
+========================
+| Processor | Package  |
+------------------------
+| tokenize  | combined |
+========================
+
+[26299 140238842783552] 2021-05-24 13:12:21,598 INFO - (MainThread) - core.py:__init__:115 - Use device: cpu
+[26299 140238842783552] 2021-05-24 13:12:21,598 INFO - (MainThread) - core.py:__init__:121 - Loading: tokenize
+[26299 140238842783552] 2021-05-24 13:12:21,607 INFO - (MainThread) - core.py:__init__:166 - Done loading processors!
+[14733 140600692655936] 2021-05-26 12:32:19,091 INFO - (MainThread) - core.py:__init__:104 - Loading these models for language: en (English):
+========================
+| Processor | Package  |
+------------------------
+| tokenize  | combined |
+========================
+
+[14733 140600692655936] 2021-05-26 12:32:19,092 INFO - (MainThread) - core.py:__init__:115 - Use device: cpu
+[14733 140600692655936] 2021-05-26 12:32:19,092 INFO - (MainThread) - core.py:__init__:121 - Loading: tokenize
+[14733 140600692655936] 2021-05-26 12:32:19,101 INFO - (MainThread) - core.py:__init__:166 - Done loading processors!
+[14733 140600692655936] 2021-05-26 12:32:55,121 INFO - (MainThread) - core.py:__init__:104 - Loading these models for language: en (English):
+========================
+| Processor | Package  |
+------------------------
+| tokenize  | combined |
+========================
+
+[14733 140600692655936] 2021-05-26 12:32:55,122 INFO - (MainThread) - core.py:__init__:115 - Use device: cpu
+[14733 140600692655936] 2021-05-26 12:32:55,122 INFO - (MainThread) - core.py:__init__:121 - Loading: tokenize
+[14733 140600692655936] 2021-05-26 12:32:55,131 INFO - (MainThread) - core.py:__init__:166 - Done loading processors!
+[14733 140600692655936] 2021-05-26 12:33:38,392 INFO - (MainThread) - core.py:__init__:104 - Loading these models for language: en (English):
+========================
+| Processor | Package  |
+------------------------
+| tokenize  | combined |
+========================
+
+[14733 140600692655936] 2021-05-26 12:33:38,393 INFO - (MainThread) - core.py:__init__:115 - Use device: cpu
+[14733 140600692655936] 2021-05-26 12:33:38,393 INFO - (MainThread) - core.py:__init__:121 - Loading: tokenize
+[14733 140600692655936] 2021-05-26 12:33:38,402 INFO - (MainThread) - core.py:__init__:166 - Done loading processors!
+[14733 140600692655936] 2021-05-26 12:34:18,606 INFO - (MainThread) - core.py:__init__:104 - Loading these models for language: en (English):
+========================
+| Processor | Package  |
+------------------------
+| tokenize  | combined |
+========================
+
+[14733 140600692655936] 2021-05-26 12:34:18,607 INFO - (MainThread) - core.py:__init__:115 - Use device: cpu
+[14733 140600692655936] 2021-05-26 12:34:18,607 INFO - (MainThread) - core.py:__init__:121 - Loading: tokenize
+[14733 140600692655936] 2021-05-26 12:34:18,616 INFO - (MainThread) - core.py:__init__:166 - Done loading processors!
+[14733 140600692655936] 2021-05-26 12:34:55,926 INFO - (MainThread) - core.py:__init__:104 - Loading these models for language: en (English):
+========================
+| Processor | Package  |
+------------------------
+| tokenize  | combined |
+========================
+
+[14733 140600692655936] 2021-05-26 12:34:55,927 INFO - (MainThread) - core.py:__init__:115 - Use device: cpu
+[14733 140600692655936] 2021-05-26 12:34:55,927 INFO - (MainThread) - core.py:__init__:121 - Loading: tokenize
+[14733 140600692655936] 2021-05-26 12:34:55,937 INFO - (MainThread) - core.py:__init__:166 - Done loading processors!
+[14733 140600692655936] 2021-05-26 12:35:31,787 INFO - (MainThread) - core.py:__init__:104 - Loading these models for language: en (English):
+========================
+| Processor | Package  |
+------------------------
+| tokenize  | combined |
+========================
+
+[14733 140600692655936] 2021-05-26 12:35:31,788 INFO - (MainThread) - core.py:__init__:115 - Use device: cpu
+[14733 140600692655936] 2021-05-26 12:35:31,788 INFO - (MainThread) - core.py:__init__:121 - Loading: tokenize
+[14733 140600692655936] 2021-05-26 12:35:31,943 INFO - (MainThread) - core.py:__init__:166 - Done loading processors!
+[14733 140600692655936] 2021-05-26 12:36:11,873 INFO - (MainThread) - core.py:__init__:104 - Loading these models for language: en (English):
+========================
+| Processor | Package  |
+------------------------
+| tokenize  | combined |
+========================
+
+[14733 140600692655936] 2021-05-26 12:36:11,873 INFO - (MainThread) - core.py:__init__:115 - Use device: cpu
+[14733 140600692655936] 2021-05-26 12:36:11,873 INFO - (MainThread) - core.py:__init__:121 - Loading: tokenize
+[14733 140600692655936] 2021-05-26 12:36:11,882 INFO - (MainThread) - core.py:__init__:166 - Done loading processors!
+[14733 140600692655936] 2021-05-26 12:36:59,665 INFO - (MainThread) - core.py:__init__:104 - Loading these models for language: en (English):
+========================
+| Processor | Package  |
+------------------------
+| tokenize  | combined |
+========================
+
+[14733 140600692655936] 2021-05-26 12:36:59,665 INFO - (MainThread) - core.py:__init__:115 - Use device: cpu
+[14733 140600692655936] 2021-05-26 12:36:59,665 INFO - (MainThread) - core.py:__init__:121 - Loading: tokenize
+[14733 140600692655936] 2021-05-26 12:36:59,675 INFO - (MainThread) - core.py:__init__:166 - Done loading processors!
+[14733 140600692655936] 2021-05-26 12:37:27,977 INFO - (MainThread) - core.py:__init__:104 - Loading these models for language: en (English):
+========================
+| Processor | Package  |
+------------------------
+| tokenize  | combined |
+========================
+
+[14733 140600692655936] 2021-05-26 12:37:27,978 INFO - (MainThread) - core.py:__init__:115 - Use device: cpu
+[14733 140600692655936] 2021-05-26 12:37:27,978 INFO - (MainThread) - core.py:__init__:121 - Loading: tokenize
+[14733 140600692655936] 2021-05-26 12:37:27,987 INFO - (MainThread) - core.py:__init__:166 - Done loading processors!
+[14733 140600692655936] 2021-05-26 12:37:55,913 INFO - (MainThread) - core.py:__init__:104 - Loading these models for language: en (English):
+========================
+| Processor | Package  |
+------------------------
+| tokenize  | combined |
+========================
+
+[14733 140600692655936] 2021-05-26 12:37:55,914 INFO - (MainThread) - core.py:__init__:115 - Use device: cpu
+[14733 140600692655936] 2021-05-26 12:37:55,914 INFO - (MainThread) - core.py:__init__:121 - Loading: tokenize
+[14733 140600692655936] 2021-05-26 12:37:55,924 INFO - (MainThread) - core.py:__init__:166 - Done loading processors!
+[23299 139829387151168] 2021-05-26 13:04:43,097 INFO - (MainThread) - core.py:__init__:104 - Loading these models for language: en (English):
+========================
+| Processor | Package  |
+------------------------
+| tokenize  | combined |
+========================
+
+[23299 139829387151168] 2021-05-26 13:04:43,097 INFO - (MainThread) - core.py:__init__:115 - Use device: cpu
+[23299 139829387151168] 2021-05-26 13:04:43,098 INFO - (MainThread) - core.py:__init__:121 - Loading: tokenize
+[23299 139829387151168] 2021-05-26 13:04:43,107 INFO - (MainThread) - core.py:__init__:166 - Done loading processors!
+[23299 139829387151168] 2021-05-26 13:05:22,474 INFO - (MainThread) - core.py:__init__:104 - Loading these models for language: en (English):
+========================
+| Processor | Package  |
+------------------------
+| tokenize  | combined |
+========================
+
+[23299 139829387151168] 2021-05-26 13:05:22,474 INFO - (MainThread) - core.py:__init__:115 - Use device: cpu
+[23299 139829387151168] 2021-05-26 13:05:22,475 INFO - (MainThread) - core.py:__init__:121 - Loading: tokenize
+[23299 139829387151168] 2021-05-26 13:05:22,484 INFO - (MainThread) - core.py:__init__:166 - Done loading processors!
+[23299 139829387151168] 2021-05-26 13:06:10,758 INFO - (MainThread) - core.py:__init__:104 - Loading these models for language: en (English):
+========================
+| Processor | Package  |
+------------------------
+| tokenize  | combined |
+========================
+
+[23299 139829387151168] 2021-05-26 13:06:10,758 INFO - (MainThread) - core.py:__init__:115 - Use device: cpu
+[23299 139829387151168] 2021-05-26 13:06:10,759 INFO - (MainThread) - core.py:__init__:121 - Loading: tokenize
+[23299 139829387151168] 2021-05-26 13:06:10,767 INFO - (MainThread) - core.py:__init__:166 - Done loading processors!
+[23299 139829387151168] 2021-05-26 13:06:54,723 INFO - (MainThread) - core.py:__init__:104 - Loading these models for language: en (English):
+========================
+| Processor | Package  |
+------------------------
+| tokenize  | combined |
+========================
+
+[23299 139829387151168] 2021-05-26 13:06:54,724 INFO - (MainThread) - core.py:__init__:115 - Use device: cpu
+[23299 139829387151168] 2021-05-26 13:06:54,724 INFO - (MainThread) - core.py:__init__:121 - Loading: tokenize
+[23299 139829387151168] 2021-05-26 13:06:54,733 INFO - (MainThread) - core.py:__init__:166 - Done loading processors!
+[29967 140253818013504] 2021-05-26 13:12:00,452 INFO - (MainThread) - core.py:__init__:104 - Loading these models for language: en (English):
+========================
+| Processor | Package  |
+------------------------
+| tokenize  | combined |
+========================
+
+[29967 140253818013504] 2021-05-26 13:12:00,452 INFO - (MainThread) - core.py:__init__:115 - Use device: cpu
+[29967 140253818013504] 2021-05-26 13:12:00,452 INFO - (MainThread) - core.py:__init__:121 - Loading: tokenize
+[29967 140253818013504] 2021-05-26 13:12:00,461 INFO - (MainThread) - core.py:__init__:166 - Done loading processors!
+[5727 140609103435584] 2021-06-30 13:32:09,953 INFO - (MainThread) - core.py:__init__:104 - Loading these models for language: en (English):
+========================
+| Processor | Package  |
+------------------------
+| tokenize  | combined |
+========================
+
+[5727 140609103435584] 2021-06-30 13:32:09,963 INFO - (MainThread) - core.py:__init__:115 - Use device: cpu
+[5727 140609103435584] 2021-06-30 13:32:09,963 INFO - (MainThread) - core.py:__init__:121 - Loading: tokenize
+[5727 140609103435584] 2021-06-30 13:32:09,972 INFO - (MainThread) - core.py:__init__:166 - Done loading processors!
+[5727 140609103435584] 2021-06-30 13:33:28,276 INFO - (MainThread) - core.py:__init__:104 - Loading these models for language: en (English):
+========================
+| Processor | Package  |
+------------------------
+| tokenize  | combined |
+========================
+
+[5727 140609103435584] 2021-06-30 13:33:28,277 INFO - (MainThread) - core.py:__init__:115 - Use device: cpu
+[5727 140609103435584] 2021-06-30 13:33:28,277 INFO - (MainThread) - core.py:__init__:121 - Loading: tokenize
+[5727 140609103435584] 2021-06-30 13:33:28,287 INFO - (MainThread) - core.py:__init__:166 - Done loading processors!
+[5727 140609103435584] 2021-06-30 13:34:36,398 INFO - (MainThread) - core.py:__init__:104 - Loading these models for language: en (English):
+========================
+| Processor | Package  |
+------------------------
+| tokenize  | combined |
+========================
+
+[5727 140609103435584] 2021-06-30 13:34:36,399 INFO - (MainThread) - core.py:__init__:115 - Use device: cpu
+[5727 140609103435584] 2021-06-30 13:34:36,399 INFO - (MainThread) - core.py:__init__:121 - Loading: tokenize
+[5727 140609103435584] 2021-06-30 13:34:36,409 INFO - (MainThread) - core.py:__init__:166 - Done loading processors!
+[5727 140609103435584] 2021-06-30 13:35:58,653 INFO - (MainThread) - core.py:__init__:104 - Loading these models for language: en (English):
+========================
+| Processor | Package  |
+------------------------
+| tokenize  | combined |
+========================
+
+[5727 140609103435584] 2021-06-30 13:35:58,655 INFO - (MainThread) - core.py:__init__:115 - Use device: cpu
+[5727 140609103435584] 2021-06-30 13:35:58,655 INFO - (MainThread) - core.py:__init__:121 - Loading: tokenize
+[5727 140609103435584] 2021-06-30 13:35:58,664 INFO - (MainThread) - core.py:__init__:166 - Done loading processors!
+[5727 140609103435584] 2021-06-30 13:37:18,806 INFO - (MainThread) - core.py:__init__:104 - Loading these models for language: en (English):
+========================
+| Processor | Package  |
+------------------------
+| tokenize  | combined |
+========================
+
+[5727 140609103435584] 2021-06-30 13:37:18,807 INFO - (MainThread) - core.py:__init__:115 - Use device: cpu
+[5727 140609103435584] 2021-06-30 13:37:18,807 INFO - (MainThread) - core.py:__init__:121 - Loading: tokenize
+[5727 140609103435584] 2021-06-30 13:37:18,816 INFO - (MainThread) - core.py:__init__:166 - Done loading processors!
+[5727 140609103435584] 2021-06-30 13:38:23,731 INFO - (MainThread) - core.py:__init__:104 - Loading these models for language: en (English):
+========================
+| Processor | Package  |
+------------------------
+| tokenize  | combined |
+========================
+
+[5727 140609103435584] 2021-06-30 13:38:23,732 INFO - (MainThread) - core.py:__init__:115 - Use device: cpu
+[5727 140609103435584] 2021-06-30 13:38:23,732 INFO - (MainThread) - core.py:__init__:121 - Loading: tokenize
+[5727 140609103435584] 2021-06-30 13:38:23,740 INFO - (MainThread) - core.py:__init__:166 - Done loading processors!
+[5727 140609103435584] 2021-06-30 13:40:01,751 INFO - (MainThread) - core.py:__init__:104 - Loading these models for language: en (English):
+========================
+| Processor | Package  |
+------------------------
+| tokenize  | combined |
+========================
+
+[5727 140609103435584] 2021-06-30 13:40:01,751 INFO - (MainThread) - core.py:__init__:115 - Use device: cpu
+[5727 140609103435584] 2021-06-30 13:40:01,751 INFO - (MainThread) - core.py:__init__:121 - Loading: tokenize
+[5727 140609103435584] 2021-06-30 13:40:01,760 INFO - (MainThread) - core.py:__init__:166 - Done loading processors!
+[5727 140609103435584] 2021-06-30 13:41:17,292 INFO - (MainThread) - core.py:__init__:104 - Loading these models for language: en (English):
+========================
+| Processor | Package  |
+------------------------
+| tokenize  | combined |
+========================
+
+[5727 140609103435584] 2021-06-30 13:41:17,293 INFO - (MainThread) - core.py:__init__:115 - Use device: cpu
+[5727 140609103435584] 2021-06-30 13:41:17,293 INFO - (MainThread) - core.py:__init__:121 - Loading: tokenize
+[5727 140609103435584] 2021-06-30 13:41:17,301 INFO - (MainThread) - core.py:__init__:166 - Done loading processors!
+[5727 140609103435584] 2021-06-30 13:43:03,229 INFO - (MainThread) - core.py:__init__:104 - Loading these models for language: en (English):
+========================
+| Processor | Package  |
+------------------------
+| tokenize  | combined |
+========================
+
+[5727 140609103435584] 2021-06-30 13:43:03,229 INFO - (MainThread) - core.py:__init__:115 - Use device: cpu
+[5727 140609103435584] 2021-06-30 13:43:03,230 INFO - (MainThread) - core.py:__init__:121 - Loading: tokenize
+[5727 140609103435584] 2021-06-30 13:43:03,238 INFO - (MainThread) - core.py:__init__:166 - Done loading processors!
+[5727 140609103435584] 2021-06-30 13:44:22,670 INFO - (MainThread) - core.py:__init__:104 - Loading these models for language: en (English):
+========================
+| Processor | Package  |
+------------------------
+| tokenize  | combined |
+========================
+
+[5727 140609103435584] 2021-06-30 13:44:22,671 INFO - (MainThread) - core.py:__init__:115 - Use device: cpu
+[5727 140609103435584] 2021-06-30 13:44:22,671 INFO - (MainThread) - core.py:__init__:121 - Loading: tokenize
+[5727 140609103435584] 2021-06-30 13:44:22,680 INFO - (MainThread) - core.py:__init__:166 - Done loading processors!
+[5727 140609103435584] 2021-06-30 13:45:32,430 INFO - (MainThread) - core.py:__init__:104 - Loading these models for language: en (English):
+========================
+| Processor | Package  |
+------------------------
+| tokenize  | combined |
+========================
+
+[5727 140609103435584] 2021-06-30 13:45:32,430 INFO - (MainThread) - core.py:__init__:115 - Use device: cpu
+[5727 140609103435584] 2021-06-30 13:45:32,431 INFO - (MainThread) - core.py:__init__:121 - Loading: tokenize
+[5727 140609103435584] 2021-06-30 13:45:32,439 INFO - (MainThread) - core.py:__init__:166 - Done loading processors!
+[2841 139677330777920] 2021-06-30 14:54:12,754 INFO - (MainThread) - core.py:__init__:104 - Loading these models for language: en (English):
+========================
+| Processor | Package  |
+------------------------
+| tokenize  | combined |
+========================
+
+[2841 139677330777920] 2021-06-30 14:54:12,755 INFO - (MainThread) - core.py:__init__:115 - Use device: cpu
+[2841 139677330777920] 2021-06-30 14:54:12,755 INFO - (MainThread) - core.py:__init__:121 - Loading: tokenize
+[2841 139677330777920] 2021-06-30 14:54:12,765 INFO - (MainThread) - core.py:__init__:166 - Done loading processors!
+[2841 139677330777920] 2021-06-30 14:55:14,316 INFO - (MainThread) - core.py:__init__:104 - Loading these models for language: en (English):
+========================
+| Processor | Package  |
+------------------------
+| tokenize  | combined |
+========================
+
+[2841 139677330777920] 2021-06-30 14:55:14,317 INFO - (MainThread) - core.py:__init__:115 - Use device: cpu
+[2841 139677330777920] 2021-06-30 14:55:14,317 INFO - (MainThread) - core.py:__init__:121 - Loading: tokenize
+[2841 139677330777920] 2021-06-30 14:55:14,326 INFO - (MainThread) - core.py:__init__:166 - Done loading processors!
+[14557 139847350597440] 2021-06-30 14:55:53,693 INFO - (MainThread) - core.py:__init__:104 - Loading these models for language: en (English):
+========================
+| Processor | Package  |
+------------------------
+| tokenize  | combined |
+========================
+
+[14557 139847350597440] 2021-06-30 14:55:53,693 INFO - (MainThread) - core.py:__init__:115 - Use device: cpu
+[14557 139847350597440] 2021-06-30 14:55:53,693 INFO - (MainThread) - core.py:__init__:121 - Loading: tokenize
+[14557 139847350597440] 2021-06-30 14:55:53,702 INFO - (MainThread) - core.py:__init__:166 - Done loading processors!
+[14557 139847350597440] 2021-06-30 14:56:55,228 INFO - (MainThread) - core.py:__init__:104 - Loading these models for language: en (English):
+========================
+| Processor | Package  |
+------------------------
+| tokenize  | combined |
+========================
+
+[14557 139847350597440] 2021-06-30 14:56:55,229 INFO - (MainThread) - core.py:__init__:115 - Use device: cpu
+[14557 139847350597440] 2021-06-30 14:56:55,229 INFO - (MainThread) - core.py:__init__:121 - Loading: tokenize
+[14557 139847350597440] 2021-06-30 14:56:55,238 INFO - (MainThread) - core.py:__init__:166 - Done loading processors!
+[26395 139825216452416] 2021-06-30 14:57:39,218 INFO - (MainThread) - core.py:__init__:104 - Loading these models for language: en (English):
+========================
+| Processor | Package  |
+------------------------
+| tokenize  | combined |
+========================
+
+[26395 139825216452416] 2021-06-30 14:57:39,219 INFO - (MainThread) - core.py:__init__:115 - Use device: cpu
+[26395 139825216452416] 2021-06-30 14:57:39,219 INFO - (MainThread) - core.py:__init__:121 - Loading: tokenize
+[26395 139825216452416] 2021-06-30 14:57:39,228 INFO - (MainThread) - core.py:__init__:166 - Done loading processors!
+[26395 139825216452416] 2021-06-30 14:58:40,937 INFO - (MainThread) - core.py:__init__:104 - Loading these models for language: en (English):
+========================
+| Processor | Package  |
+------------------------
+| tokenize  | combined |
+========================
+
+[26395 139825216452416] 2021-06-30 14:58:40,938 INFO - (MainThread) - core.py:__init__:115 - Use device: cpu
+[26395 139825216452416] 2021-06-30 14:58:40,938 INFO - (MainThread) - core.py:__init__:121 - Loading: tokenize
+[26395 139825216452416] 2021-06-30 14:58:40,946 INFO - (MainThread) - core.py:__init__:166 - Done loading processors!
+[7200 139994587191104] 2021-06-30 14:59:52,681 INFO - (MainThread) - core.py:__init__:104 - Loading these models for language: en (English):
+========================
+| Processor | Package  |
+------------------------
+| tokenize  | combined |
+========================
+
+[7200 139994587191104] 2021-06-30 14:59:52,682 INFO - (MainThread) - core.py:__init__:115 - Use device: cpu
+[7200 139994587191104] 2021-06-30 14:59:52,682 INFO - (MainThread) - core.py:__init__:121 - Loading: tokenize
+[7200 139994587191104] 2021-06-30 14:59:52,693 INFO - (MainThread) - core.py:__init__:166 - Done loading processors!
+[18846 140719040436032] 2021-06-30 15:01:44,468 INFO - (MainThread) - core.py:__init__:104 - Loading these models for language: en (English):
+========================
+| Processor | Package  |
+------------------------
+| tokenize  | combined |
+========================
+
+[18846 140719040436032] 2021-06-30 15:01:44,469 INFO - (MainThread) - core.py:__init__:115 - Use device: cpu
+[18846 140719040436032] 2021-06-30 15:01:44,469 INFO - (MainThread) - core.py:__init__:121 - Loading: tokenize
+[18846 140719040436032] 2021-06-30 15:01:44,480 INFO - (MainThread) - core.py:__init__:166 - Done loading processors!
+[18846 140719040436032] 2021-06-30 15:02:48,365 INFO - (MainThread) - core.py:__init__:104 - Loading these models for language: en (English):
+========================
+| Processor | Package  |
+------------------------
+| tokenize  | combined |
+========================
+
+[18846 140719040436032] 2021-06-30 15:02:48,366 INFO - (MainThread) - core.py:__init__:115 - Use device: cpu
+[18846 140719040436032] 2021-06-30 15:02:48,366 INFO - (MainThread) - core.py:__init__:121 - Loading: tokenize
+[18846 140719040436032] 2021-06-30 15:02:48,374 INFO - (MainThread) - core.py:__init__:166 - Done loading processors!
+[1562 139885355157312] 2021-06-30 15:05:59,617 INFO - (MainThread) - core.py:__init__:104 - Loading these models for language: en (English):
+========================
+| Processor | Package  |
+------------------------
+| tokenize  | combined |
+========================
+
+[1562 139885355157312] 2021-06-30 15:05:59,617 INFO - (MainThread) - core.py:__init__:115 - Use device: cpu
+[1562 139885355157312] 2021-06-30 15:05:59,618 INFO - (MainThread) - core.py:__init__:121 - Loading: tokenize
+[1562 139885355157312] 2021-06-30 15:05:59,627 INFO - (MainThread) - core.py:__init__:166 - Done loading processors!
+[1562 139885355157312] 2021-06-30 15:07:06,042 INFO - (MainThread) - core.py:__init__:104 - Loading these models for language: en (English):
+========================
+| Processor | Package  |
+------------------------
+| tokenize  | combined |
+========================
+
+[1562 139885355157312] 2021-06-30 15:07:06,042 INFO - (MainThread) - core.py:__init__:115 - Use device: cpu
+[1562 139885355157312] 2021-06-30 15:07:06,042 INFO - (MainThread) - core.py:__init__:121 - Loading: tokenize
+[1562 139885355157312] 2021-06-30 15:07:06,051 INFO - (MainThread) - core.py:__init__:166 - Done loading processors!
+[15954 139672517879616] 2021-06-30 15:08:21,695 INFO - (MainThread) - core.py:__init__:104 - Loading these models for language: en (English):
+========================
+| Processor | Package  |
+------------------------
+| tokenize  | combined |
+========================
+
+[15954 139672517879616] 2021-06-30 15:08:21,696 INFO - (MainThread) - core.py:__init__:115 - Use device: cpu
+[15954 139672517879616] 2021-06-30 15:08:21,696 INFO - (MainThread) - core.py:__init__:121 - Loading: tokenize
+[15954 139672517879616] 2021-06-30 15:08:21,704 INFO - (MainThread) - core.py:__init__:166 - Done loading processors!
+[15954 139672517879616] 2021-06-30 15:09:25,161 INFO - (MainThread) - core.py:__init__:104 - Loading these models for language: en (English):
+========================
+| Processor | Package  |
+------------------------
+| tokenize  | combined |
+========================
+
+[15954 139672517879616] 2021-06-30 15:09:25,162 INFO - (MainThread) - core.py:__init__:115 - Use device: cpu
+[15954 139672517879616] 2021-06-30 15:09:25,162 INFO - (MainThread) - core.py:__init__:121 - Loading: tokenize
+[15954 139672517879616] 2021-06-30 15:09:25,171 INFO - (MainThread) - core.py:__init__:166 - Done loading processors!
+[28798 140233800582976] 2021-06-30 15:12:41,967 INFO - (MainThread) - core.py:__init__:104 - Loading these models for language: en (English):
+========================
+| Processor | Package  |
+------------------------
+| tokenize  | combined |
+========================
+
+[28798 140233800582976] 2021-06-30 15:12:41,967 INFO - (MainThread) - core.py:__init__:115 - Use device: cpu
+[28798 140233800582976] 2021-06-30 15:12:41,968 INFO - (MainThread) - core.py:__init__:121 - Loading: tokenize
+[28798 140233800582976] 2021-06-30 15:12:41,976 INFO - (MainThread) - core.py:__init__:166 - Done loading processors!
+[28798 140233800582976] 2021-06-30 15:13:42,281 INFO - (MainThread) - core.py:__init__:104 - Loading these models for language: en (English):
+========================
+| Processor | Package  |
+------------------------
+| tokenize  | combined |
+========================
+
+[28798 140233800582976] 2021-06-30 15:13:42,282 INFO - (MainThread) - core.py:__init__:115 - Use device: cpu
+[28798 140233800582976] 2021-06-30 15:13:42,283 INFO - (MainThread) - core.py:__init__:121 - Loading: tokenize
+[28798 140233800582976] 2021-06-30 15:13:42,291 INFO - (MainThread) - core.py:__init__:166 - Done loading processors!
+[8141 140216928585536] 2021-06-30 15:14:05,968 INFO - (MainThread) - core.py:__init__:104 - Loading these models for language: en (English):
+========================
+| Processor | Package  |
+------------------------
+| tokenize  | combined |
+========================
+
+[8141 140216928585536] 2021-06-30 15:14:05,969 INFO - (MainThread) - core.py:__init__:115 - Use device: cpu
+[8141 140216928585536] 2021-06-30 15:14:05,969 INFO - (MainThread) - core.py:__init__:121 - Loading: tokenize
+[8141 140216928585536] 2021-06-30 15:14:05,979 INFO - (MainThread) - core.py:__init__:166 - Done loading processors!
+[8141 140216928585536] 2021-06-30 15:15:08,833 INFO - (MainThread) - core.py:__init__:104 - Loading these models for language: en (English):
+========================
+| Processor | Package  |
+------------------------
+| tokenize  | combined |
+========================
+
+[8141 140216928585536] 2021-06-30 15:15:08,834 INFO - (MainThread) - core.py:__init__:115 - Use device: cpu
+[8141 140216928585536] 2021-06-30 15:15:08,834 INFO - (MainThread) - core.py:__init__:121 - Loading: tokenize
+[8141 140216928585536] 2021-06-30 15:15:08,843 INFO - (MainThread) - core.py:__init__:166 - Done loading processors!
+[20081 140451091167040] 2021-06-30 15:16:39,907 INFO - (MainThread) - core.py:__init__:104 - Loading these models for language: en (English):
+========================
+| Processor | Package  |
+------------------------
+| tokenize  | combined |
+========================
+
+[20081 140451091167040] 2021-06-30 15:16:39,908 INFO - (MainThread) - core.py:__init__:115 - Use device: cpu
+[20081 140451091167040] 2021-06-30 15:16:39,908 INFO - (MainThread) - core.py:__init__:121 - Loading: tokenize
+[20081 140451091167040] 2021-06-30 15:16:39,917 INFO - (MainThread) - core.py:__init__:166 - Done loading processors!
+[20081 140451091167040] 2021-06-30 15:17:47,045 INFO - (MainThread) - core.py:__init__:104 - Loading these models for language: en (English):
+========================
+| Processor | Package  |
+------------------------
+| tokenize  | combined |
+========================
+
+[20081 140451091167040] 2021-06-30 15:17:47,046 INFO - (MainThread) - core.py:__init__:115 - Use device: cpu
+[20081 140451091167040] 2021-06-30 15:17:47,046 INFO - (MainThread) - core.py:__init__:121 - Loading: tokenize
+[20081 140451091167040] 2021-06-30 15:17:47,055 INFO - (MainThread) - core.py:__init__:166 - Done loading processors!
+[32554 139751294379840] 2021-06-30 15:18:51,371 INFO - (MainThread) - core.py:__init__:104 - Loading these models for language: en (English):
+========================
+| Processor | Package  |
+------------------------
+| tokenize  | combined |
+========================
+
+[32554 139751294379840] 2021-06-30 15:18:51,371 INFO - (MainThread) - core.py:__init__:115 - Use device: cpu
+[32554 139751294379840] 2021-06-30 15:18:51,372 INFO - (MainThread) - core.py:__init__:121 - Loading: tokenize
+[32554 139751294379840] 2021-06-30 15:18:51,381 INFO - (MainThread) - core.py:__init__:166 - Done loading processors!
+[32554 139751294379840] 2021-06-30 15:19:52,148 INFO - (MainThread) - core.py:__init__:104 - Loading these models for language: en (English):
+========================
+| Processor | Package  |
+------------------------
+| tokenize  | combined |
+========================
+
+[32554 139751294379840] 2021-06-30 15:19:52,149 INFO - (MainThread) - core.py:__init__:115 - Use device: cpu
+[32554 139751294379840] 2021-06-30 15:19:52,149 INFO - (MainThread) - core.py:__init__:121 - Loading: tokenize
+[32554 139751294379840] 2021-06-30 15:19:52,158 INFO - (MainThread) - core.py:__init__:166 - Done loading processors!
+[13641 140530685577024] 2021-06-30 15:23:14,415 INFO - (MainThread) - core.py:__init__:104 - Loading these models for language: en (English):
+========================
+| Processor | Package  |
+------------------------
+| tokenize  | combined |
+========================
+
+[13641 140530685577024] 2021-06-30 15:23:14,416 INFO - (MainThread) - core.py:__init__:115 - Use device: cpu
+[13641 140530685577024] 2021-06-30 15:23:14,416 INFO - (MainThread) - core.py:__init__:121 - Loading: tokenize
+[13641 140530685577024] 2021-06-30 15:23:14,424 INFO - (MainThread) - core.py:__init__:166 - Done loading processors!
+[11090 140611359807296] 2021-06-30 19:28:16,033 INFO - (MainThread) - core.py:__init__:104 - Loading these models for language: en (English):
+========================
+| Processor | Package  |
+------------------------
+| tokenize  | combined |
+========================
+
+[11090 140611359807296] 2021-06-30 19:28:16,034 INFO - (MainThread) - core.py:__init__:115 - Use device: cpu
+[11090 140611359807296] 2021-06-30 19:28:16,034 INFO - (MainThread) - core.py:__init__:121 - Loading: tokenize
+[11090 140611359807296] 2021-06-30 19:28:16,043 INFO - (MainThread) - core.py:__init__:166 - Done loading processors!
+[11090 140611359807296] 2021-06-30 19:29:18,648 INFO - (MainThread) - core.py:__init__:104 - Loading these models for language: en (English):
+========================
+| Processor | Package  |
+------------------------
+| tokenize  | combined |
+========================
+
+[11090 140611359807296] 2021-06-30 19:29:18,649 INFO - (MainThread) - core.py:__init__:115 - Use device: cpu
+[11090 140611359807296] 2021-06-30 19:29:18,649 INFO - (MainThread) - core.py:__init__:121 - Loading: tokenize
+[11090 140611359807296] 2021-06-30 19:29:18,658 INFO - (MainThread) - core.py:__init__:166 - Done loading processors!
+[11090 140611359807296] 2021-06-30 19:30:29,319 INFO - (MainThread) - core.py:__init__:104 - Loading these models for language: en (English):
+========================
+| Processor | Package  |
+------------------------
+| tokenize  | combined |
+========================
+
+[11090 140611359807296] 2021-06-30 19:30:29,320 INFO - (MainThread) - core.py:__init__:115 - Use device: cpu
+[11090 140611359807296] 2021-06-30 19:30:29,321 INFO - (MainThread) - core.py:__init__:121 - Loading: tokenize
+[11090 140611359807296] 2021-06-30 19:30:29,331 INFO - (MainThread) - core.py:__init__:166 - Done loading processors!
+[11090 140611359807296] 2021-06-30 19:31:53,657 INFO - (MainThread) - core.py:__init__:104 - Loading these models for language: en (English):
+========================
+| Processor | Package  |
+------------------------
+| tokenize  | combined |
+========================
+
+[11090 140611359807296] 2021-06-30 19:31:53,658 INFO - (MainThread) - core.py:__init__:115 - Use device: cpu
+[11090 140611359807296] 2021-06-30 19:31:53,658 INFO - (MainThread) - core.py:__init__:121 - Loading: tokenize
+[11090 140611359807296] 2021-06-30 19:31:53,667 INFO - (MainThread) - core.py:__init__:166 - Done loading processors!
+[11090 140611359807296] 2021-06-30 19:33:20,243 INFO - (MainThread) - core.py:__init__:104 - Loading these models for language: en (English):
+========================
+| Processor | Package  |
+------------------------
+| tokenize  | combined |
+========================
+
+[11090 140611359807296] 2021-06-30 19:33:20,243 INFO - (MainThread) - core.py:__init__:115 - Use device: cpu
+[11090 140611359807296] 2021-06-30 19:33:20,244 INFO - (MainThread) - core.py:__init__:121 - Loading: tokenize
+[11090 140611359807296] 2021-06-30 19:33:20,252 INFO - (MainThread) - core.py:__init__:166 - Done loading processors!
+[11090 140611359807296] 2021-06-30 19:34:24,638 INFO - (MainThread) - core.py:__init__:104 - Loading these models for language: en (English):
+========================
+| Processor | Package  |
+------------------------
+| tokenize  | combined |
+========================
+
+[11090 140611359807296] 2021-06-30 19:34:24,638 INFO - (MainThread) - core.py:__init__:115 - Use device: cpu
+[11090 140611359807296] 2021-06-30 19:34:24,639 INFO - (MainThread) - core.py:__init__:121 - Loading: tokenize
+[11090 140611359807296] 2021-06-30 19:34:24,647 INFO - (MainThread) - core.py:__init__:166 - Done loading processors!
+[11090 140611359807296] 2021-06-30 19:36:04,245 INFO - (MainThread) - core.py:__init__:104 - Loading these models for language: en (English):
+========================
+| Processor | Package  |
+------------------------
+| tokenize  | combined |
+========================
+
+[11090 140611359807296] 2021-06-30 19:36:04,246 INFO - (MainThread) - core.py:__init__:115 - Use device: cpu
+[11090 140611359807296] 2021-06-30 19:36:04,246 INFO - (MainThread) - core.py:__init__:121 - Loading: tokenize
+[11090 140611359807296] 2021-06-30 19:36:04,255 INFO - (MainThread) - core.py:__init__:166 - Done loading processors!
+[11090 140611359807296] 2021-06-30 19:37:21,149 INFO - (MainThread) - core.py:__init__:104 - Loading these models for language: en (English):
+========================
+| Processor | Package  |
+------------------------
+| tokenize  | combined |
+========================
+
+[11090 140611359807296] 2021-06-30 19:37:21,149 INFO - (MainThread) - core.py:__init__:115 - Use device: cpu
+[11090 140611359807296] 2021-06-30 19:37:21,150 INFO - (MainThread) - core.py:__init__:121 - Loading: tokenize
+[11090 140611359807296] 2021-06-30 19:37:21,158 INFO - (MainThread) - core.py:__init__:166 - Done loading processors!
+[11090 140611359807296] 2021-06-30 19:39:12,371 INFO - (MainThread) - core.py:__init__:104 - Loading these models for language: en (English):
+========================
+| Processor | Package  |
+------------------------
+| tokenize  | combined |
+========================
+
+[11090 140611359807296] 2021-06-30 19:39:12,372 INFO - (MainThread) - core.py:__init__:115 - Use device: cpu
+[11090 140611359807296] 2021-06-30 19:39:12,372 INFO - (MainThread) - core.py:__init__:121 - Loading: tokenize
+[11090 140611359807296] 2021-06-30 19:39:12,381 INFO - (MainThread) - core.py:__init__:166 - Done loading processors!
+[11090 140611359807296] 2021-06-30 19:40:33,469 INFO - (MainThread) - core.py:__init__:104 - Loading these models for language: en (English):
+========================
+| Processor | Package  |
+------------------------
+| tokenize  | combined |
+========================
+
+[11090 140611359807296] 2021-06-30 19:40:33,469 INFO - (MainThread) - core.py:__init__:115 - Use device: cpu
+[11090 140611359807296] 2021-06-30 19:40:33,469 INFO - (MainThread) - core.py:__init__:121 - Loading: tokenize
+[11090 140611359807296] 2021-06-30 19:40:33,478 INFO - (MainThread) - core.py:__init__:166 - Done loading processors!
+[11090 140611359807296] 2021-06-30 19:41:44,295 INFO - (MainThread) - core.py:__init__:104 - Loading these models for language: en (English):
+========================
+| Processor | Package  |
+------------------------
+| tokenize  | combined |
+========================
+
+[11090 140611359807296] 2021-06-30 19:41:44,295 INFO - (MainThread) - core.py:__init__:115 - Use device: cpu
+[11090 140611359807296] 2021-06-30 19:41:44,295 INFO - (MainThread) - core.py:__init__:121 - Loading: tokenize
+[11090 140611359807296] 2021-06-30 19:41:44,304 INFO - (MainThread) - core.py:__init__:166 - Done loading processors!
+[31808 140605251942208] 2021-07-01 20:17:56,294 INFO - (MainThread) - core.py:__init__:104 - Loading these models for language: en (English):
+========================
+| Processor | Package  |
+------------------------
+| tokenize  | combined |
+========================
+
+[31808 140605251942208] 2021-07-01 20:17:56,326 INFO - (MainThread) - core.py:__init__:115 - Use device: cpu
+[31808 140605251942208] 2021-07-01 20:17:56,327 INFO - (MainThread) - core.py:__init__:121 - Loading: tokenize
+[31808 140605251942208] 2021-07-01 20:17:56,337 INFO - (MainThread) - core.py:__init__:166 - Done loading processors!
+[31808 140605251942208] 2021-07-01 20:18:04,971 INFO - (MainThread) - core.py:__init__:104 - Loading these models for language: en (English):
+========================
+| Processor | Package  |
+------------------------
+| tokenize  | combined |
+========================
+
+[31808 140605251942208] 2021-07-01 20:18:04,972 INFO - (MainThread) - core.py:__init__:115 - Use device: cpu
+[31808 140605251942208] 2021-07-01 20:18:04,972 INFO - (MainThread) - core.py:__init__:121 - Loading: tokenize
+[31808 140605251942208] 2021-07-01 20:18:04,981 INFO - (MainThread) - core.py:__init__:166 - Done loading processors!
+[4732 140063539238720] 2021-07-01 20:18:54,468 INFO - (MainThread) - core.py:__init__:104 - Loading these models for language: en (English):
+========================
+| Processor | Package  |
+------------------------
+| tokenize  | combined |
+========================
+
+[4732 140063539238720] 2021-07-01 20:18:54,468 INFO - (MainThread) - core.py:__init__:115 - Use device: cpu
+[4732 140063539238720] 2021-07-01 20:18:54,469 INFO - (MainThread) - core.py:__init__:121 - Loading: tokenize
+[4732 140063539238720] 2021-07-01 20:18:54,478 INFO - (MainThread) - core.py:__init__:166 - Done loading processors!
+[4732 140063539238720] 2021-07-01 20:18:59,311 INFO - (MainThread) - core.py:__init__:104 - Loading these models for language: en (English):
+========================
+| Processor | Package  |
+------------------------
+| tokenize  | combined |
+========================
+
+[4732 140063539238720] 2021-07-01 20:18:59,312 INFO - (MainThread) - core.py:__init__:115 - Use device: cpu
+[4732 140063539238720] 2021-07-01 20:18:59,312 INFO - (MainThread) - core.py:__init__:121 - Loading: tokenize
+[4732 140063539238720] 2021-07-01 20:18:59,321 INFO - (MainThread) - core.py:__init__:166 - Done loading processors!
+[9796 139792831272768] 2021-07-01 20:19:46,051 INFO - (MainThread) - core.py:__init__:104 - Loading these models for language: en (English):
+========================
+| Processor | Package  |
+------------------------
+| tokenize  | combined |
+========================
+
+[9796 139792831272768] 2021-07-01 20:19:46,051 INFO - (MainThread) - core.py:__init__:115 - Use device: cpu
+[9796 139792831272768] 2021-07-01 20:19:46,052 INFO - (MainThread) - core.py:__init__:121 - Loading: tokenize
+[9796 139792831272768] 2021-07-01 20:19:46,061 INFO - (MainThread) - core.py:__init__:166 - Done loading processors!
+[9796 139792831272768] 2021-07-01 20:21:04,045 INFO - (MainThread) - core.py:__init__:104 - Loading these models for language: en (English):
+========================
+| Processor | Package  |
+------------------------
+| tokenize  | combined |
+========================
+
+[9796 139792831272768] 2021-07-01 20:21:04,046 INFO - (MainThread) - core.py:__init__:115 - Use device: cpu
+[9796 139792831272768] 2021-07-01 20:21:04,046 INFO - (MainThread) - core.py:__init__:121 - Loading: tokenize
+[9796 139792831272768] 2021-07-01 20:21:04,056 INFO - (MainThread) - core.py:__init__:166 - Done loading processors!
+[21987 140345107474240] 2021-07-01 20:22:27,363 INFO - (MainThread) - core.py:__init__:104 - Loading these models for language: en (English):
+========================
+| Processor | Package  |
+------------------------
+| tokenize  | combined |
+========================
+
+[21987 140345107474240] 2021-07-01 20:22:27,363 INFO - (MainThread) - core.py:__init__:115 - Use device: cpu
+[21987 140345107474240] 2021-07-01 20:22:27,363 INFO - (MainThread) - core.py:__init__:121 - Loading: tokenize
+[21987 140345107474240] 2021-07-01 20:22:27,372 INFO - (MainThread) - core.py:__init__:166 - Done loading processors!
+[21987 140345107474240] 2021-07-01 20:22:31,800 INFO - (MainThread) - core.py:__init__:104 - Loading these models for language: en (English):
+========================
+| Processor | Package  |
+------------------------
+| tokenize  | combined |
+========================
+
+[21987 140345107474240] 2021-07-01 20:22:31,801 INFO - (MainThread) - core.py:__init__:115 - Use device: cpu
+[21987 140345107474240] 2021-07-01 20:22:31,801 INFO - (MainThread) - core.py:__init__:121 - Loading: tokenize
+[21987 140345107474240] 2021-07-01 20:22:31,810 INFO - (MainThread) - core.py:__init__:166 - Done loading processors!
+[27349 140376792106816] 2021-07-01 20:23:49,601 INFO - (MainThread) - core.py:__init__:104 - Loading these models for language: en (English):
+========================
+| Processor | Package  |
+------------------------
+| tokenize  | combined |
+========================
+
+[27349 140376792106816] 2021-07-01 20:23:49,601 INFO - (MainThread) - core.py:__init__:115 - Use device: cpu
+[27349 140376792106816] 2021-07-01 20:23:49,601 INFO - (MainThread) - core.py:__init__:121 - Loading: tokenize
+[27349 140376792106816] 2021-07-01 20:23:49,610 INFO - (MainThread) - core.py:__init__:166 - Done loading processors!
+[27349 140376792106816] 2021-07-01 20:24:00,482 INFO - (MainThread) - core.py:__init__:104 - Loading these models for language: en (English):
+========================
+| Processor | Package  |
+------------------------
+| tokenize  | combined |
+========================
+
+[27349 140376792106816] 2021-07-01 20:24:00,483 INFO - (MainThread) - core.py:__init__:115 - Use device: cpu
+[27349 140376792106816] 2021-07-01 20:24:00,483 INFO - (MainThread) - core.py:__init__:121 - Loading: tokenize
+[27349 140376792106816] 2021-07-01 20:24:00,491 INFO - (MainThread) - core.py:__init__:166 - Done loading processors!
+[10277 139765561005888] 2021-07-02 14:47:36,155 INFO - (MainThread) - core.py:__init__:104 - Loading these models for language: en (English):
+========================
+| Processor | Package  |
+------------------------
+| tokenize  | combined |
+========================
+
+[10277 139765561005888] 2021-07-02 14:47:36,156 INFO - (MainThread) - core.py:__init__:115 - Use device: cpu
+[10277 139765561005888] 2021-07-02 14:47:36,156 INFO - (MainThread) - core.py:__init__:121 - Loading: tokenize
+[10277 139765561005888] 2021-07-02 14:47:36,166 INFO - (MainThread) - core.py:__init__:166 - Done loading processors!
+[10277 139765561005888] 2021-07-02 14:47:46,219 INFO - (MainThread) - core.py:__init__:104 - Loading these models for language: en (English):
+========================
+| Processor | Package  |
+------------------------
+| tokenize  | combined |
+========================
+
+[10277 139765561005888] 2021-07-02 14:47:46,220 INFO - (MainThread) - core.py:__init__:115 - Use device: cpu
+[10277 139765561005888] 2021-07-02 14:47:46,220 INFO - (MainThread) - core.py:__init__:121 - Loading: tokenize
+[10277 139765561005888] 2021-07-02 14:47:46,229 INFO - (MainThread) - core.py:__init__:166 - Done loading processors!
+[15625 139664435619648] 2021-07-02 14:49:04,270 INFO - (MainThread) - core.py:__init__:104 - Loading these models for language: en (English):
+========================
+| Processor | Package  |
+------------------------
+| tokenize  | combined |
+========================
+
+[15625 139664435619648] 2021-07-02 14:49:04,271 INFO - (MainThread) - core.py:__init__:115 - Use device: cpu
+[15625 139664435619648] 2021-07-02 14:49:04,271 INFO - (MainThread) - core.py:__init__:121 - Loading: tokenize
+[15625 139664435619648] 2021-07-02 14:49:04,280 INFO - (MainThread) - core.py:__init__:166 - Done loading processors!
+[21267 139672922085184] 2021-07-02 14:51:23,474 INFO - (MainThread) - core.py:__init__:104 - Loading these models for language: en (English):
+========================
+| Processor | Package  |
+------------------------
+| tokenize  | combined |
+========================
+
+[21267 139672922085184] 2021-07-02 14:51:23,475 INFO - (MainThread) - core.py:__init__:115 - Use device: cpu
+[21267 139672922085184] 2021-07-02 14:51:23,475 INFO - (MainThread) - core.py:__init__:121 - Loading: tokenize
+[21267 139672922085184] 2021-07-02 14:51:23,483 INFO - (MainThread) - core.py:__init__:166 - Done loading processors!
+[25151 139699556292416] 2021-07-02 14:52:04,020 INFO - (MainThread) - core.py:__init__:104 - Loading these models for language: en (English):
+========================
+| Processor | Package  |
+------------------------
+| tokenize  | combined |
+========================
+
+[25151 139699556292416] 2021-07-02 14:52:04,021 INFO - (MainThread) - core.py:__init__:115 - Use device: cpu
+[25151 139699556292416] 2021-07-02 14:52:04,021 INFO - (MainThread) - core.py:__init__:121 - Loading: tokenize
+[25151 139699556292416] 2021-07-02 14:52:04,030 INFO - (MainThread) - core.py:__init__:166 - Done loading processors!
+[25151 139699556292416] 2021-07-02 14:52:09,680 INFO - (MainThread) - core.py:__init__:104 - Loading these models for language: en (English):
+========================
+| Processor | Package  |
+------------------------
+| tokenize  | combined |
+========================
+
+[25151 139699556292416] 2021-07-02 14:52:09,681 INFO - (MainThread) - core.py:__init__:115 - Use device: cpu
+[25151 139699556292416] 2021-07-02 14:52:09,681 INFO - (MainThread) - core.py:__init__:121 - Loading: tokenize
+[25151 139699556292416] 2021-07-02 14:52:09,690 INFO - (MainThread) - core.py:__init__:166 - Done loading processors!
+[25151 139699556292416] 2021-07-02 14:52:17,706 INFO - (MainThread) - core.py:__init__:104 - Loading these models for language: en (English):
+========================
+| Processor | Package  |
+------------------------
+| tokenize  | combined |
+========================
+
+[25151 139699556292416] 2021-07-02 14:52:17,707 INFO - (MainThread) - core.py:__init__:115 - Use device: cpu
+[25151 139699556292416] 2021-07-02 14:52:17,707 INFO - (MainThread) - core.py:__init__:121 - Loading: tokenize
+[25151 139699556292416] 2021-07-02 14:52:17,718 INFO - (MainThread) - core.py:__init__:166 - Done loading processors!
+[25151 139699556292416] 2021-07-02 14:52:23,470 INFO - (MainThread) - core.py:__init__:104 - Loading these models for language: en (English):
+========================
+| Processor | Package  |
+------------------------
+| tokenize  | combined |
+========================
+
+[25151 139699556292416] 2021-07-02 14:52:23,471 INFO - (MainThread) - core.py:__init__:115 - Use device: cpu
+[25151 139699556292416] 2021-07-02 14:52:23,471 INFO - (MainThread) - core.py:__init__:121 - Loading: tokenize
+[25151 139699556292416] 2021-07-02 14:52:23,479 INFO - (MainThread) - core.py:__init__:166 - Done loading processors!
+[25151 139699556292416] 2021-07-02 14:52:31,111 INFO - (MainThread) - core.py:__init__:104 - Loading these models for language: en (English):
+========================
+| Processor | Package  |
+------------------------
+| tokenize  | combined |
+========================
+
+[25151 139699556292416] 2021-07-02 14:52:31,112 INFO - (MainThread) - core.py:__init__:115 - Use device: cpu
+[25151 139699556292416] 2021-07-02 14:52:31,113 INFO - (MainThread) - core.py:__init__:121 - Loading: tokenize
+[25151 139699556292416] 2021-07-02 14:52:31,123 INFO - (MainThread) - core.py:__init__:166 - Done loading processors!
+[25151 139699556292416] 2021-07-02 14:52:34,467 INFO - (MainThread) - core.py:__init__:104 - Loading these models for language: en (English):
+========================
+| Processor | Package  |
+------------------------
+| tokenize  | combined |
+========================
+
+[25151 139699556292416] 2021-07-02 14:52:34,467 INFO - (MainThread) - core.py:__init__:115 - Use device: cpu
+[25151 139699556292416] 2021-07-02 14:52:34,468 INFO - (MainThread) - core.py:__init__:121 - Loading: tokenize
+[25151 139699556292416] 2021-07-02 14:52:34,476 INFO - (MainThread) - core.py:__init__:166 - Done loading processors!
+[25151 139699556292416] 2021-07-02 14:52:36,405 INFO - (MainThread) - core.py:__init__:104 - Loading these models for language: en (English):
+========================
+| Processor | Package  |
+------------------------
+| tokenize  | combined |
+========================
+
+[25151 139699556292416] 2021-07-02 14:52:36,406 INFO - (MainThread) - core.py:__init__:115 - Use device: cpu
+[25151 139699556292416] 2021-07-02 14:52:36,406 INFO - (MainThread) - core.py:__init__:121 - Loading: tokenize
+[25151 139699556292416] 2021-07-02 14:52:36,414 INFO - (MainThread) - core.py:__init__:166 - Done loading processors!
+[25151 139699556292416] 2021-07-02 14:52:40,302 INFO - (MainThread) - core.py:__init__:104 - Loading these models for language: en (English):
+========================
+| Processor | Package  |
+------------------------
+| tokenize  | combined |
+========================
+
+[25151 139699556292416] 2021-07-02 14:52:40,302 INFO - (MainThread) - core.py:__init__:115 - Use device: cpu
+[25151 139699556292416] 2021-07-02 14:52:40,302 INFO - (MainThread) - core.py:__init__:121 - Loading: tokenize
+[25151 139699556292416] 2021-07-02 14:52:40,312 INFO - (MainThread) - core.py:__init__:166 - Done loading processors!
+[25151 139699556292416] 2021-07-02 14:52:45,221 INFO - (MainThread) - core.py:__init__:104 - Loading these models for language: en (English):
+========================
+| Processor | Package  |
+------------------------
+| tokenize  | combined |
+========================
+
+[25151 139699556292416] 2021-07-02 14:52:45,222 INFO - (MainThread) - core.py:__init__:115 - Use device: cpu
+[25151 139699556292416] 2021-07-02 14:52:45,222 INFO - (MainThread) - core.py:__init__:121 - Loading: tokenize
+[25151 139699556292416] 2021-07-02 14:52:45,231 INFO - (MainThread) - core.py:__init__:166 - Done loading processors!
+[25151 139699556292416] 2021-07-02 14:52:49,644 INFO - (MainThread) - core.py:__init__:104 - Loading these models for language: en (English):
+========================
+| Processor | Package  |
+------------------------
+| tokenize  | combined |
+========================
+
+[25151 139699556292416] 2021-07-02 14:52:49,644 INFO - (MainThread) - core.py:__init__:115 - Use device: cpu
+[25151 139699556292416] 2021-07-02 14:52:49,644 INFO - (MainThread) - core.py:__init__:121 - Loading: tokenize
+[25151 139699556292416] 2021-07-02 14:52:49,653 INFO - (MainThread) - core.py:__init__:166 - Done loading processors!
+[25151 139699556292416] 2021-07-02 14:52:53,386 INFO - (MainThread) - core.py:__init__:104 - Loading these models for language: en (English):
+========================
+| Processor | Package  |
+------------------------
+| tokenize  | combined |
+========================
+
+[25151 139699556292416] 2021-07-02 14:52:53,386 INFO - (MainThread) - core.py:__init__:115 - Use device: cpu
+[25151 139699556292416] 2021-07-02 14:52:53,386 INFO - (MainThread) - core.py:__init__:121 - Loading: tokenize
+[25151 139699556292416] 2021-07-02 14:52:53,395 INFO - (MainThread) - core.py:__init__:166 - Done loading processors!
+[16566 140168835131200] 2021-07-07 14:04:00,853 INFO - (MainThread) - core.py:__init__:104 - Loading these models for language: en (English):
+========================
+| Processor | Package  |
+------------------------
+| tokenize  | combined |
+========================
+
+[16566 140168835131200] 2021-07-07 14:04:00,853 INFO - (MainThread) - core.py:__init__:115 - Use device: cpu
+[16566 140168835131200] 2021-07-07 14:04:00,854 INFO - (MainThread) - core.py:__init__:121 - Loading: tokenize
+[16566 140168835131200] 2021-07-07 14:04:00,862 INFO - (MainThread) - core.py:__init__:166 - Done loading processors!
+[26304 140295046248256] 2021-07-07 14:05:58,273 INFO - (MainThread) - core.py:__init__:104 - Loading these models for language: en (English):
+========================
+| Processor | Package  |
+------------------------
+| tokenize  | combined |
+========================
+
+[26304 140295046248256] 2021-07-07 14:05:58,274 INFO - (MainThread) - core.py:__init__:115 - Use device: cpu
+[26304 140295046248256] 2021-07-07 14:05:58,274 INFO - (MainThread) - core.py:__init__:121 - Loading: tokenize
+[26304 140295046248256] 2021-07-07 14:05:58,284 INFO - (MainThread) - core.py:__init__:166 - Done loading processors!
+[26304 140295046248256] 2021-07-07 14:05:58,287 INFO - (MainThread) - _internal.py:_log:225 -  * Running on http://127.0.0.1:5000/ (Press CTRL+C to quit)
+[6351 140060203951936] 2021-07-07 14:23:59,580 INFO - (MainThread) - _internal.py:_log:225 -  * Running on http://127.0.0.1:5000/ (Press CTRL+C to quit)
+[6351 140060203951936] 2021-07-07 14:23:59,588 INFO - (MainThread) - _internal.py:_log:225 -  * Restarting with stat
+[6485 140654398965568] 2021-07-07 14:24:10,143 WARNING - (MainThread) - _internal.py:_log:225 -  * Debugger is active!
+[6485 140654398965568] 2021-07-07 14:24:10,168 INFO - (MainThread) - _internal.py:_log:225 -  * Debugger PIN: 914-598-267
+[6485 140650293516032] 2021-07-07 14:26:27,253 INFO - (Thread-5  ) - core.py:__init__:104 - Loading these models for language: en (English):
+========================
+| Processor | Package  |
+------------------------
+| tokenize  | combined |
+========================
+
+[6485 140650293516032] 2021-07-07 14:26:27,254 INFO - (Thread-5  ) - core.py:__init__:115 - Use device: cpu
+[6485 140650293516032] 2021-07-07 14:26:27,254 INFO - (Thread-5  ) - core.py:__init__:121 - Loading: tokenize
+[6485 140650293516032] 2021-07-07 14:26:27,265 INFO - (Thread-5  ) - core.py:__init__:166 - Done loading processors!
+[6351 140060203951936] 2021-07-07 14:26:32,319 INFO - (MainThread) - _internal.py:_log:225 -  * Running on http://127.0.0.1:5000/ (Press CTRL+C to quit)
+[6351 140060203951936] 2021-07-07 14:26:32,319 INFO - (MainThread) - _internal.py:_log:225 -  * Restarting with stat
+[12200 140562321069888] 2021-07-07 14:26:42,812 WARNING - (MainThread) - _internal.py:_log:225 -  * Debugger is active!
+[12200 140562321069888] 2021-07-07 14:26:42,836 INFO - (MainThread) - _internal.py:_log:225 -  * Debugger PIN: 914-598-267
+[12200 140558349387520] 2021-07-07 14:26:49,860 INFO - (Thread-5  ) - core.py:__init__:104 - Loading these models for language: en (English):
+========================
+| Processor | Package  |
+------------------------
+| tokenize  | combined |
+========================
+
+[12200 140558349387520] 2021-07-07 14:26:49,861 INFO - (Thread-5  ) - core.py:__init__:115 - Use device: cpu
+[12200 140558349387520] 2021-07-07 14:26:49,861 INFO - (Thread-5  ) - core.py:__init__:121 - Loading: tokenize
+[12200 140558349387520] 2021-07-07 14:26:49,871 INFO - (Thread-5  ) - core.py:__init__:166 - Done loading processors!
+[30943 140421743617856] 2021-07-07 14:32:01,437 INFO - (MainThread) - _internal.py:_log:225 -  * Running on http://127.0.0.1:8000/ (Press CTRL+C to quit)
+[30943 140421743617856] 2021-07-07 14:32:01,438 INFO - (MainThread) - _internal.py:_log:225 -  * Restarting with stat
+[31077 139994107074368] 2021-07-07 14:32:12,361 WARNING - (MainThread) - _internal.py:_log:225 -  * Debugger is active!
+[31077 139994107074368] 2021-07-07 14:32:12,387 INFO - (MainThread) - _internal.py:_log:225 -  * Debugger PIN: 914-598-267
+[30943 140421743617856] 2021-07-07 14:32:52,944 INFO - (MainThread) - _internal.py:_log:225 -  * Running on http://127.0.0.1:8000/ (Press CTRL+C to quit)
+[30943 140421743617856] 2021-07-07 14:32:52,944 INFO - (MainThread) - _internal.py:_log:225 -  * Restarting with stat
+[6060 140499905963840] 2021-07-07 14:38:01,319 INFO - (MainThread) - _internal.py:_log:225 -  * Running on http://127.0.0.1:8000/ (Press CTRL+C to quit)
+[6060 140499905963840] 2021-07-07 14:38:01,321 INFO - (MainThread) - _internal.py:_log:225 -  * Restarting with stat
+[6194 139881277495104] 2021-07-07 14:38:15,966 WARNING - (MainThread) - _internal.py:_log:225 -  * Debugger is active!
+[6194 139881277495104] 2021-07-07 14:38:15,987 INFO - (MainThread) - _internal.py:_log:225 -  * Debugger PIN: 914-598-267
+[7026 139754938521408] 2021-07-07 14:40:03,306 INFO - (MainThread) - _internal.py:_log:225 -  * Running on http://127.0.0.1:8000/ (Press CTRL+C to quit)
+[7026 139754938521408] 2021-07-07 14:40:03,307 INFO - (MainThread) - _internal.py:_log:225 -  * Restarting with stat
+[7181 139939621898048] 2021-07-07 14:40:16,889 WARNING - (MainThread) - _internal.py:_log:225 -  * Debugger is active!
+[7181 139939621898048] 2021-07-07 14:40:16,910 INFO - (MainThread) - _internal.py:_log:225 -  * Debugger PIN: 914-598-267
+[24139 140713611691840] 2021-07-07 15:12:08,425 INFO - (MainThread) - _internal.py:_log:225 -  * Running on http://127.0.0.1:8000/ (Press CTRL+C to quit)
+[24139 140713611691840] 2021-07-07 15:12:08,426 INFO - (MainThread) - _internal.py:_log:225 -  * Restarting with stat
+[24274 139900245583680] 2021-07-07 15:12:19,548 WARNING - (MainThread) - _internal.py:_log:225 -  * Debugger is active!
+[24274 139900245583680] 2021-07-07 15:12:19,568 INFO - (MainThread) - _internal.py:_log:225 -  * Debugger PIN: 914-598-267
+[25500 139692626396992] 2021-07-07 15:13:34,519 INFO - (MainThread) - _internal.py:_log:225 -  * Running on http://127.0.0.1:8000/ (Press CTRL+C to quit)
+[25500 139692626396992] 2021-07-07 15:13:34,520 INFO - (MainThread) - _internal.py:_log:225 -  * Restarting with stat
+[25634 140692488578880] 2021-07-07 15:13:47,951 WARNING - (MainThread) - _internal.py:_log:225 -  * Debugger is active!
+[25634 140692488578880] 2021-07-07 15:13:47,972 INFO - (MainThread) - _internal.py:_log:225 -  * Debugger PIN: 914-598-267
+[25500 139692626396992] 2021-07-07 15:13:56,620 INFO - (MainThread) - _internal.py:_log:225 -  * Running on http://127.0.0.1:8000/ (Press CTRL+C to quit)
+[25500 139692626396992] 2021-07-07 15:13:56,620 INFO - (MainThread) - _internal.py:_log:225 -  * Restarting with stat
+[30431 140616552191808] 2021-07-07 15:14:06,932 WARNING - (MainThread) - _internal.py:_log:225 -  * Debugger is active!
+[30431 140616552191808] 2021-07-07 15:14:06,951 INFO - (MainThread) - _internal.py:_log:225 -  * Debugger PIN: 914-598-267
+[31152 140010260326208] 2021-07-07 15:15:29,612 INFO - (MainThread) - _internal.py:_log:225 -  * Running on http://127.0.0.1:5000/ (Press CTRL+C to quit)
+[31152 140010260326208] 2021-07-07 15:15:29,613 INFO - (MainThread) - _internal.py:_log:225 -  * Restarting with stat
+[31279 140237730420544] 2021-07-07 15:15:43,089 WARNING - (MainThread) - _internal.py:_log:225 -  * Debugger is active!
+[31279 140237730420544] 2021-07-07 15:15:43,110 INFO - (MainThread) - _internal.py:_log:225 -  * Debugger PIN: 914-598-267
+[31279 140233624491776] 2021-07-07 15:16:20,223 INFO - (Thread-5  ) - _internal.py:_log:225 - 127.0.0.1 - - [07/Jul/2021 15:16:20] "[35m[1mGET /getclaimevidence HTTP/1.1[0m" 500 -
+[1948 140456913192768] 2021-07-07 15:16:31,959 INFO - (MainThread) - _internal.py:_log:225 -  * Running on http://127.0.0.1:5000/ (Press CTRL+C to quit)
+[1948 140456913192768] 2021-07-07 15:16:31,959 INFO - (MainThread) - _internal.py:_log:225 -  * Restarting with stat
+[2059 140573792827200] 2021-07-07 15:16:39,823 WARNING - (MainThread) - _internal.py:_log:225 -  * Debugger is active!
+[2059 140573792827200] 2021-07-07 15:16:39,841 INFO - (MainThread) - _internal.py:_log:225 -  * Debugger PIN: 914-598-267
+[24488 140293307483968] 2021-07-07 21:43:45,541 INFO - (MainThread) - _internal.py:_log:225 -  * Running on http://127.0.0.1:5000/ (Press CTRL+C to quit)
+[24488 140293307483968] 2021-07-07 21:43:45,542 INFO - (MainThread) - _internal.py:_log:225 -  * Restarting with stat

@@ -15,7 +15,9 @@ import pandas as pd
 import logcontrol
 import timelogger
 import pdb
-
+import subprocess
+import os
+import shutil
 
 if __name__ == "__main__":
 
@@ -30,7 +32,7 @@ if __name__ == "__main__":
     parser.add_argument("-lr", "--label_range", help="Assign y value within range for training set | Ex: 0.7-1")
 
     #python process_docs.py -out ../../tei10 -in ../../pdf10 -m generate-train" -csv ../
-    database_path = path.expanduser('~/data/database')
+    database_path = path.expanduser(r'/home/rfn5089/pipeline-claimextraction/score_psu/pipeline/data/')
     database = Database(database_path)
 
     args = parser.parse_args()
@@ -40,12 +42,12 @@ if __name__ == "__main__":
     logcontrol.set_log_file(args.csv_out + '/main_log.txt')
 
     # Debug parameters config
-    #args.mode = "extract-test"
-    #args.grobid_out = r"C:\Users\arjun\dev\GROBID_processed\test"
-    #args.pdf_input = r"C:\Users\arjun\dev\test\pdfs"
-    args.data_file = r"~/data/2400set/data.csv"
-    #args.csv_out = r"C:\Users\arjun\dev"
-
+    args.mode = "generate-train"
+    args.grobid_out = r"/home/rfn5089/tei10/"
+    args.pdf_input = r"/home/rfn5089/pdf10/"
+    args.data_file = r"/home/rfn5089/pipeline-claimextraction/score_psu/pipeline/data/data.csv"
+    args.csv_out = r"/home/rfn5089/pipeline-claimextraction/score_psu/pipeline/"
+    
     # Process PDFS -> Generate XMLs and txt files
     if args.mode == "process-pdfs":
         # Change pdf names (Some PDFs have '-' instead of '_' in the names)
@@ -75,7 +77,15 @@ if __name__ == "__main__":
                   'num_hypo_tested','real_p', 'real_p_sign', 'p_val_range', 'num_significant', 'sample_size',
                   "extend_p", "funded", "Venue_Citation_Count", "Venue_Scholarly_Output",
                   "Venue_Percent_Cited", "Venue_CiteScore", "Venue_SNIP", "Venue_SJR", "avg_pub", "avg_hidx",
-                  "avg_auth_cites", "avg_high_inf_cites","sentiment_agg", "age", "y")
+                  "avg_auth_cites", "avg_high_inf_cites","sentiment_agg", "age","supporting_sentences", "refuting_sentences", "ratio_support", "y")
+
+        os.chdir(r"/home/rfn5089/pipeline-claimextraction/score_psu/pipeline/scifact/")
+        shutil.rmtree(r'/home/rfn5089/pipeline-claimextraction/score_psu/pipeline/scifact/data')
+        shellscript = subprocess.Popen(["./script/download-data.sh"], stdin=subprocess.PIPE)
+        shellscript.stdin.close()
+        returncode = shellscript.wait()   # blocks until shellscript is done
+
+        os.chdir(r"/home/rfn5089/pipeline-claimextraction/score_psu/pipeline/")
 
         record = namedtuple('record', fields)
         record.__new__.__defaults__ = (None,) * len(record._fields)
@@ -93,7 +103,7 @@ if __name__ == "__main__":
         for xml in xmls:
             try:
                 print("Processing ", xml)
-                extractor = TEIExtractor(args.grobid_out + '/' + xml,database)
+                extractor = TEIExtractor(args.grobid_out + '/' + xml,database, xml, args.data_file)
                 extraction_stage = extractor.extract_paper_info()
                 issn = extraction_stage['ISSN']
                 auth = extraction_stage['authors']
@@ -101,6 +111,10 @@ if __name__ == "__main__":
                 del extraction_stage['ISSN']
                 del extraction_stage['authors']
                 del extraction_stage['citations']
+
+                #put('http://localhost:5000/todo1', data={'data': 'Remember the milk'}).json()
+                #get('http://localhost:5000/getclaimevidence').json()
+
                 p_val_stage = extract_p_values(args.pdf_input + '/' + xml.replace('.tei.xml', '.txt'))
                 features = dict(**extraction_stage, **p_val_stage)
                 #pdb.set_trace()
