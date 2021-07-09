@@ -45,7 +45,7 @@ except Exception as e:
     print(e)
 
 """
-
+#Flask instance
 app = Flask(__name__)
 
 class ReadPickle:
@@ -140,8 +140,8 @@ class TEIExtractor:
             return int(label)
         return -1
     """
-
-    @app.route("/", methods=['GET', 'POST'])
+    #Flask URL trigger
+    @app.route("/getclaimevidence")
     def get(self):
 
         extractor = ClaimEvidenceExtractor(self.xml, self.soup,self.test_csv) 
@@ -229,8 +229,8 @@ class TEIExtractor:
         # SJR
         api_resp = self.get_sjr(self.paper.doi, self.paper.title,self.db)
 
-        #Get response for claim evidence: Error- Connection refused
-        response =  requests.get('http://0.0.0.0:8000/')
+        # Get response for claim evidence using request to API
+        response =  requests.get('http://0.0.0.0:8000/getclaimevidence')
         print(response)
 
         if api_resp:
@@ -313,8 +313,6 @@ class TEIExtractor:
         #pdb.set_trace()
         final = {"doi":response.doi, "title":response.title, "sjr": response.sjr, "num_citations": response.citedby,"subject":response.subject,"subject_code":response.subject_code,"normalized_citations":response.normalized,"citationVelocity":response.velocity,"influentialCitationCount":response.incite,"references_count":response.refcount,"openaccessflag":response.openaccess,"influentialReferencesCount":response.inref, "reference_background": response.refback, "reference_result":response.refresult, "reference_methodology":response.refmeth,"citations_background":response.cback,"citations_result":response.cresult,"citations_methodology":response.cmeth, "citations_next":response.next, "upstream_influential_methodology_count": response.upstream_influential_methodology_count, "ISSN": response.issn, "authors":response.auth, "citations":response.citations,"age":response.age,"abstract":response.ab}
         return final
-
-    
 
 if __name__ == "__main__":
 

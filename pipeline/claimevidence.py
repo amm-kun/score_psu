@@ -293,16 +293,3 @@ class ClaimEvidenceExtractor():
 
         print(' Support: ', support, ' Refute: ', refute, ' Ratio: ', ratio)
         return support, refute, ratio, support_para, contradict_para, not_enough_info_para
-    
-    def get(self):
-        os.chdir(r"/home/rfn5089/pipeline-claimextraction/score_psu/pipeline/scifact/")
-        self.make_corpus()
-
-        os.chdir(r"/home/rfn5089/pipeline-claimextraction/score_psu/pipeline/scifact/")
-        shellscript = subprocess.Popen(["./script/pipeline.sh", "open", "verisci", "test"], stdin=subprocess.PIPE) 
-        shellscript.stdin.close()
-        returncode = shellscript.wait()   # blocks until shellscript is done
-
-        support, refute, total, support_para, contradict_para, not_enough_info_para = self.get_results()
-            
-        return support, refute, total, support_para, contradict_para, not_enough_info_para
