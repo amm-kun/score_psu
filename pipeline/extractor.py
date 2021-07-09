@@ -8,7 +8,23 @@ from elsevier_api import getelsevier
 from elsevier_api import getsemantic
 import pickle
 import pdb
-from scripts.coCitation import coCite
+from requests import put, get
+"""
+import textstat
+from textblob import TextBlob
+from allennlp.predictors.predictor import Predictor
+import allennlp_models.tagging
+"""
+from coCitation import coCite
+import time
+import subprocess
+import os
+from flask_restful import Resource, Api
+from flask import Flask
+from claimevidence import ClaimEvidenceExtractor
+import os
+import json
+
 """
 Object models for the Processing Pipeline to generate features for the DARPA SCORE project
 -----------------Includes the pre-processing step for the Predition Market----------------
@@ -20,7 +36,17 @@ _license_ = ""
 _version_ = "1.0"
 _maintainer_ = "Arjun Menon"
 _email_ = "amm8987@psu.edu"
+"""
+predictor=None
+try:
+    predictor = Predictor.from_path("https://storage.googleapis.com/allennlp-public-models/sst-roberta-large-2020.06.08.tar.gz")
+    print("Sentiment Roberta Model Success!!!")
+except Exception as e:
+    print(e)
 
+"""
+#Flask instance
+app = Flask(__name__)
 
 class ReadPickle:
     def __init__(self, filename):
@@ -41,11 +67,13 @@ class ReadPickle:
 
 
 class TEIExtractor:
-    def __init__(self, file, db, test_tsv=None):
+    def __init__(self, file, db, xml, data_file, test_tsv=None,):
         self.file = file
-        self.uni_rank = ReadPickle('uni_rank.pickle')
-        self.sjr = ReadPickle('journal_dictionary.pkl')
+        self.xml = xml
+        self.uni_rank = ReadPickle(r'/home/rfn5089/pipeline-claimextraction/score_psu/pipeline/uni_rank.pickle')
+        self.sjr = ReadPickle(r'/home/rfn5089/pipeline-claimextraction/score_psu/pipeline/journal_dictionary.pkl')
         self.document = test_tsv
+        self.test_csv = data_file
         self.paper = Paper()
         with open(file, 'rb') as tei:
             self.soup = BeautifulSoup(tei, features="lxml")
@@ -67,6 +95,8 @@ class TEIExtractor:
         authors = self.get_authors(self.soup.analytic.find_all('author'))
         if authors:
             self.paper.authors = authors
+        if self.soup.abstract:
+            self.paper.abstract = elem_to_text(self.soup.abstract)
         # Citations
         bibliography = self.soup.listbibl.find_all('biblstruct')
         for bibl in bibliography:
@@ -88,7 +118,44 @@ class TEIExtractor:
             self.paper.citations.append(citation)
         self.paper.set_self_citations()
         return {'doi': self.paper.doi, 'title': self.paper.title, 'total_citations': len(self.paper.citations),
-                'self_citations': self.paper.self_citations}
+                'self_citations': self.paper.self_citations, 'abstract': self.paper.abstract}
+    """
+    def get_reading_score(self, abstract):
+        if isinstance(abstract,str):
+            if not abstract: return 0
+            return textstat.flesch_reading_ease(abstract)
+        return 0
+    
+    def get_subjectivity(self, abstract):
+        if isinstance(abstract,str):
+            if len(abstract)<10: return -1
+            txtblob = TextBlob(abstract)
+            return txtblob.sentiment.subjectivity
+        return -1
+    
+    def get_sentiment(self, abstract):
+        if isinstance(abstract,str):
+            if len(abstract)<10: return -1
+            label = predictor.predict(abstract)['label']
+            return int(label)
+        return -1
+    """
+    #Flask URL trigger
+    @app.route("/getclaimevidence")
+    def get(self):
+
+        extractor = ClaimEvidenceExtractor(self.xml, self.soup,self.test_csv) 
+        os.chdir(r"/home/rfn5089/pipeline-claimextraction/score_psu/pipeline/scifact/")
+        extractor.make_corpus()
+
+        os.chdir(r"/home/rfn5089/pipeline-claimextraction/score_psu/pipeline/scifact/")
+        shellscript = subprocess.Popen(["./script/pipeline.sh", "open", "verisci", "test"], stdin=subprocess.PIPE) 
+        shellscript.stdin.close()
+        returncode = shellscript.wait()   # blocks until shellscript is done
+
+        support, refute, total, support_para, contradict_para, not_enough_info_para = extractor.get_results()
+                
+        return flask.jsonify({'support':support,'refute':refute,'total':total,'support_para':support_para,'contradict_para':contradict_para,'not_enough_info_para':not_enough_info_para})
 
     def extract_paper_info(self):
         # DOI
@@ -105,6 +172,8 @@ class TEIExtractor:
         authors = self.get_authors(self.soup.analytic.find_all('author'))
         if authors:
             self.paper.authors = authors
+        if self.soup.abstract:
+            self.paper.abstract = elem_to_text(self.soup.abstract)
         # Year
         published = self.soup.analytic.find("publicationstmt")
         if published:
@@ -159,6 +228,11 @@ class TEIExtractor:
             self.paper.funded = 0
         # SJR
         api_resp = self.get_sjr(self.paper.doi, self.paper.title,self.db)
+
+        # Get response for claim evidence using request to API
+        response =  requests.get('http://0.0.0.0:8000/getclaimevidence')
+        print(response)
+
         if api_resp:
             self.paper.cited_by_count = api_resp["num_citations"]
             self.paper.sjr = api_resp["sjr"]
@@ -180,11 +254,20 @@ class TEIExtractor:
             self.paper.influential_references_methodology = api_resp["upstream_influential_methodology_count"]
             self.paper.issn = api_resp["ISSN"]
             self.paper.auth = api_resp["authors"]
+            self.paper.age = api_resp["age"]
+            if api_resp["abstract"]:
+                self.paper.abstract = api_resp["abstract"]
         # Set self-citations
         self.paper.self_citations = self.paper.set_self_citations()
         # return paper
-
+        #calculate coCitations
         t2,t3 = coCite(self.paper.doi, self.db)
+        """
+        #calculate NLP features
+        reading_score = self.get_reading_score(self.paper.abstract)
+        subjectivity = self.get_subjectivity(self.paper.abstract)
+        sentiment = self.get_sentiment(self.paper.abstract)
+        """
         return {"doi": self.paper.doi, "title": self.paper.title, "num_citations": self.paper.cited_by_count,
                 "author_count": len(self.paper.authors),"sjr": self.paper.sjr, "u_rank": self.paper.uni_rank,
                 "funded": self.paper.funded,"self_citations": self.paper.self_citations, "subject": self.paper.subject,
@@ -196,8 +279,8 @@ class TEIExtractor:
                 "citations_background": self.paper.cite_background, "citations_result": self.paper.cite_result,
                 "citations_methodology": self.paper.cite_method, "citations_next": self.paper.cite_next,
                 "upstream_influential_methodology_count": self.paper.influential_references_methodology,
-                "coCite2":t2, "coCite3":t3, "ISSN":self.paper.issn, "authors":self.paper.auth,"citations":api_resp["citations"]}
-
+                "coCite2":t2, "coCite3":t3, "ISSN":self.paper.issn, "authors":self.paper.auth,"citations":api_resp["citations"],"age":self.paper.age}
+     #           "reading_score":reading_score, "subjectivity":subjectivity, "sentiment":sentiment, 
 
     @staticmethod
     def get_authors(authors):
@@ -222,21 +305,26 @@ class TEIExtractor:
     @staticmethod
     def get_sjr(doi,title,db):
 
-        
         response = getsemantic(doi,title,db)
         crossref = response.get_row()
         scopus_search = response.return_search()
         serial_title = response.return_serialtitle()
         semantic = response.return_semantic()
-        final = {"doi":response.doi, "title":response.title, "sjr": response.sjr, "num_citations": response.citedby,"subject":response.subject,"subject_code":response.subject_code,"normalized_citations":response.normalized,"citationVelocity":response.velocity,"influentialCitationCount":response.incite,"references_count":response.refcount,"openaccessflag":response.openaccess,"influentialReferencesCount":response.inref, "reference_background": response.refback, "reference_result":response.refresult, "reference_methodology":response.refmeth,"citations_background":response.cback,"citations_result":response.cresult,"citations_methodology":response.cmeth, "citations_next":response.next, "upstream_influential_methodology_count": response.upstream_influential_methodology_count, "ISSN": response.issn, "authors":response.auth, "citations":response.citations}
+        #pdb.set_trace()
+        final = {"doi":response.doi, "title":response.title, "sjr": response.sjr, "num_citations": response.citedby,"subject":response.subject,"subject_code":response.subject_code,"normalized_citations":response.normalized,"citationVelocity":response.velocity,"influentialCitationCount":response.incite,"references_count":response.refcount,"openaccessflag":response.openaccess,"influentialReferencesCount":response.inref, "reference_background": response.refback, "reference_result":response.refresult, "reference_methodology":response.refmeth,"citations_background":response.cback,"citations_result":response.cresult,"citations_methodology":response.cmeth, "citations_next":response.next, "upstream_influential_methodology_count": response.upstream_influential_methodology_count, "ISSN": response.issn, "authors":response.auth, "citations":response.citations,"age":response.age,"abstract":response.ab}
         return final
 
 if __name__ == "__main__":
 
-    uni_rank = ReadPickle('uni_rank.pickle')
-    sjr = ReadPickle('journal_dictionary.pkl')
+    port = int(os.environ.get("PORT", 8000))
+    app.run(host='0.0.0.0', port=port)
 
-    test = r"C:\Users\arjun\dev\GROBID_processed\test\Gelfand_covid_n8dr9.tei.xml"
-    extractor = TEIExtractor(test)
-    test_paper = extractor.extract_paper_info()
-    print(test_paper)
+
+    #uni_rank = ReadPickle('uni_rank.pickle')
+    #sjr = ReadPickle('journal_dictionary.pkl')
+    
+    #test = r"C:\Users\arjun\dev\GROBID_processed\test\Gelfand_covid_n8dr9.tei.xml"
+    #extractor = TEIExtractor(test)
+    #test_paper = extractor.extract_paper_info()
+    #print(test_paper)
+
