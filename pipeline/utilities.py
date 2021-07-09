@@ -15,7 +15,7 @@ p_val_sign = {
  #                          'SJR': 'Venue_SJR'}
 tamu_select_features = ["Venue_Citation_Count", "Venue_Scholarly_Output", "Venue_Percent_Cited", "Venue_CiteScore",
                         "Venue_SNIP", "Venue_SJR", "avg_pub", "avg_hidx", "avg_auth_cites",
-                        "avg_high_inf_cites","sentiment_agg", "paper_age"]
+                        "avg_high_inf_cites","sentiment_agg"]
 
 def remove_accents(text: str):
     text = re.sub('[âàäáãå]', 'a', text)

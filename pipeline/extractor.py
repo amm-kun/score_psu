@@ -141,7 +141,8 @@ class TEIExtractor:
         return -1
     """
     #Flask URL trigger
-    @app.route("/")
+    @app.route("/getclaimevidence")
+
     def get(self):
 
         extractor = ClaimEvidenceExtractor(self.xml, self.soup,self.test_csv) 
@@ -230,7 +231,8 @@ class TEIExtractor:
         api_resp = self.get_sjr(self.paper.doi, self.paper.title,self.db)
 
         # Get response for claim evidence using request to API
-        response =  requests.get('http://0.0.0.0:8000/')
+
+        response =  requests.get('http://0.0.0.0:8000/getclaimevidence')
         print(response)
 
         if api_resp:

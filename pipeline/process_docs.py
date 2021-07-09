@@ -30,11 +30,11 @@ if __name__ == "__main__":
     parser.add_argument("-csv", "--csv_out", default=getcwd(), help="CSV output path")
     parser.add_argument("-l", "--label", help="Assign y value | label for training set")
     parser.add_argument("-lr", "--label_range", help="Assign y value within range for training set | Ex: 0.7-1")
-    
+
     #python process_docs.py -out ../../tei10 -in ../../pdf10 -m generate-train" -csv ../
-    database_path = path.expanduser(r"/home/rfn5089/pipeline-claimextraction/score_psu/pipeline/data/")
+    database_path = path.expanduser(r'/home/rfn5089/pipeline-claimextraction/score_psu/pipeline/data/')
     database = Database(database_path)
-    
+  
     args = parser.parse_args()
     logcontrol.register_logger(timelogger.logger, "timelogger")
     logcontrol.set_level(logcontrol.DEBUG, group="timelogger")
@@ -73,7 +73,7 @@ if __name__ == "__main__":
                   'influentialCitationCount','references_count','openaccessflag','normalized_citations',
                   'influentialReferencesCount','reference_background','reference_result','reference_methodology',
                   'citations_background','citations_result','citations_methodology','citations_next','coCite2',
-                  'coCite3',
+                  'coCite3', 'reading_score', 'subjectivity', 'sentiment',
                   'num_hypo_tested','real_p', 'real_p_sign', 'p_val_range', 'num_significant', 'sample_size',
                   "extend_p", "funded", "Venue_Citation_Count", "Venue_Scholarly_Output",
                   "Venue_Percent_Cited", "Venue_CiteScore", "Venue_SNIP", "Venue_SJR", "avg_pub", "avg_hidx",
@@ -111,6 +111,10 @@ if __name__ == "__main__":
                 del extraction_stage['ISSN']
                 del extraction_stage['authors']
                 del extraction_stage['citations']
+
+                #put('http://localhost:5000/todo1', data={'data': 'Remember the milk'}).json()
+                #get('http://localhost:5000/getclaimevidence').json()
+
                 p_val_stage = extract_p_values(args.pdf_input + '/' + xml.replace('.tei.xml', '.txt'))
                 features = dict(**extraction_stage, **p_val_stage)
                 #pdb.set_trace()
