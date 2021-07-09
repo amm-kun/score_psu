@@ -36,6 +36,7 @@ def call_api(query):
     return r.json()
         
 def coCite(doi,db) :   
+    global cocite_db
     cocitationsAll = {}
     YearGap = 3          # change this to control the publish time of papers that cited the source paper
     counter_sourceDOI = 0

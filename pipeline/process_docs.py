@@ -34,7 +34,7 @@ if __name__ == "__main__":
     #python process_docs.py -out ../../tei10 -in ../../pdf10 -m generate-train" -csv ../
     database_path = path.expanduser(r'/home/rfn5089/pipeline-claimextraction/score_psu/pipeline/data/')
     database = Database(database_path)
-
+  
     args = parser.parse_args()
     logcontrol.register_logger(timelogger.logger, "timelogger")
     logcontrol.set_level(logcontrol.DEBUG, group="timelogger")
@@ -47,7 +47,7 @@ if __name__ == "__main__":
     args.pdf_input = r"/home/rfn5089/pdf10/"
     args.data_file = r"/home/rfn5089/pipeline-claimextraction/score_psu/pipeline/data/data.csv"
     args.csv_out = r"/home/rfn5089/pipeline-claimextraction/score_psu/pipeline/"
-    
+
     # Process PDFS -> Generate XMLs and txt files
     if args.mode == "process-pdfs":
         # Change pdf names (Some PDFs have '-' instead of '_' in the names)
