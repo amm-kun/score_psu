@@ -73,11 +73,10 @@ if __name__ == "__main__":
                   'influentialCitationCount','references_count','openaccessflag','normalized_citations',
                   'influentialReferencesCount','reference_background','reference_result','reference_methodology',
                   'citations_background','citations_result','citations_methodology','citations_next','coCite2',
-                  'coCite3', 'reading_score', 'subjectivity', 'sentiment',
-                  'num_hypo_tested','real_p', 'real_p_sign', 'p_val_range', 'num_significant', 'sample_size',
+                  'coCite3', 'num_hypo_tested','real_p', 'real_p_sign', 'p_val_range', 'num_significant', 'sample_size',
                   "extend_p", "funded", "Venue_Citation_Count", "Venue_Scholarly_Output",
                   "Venue_Percent_Cited", "Venue_CiteScore", "Venue_SNIP", "Venue_SJR", "avg_pub", "avg_hidx",
-                  "avg_auth_cites", "avg_high_inf_cites","sentiment_agg", "age","supporting_sentences", "refuting_sentences", "ratio_support", "y")
+                  "avg_auth_cites", "avg_high_inf_cites","sentiment_agg", "age","supporting_sentences", "refuting_sentences", "ratio_support")
 
         os.chdir(r"/home/rfn5089/pipeline-claimextraction/score_psu/pipeline/scifact/")
         shutil.rmtree(r'/home/rfn5089/pipeline-claimextraction/score_psu/pipeline/scifact/data')
@@ -124,11 +123,13 @@ if __name__ == "__main__":
                 select_tamu_features = select_keys(tamu_features, tamu_select_features)
                 features.update(select_tamu_features)
                 print(features)
+                """
                 if args.label_range:
                     label_range = args.label_range.split('-')
                     features['y'] = random.uniform(float(label_range[0]), float(label_range[1]))
                 else:
                     features['y'] = float(args.label)
+                """
                 try:
                     csv_write_record(writer, features, header)
                 except UnicodeDecodeError:
@@ -143,16 +144,24 @@ if __name__ == "__main__":
     elif args.mode == "extract-test":
         start = time.time()
         
-        fields = ('ta3_pid', 'doi', 'title', 'num_citations', 'author_count', 'sjr', 'u_rank', 'self_citations',
+        fields = ('doi', 'title', 'num_citations', 'author_count', 'sjr', 'u_rank','self_citations',
                   'upstream_influential_methodology_count', 'subject','subject_code','citationVelocity',
-                  'influentialCitationCount','references_count','openaccessflag', 'normalized_citations',
-                  'influentialReferencesCount','reference_background','reference_result', 'reference_methodology',
+                  'influentialCitationCount','references_count','openaccessflag','normalized_citations',
+                  'influentialReferencesCount','reference_background','reference_result','reference_methodology',
                   'citations_background','citations_result','citations_methodology','citations_next','coCite2',
-                  'coCite3','reading_score', 'subjectivity', 'sentiment',
-                  'num_hypo_tested', 'real_p', 'real_p_sign', 'p_val_range', 'num_significant',
-                  'sample_size',"extend_p", "funded", "Venue_Citation_Count", "Venue_Scholarly_Output",
+                  'coCite3', 'reading_score', 'subjectivity', 'sentiment',
+                  'num_hypo_tested','real_p', 'real_p_sign', 'p_val_range', 'num_significant', 'sample_size',
+                  "extend_p", "funded", "Venue_Citation_Count", "Venue_Scholarly_Output",
                   "Venue_Percent_Cited", "Venue_CiteScore", "Venue_SNIP", "Venue_SJR", "avg_pub", "avg_hidx",
-                  "avg_auth_cites", "avg_high_inf_cites","sentiment_agg", "age")
+                  "avg_auth_cites", "avg_high_inf_cites","sentiment_agg", "age","supporting_sentences", "refuting_sentences", "ratio_support")
+
+        os.chdir(r"/home/rfn5089/pipeline-claimextraction/score_psu/pipeline/scifact/")
+        shutil.rmtree(r'/home/rfn5089/pipeline-claimextraction/score_psu/pipeline/scifact/data')
+        shellscript = subprocess.Popen(["./script/download-data.sh"], stdin=subprocess.PIPE)
+        shellscript.stdin.close()
+        returncode = shellscript.wait()   # blocks until shellscript is done
+
+        os.chdir(r"/home/rfn5089/pipeline-claimextraction/score_psu/pipeline/")
 
         record = namedtuple('record', fields)
         record.__new__.__defaults__ = (None,) * len(record._fields)

@@ -291,5 +291,5 @@ class ClaimEvidenceExtractor():
         else: 
             ratio = 0
 
-        print(' Support: ', support, ' Refute: ', refute, ' Ratio: ', ratio)
+        #print(' Support: ', support, ' Refute: ', refute, ' Ratio: ', ratio)
         return support, refute, ratio, support_para, contradict_para, not_enough_info_para

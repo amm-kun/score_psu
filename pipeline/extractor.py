@@ -22,7 +22,6 @@ import os
 from flask_restful import Resource, Api
 from flask import Flask
 from claimevidence import ClaimEvidenceExtractor
-import os
 import json
 
 """
@@ -47,6 +46,15 @@ except Exception as e:
 """
 #Flask instance
 app = Flask(__name__)
+#Flask URL trigger
+@app.route("/getclaimevidence")
+def get():
+    #print('API called')
+    os.chdir(r"/home/rfn5089/pipeline-claimextraction/score_psu/pipeline/scifact/")
+    shellscript = subprocess.Popen(["./script/pipeline.sh", "open", "verisci", "test"], stdin=subprocess.PIPE) 
+    shellscript.stdin.close()
+    returncode = shellscript.wait()   # blocks until shellscript is done
+    return 1
 
 class ReadPickle:
     def __init__(self, filename):
@@ -140,24 +148,7 @@ class TEIExtractor:
             return int(label)
         return -1
     """
-    #Flask URL trigger
-    @app.route("/getclaimevidence")
-
-    def get(self):
-
-        extractor = ClaimEvidenceExtractor(self.xml, self.soup,self.test_csv) 
-        os.chdir(r"/home/rfn5089/pipeline-claimextraction/score_psu/pipeline/scifact/")
-        extractor.make_corpus()
-
-        os.chdir(r"/home/rfn5089/pipeline-claimextraction/score_psu/pipeline/scifact/")
-        shellscript = subprocess.Popen(["./script/pipeline.sh", "open", "verisci", "test"], stdin=subprocess.PIPE) 
-        shellscript.stdin.close()
-        returncode = shellscript.wait()   # blocks until shellscript is done
-
-        support, refute, total, support_para, contradict_para, not_enough_info_para = extractor.get_results()
-                
-        return flask.jsonify({'support':support,'refute':refute,'total':total,'support_para':support_para,'contradict_para':contradict_para,'not_enough_info_para':not_enough_info_para})
-
+    
     def extract_paper_info(self):
         # DOI
         doi = self.soup.teiheader.find("idno", type="DOI")
@@ -230,10 +221,19 @@ class TEIExtractor:
         # SJR
         api_resp = self.get_sjr(self.paper.doi, self.paper.title,self.db)
 
-        # Get response for claim evidence using request to API
+        # Adding the paragraphs from the paper to the corpus
+        extractor = ClaimEvidenceExtractor(self.xml, self.soup,self.test_csv) 
+        os.chdir(r"/home/rfn5089/pipeline-claimextraction/score_psu/pipeline/scifact/")
+        extractor.make_corpus()
 
+        # Get response for claim evidence using request to API
         response =  requests.get('http://0.0.0.0:8000/getclaimevidence')
         print(response)
+
+        self.support, self.refute, self.ratio, self.support_para, self.contradict_para, self.not_enough_info_para = extractor.get_results()
+        print('support:',self.support,'refute:',self.refute,'ratio:',self.ratio)
+
+        os.chdir(r"/home/rfn5089/pipeline-claimextraction/score_psu/pipeline/")
 
         if api_resp:
             self.paper.cited_by_count = api_resp["num_citations"]
@@ -281,7 +281,8 @@ class TEIExtractor:
                 "citations_background": self.paper.cite_background, "citations_result": self.paper.cite_result,
                 "citations_methodology": self.paper.cite_method, "citations_next": self.paper.cite_next,
                 "upstream_influential_methodology_count": self.paper.influential_references_methodology,
-                "coCite2":t2, "coCite3":t3, "ISSN":self.paper.issn, "authors":self.paper.auth,"citations":api_resp["citations"],"age":self.paper.age}
+                "coCite2":t2, "coCite3":t3, "ISSN":self.paper.issn, "authors":self.paper.auth,"citations":api_resp["citations"],"age":self.paper.age,
+                "supporting_sentences":self.support, "refuting_sentences":self.refute, "ratio_support":self.ratio}
      #           "reading_score":reading_score, "subjectivity":subjectivity, "sentiment":sentiment, 
 
     @staticmethod
@@ -329,4 +330,3 @@ if __name__ == "__main__":
     #extractor = TEIExtractor(test)
     #test_paper = extractor.extract_paper_info()
     #print(test_paper)
-
