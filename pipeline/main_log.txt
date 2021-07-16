@@ -2414,3 +2414,13 @@
 [23665 140644306573120] 2021-07-16 13:32:22,663 INFO - (MainThread) - core.py:__init__:118 - Use device: cpu
 [23665 140644306573120] 2021-07-16 13:32:22,663 INFO - (MainThread) - core.py:__init__:124 - Loading: tokenize
 [23665 140644306573120] 2021-07-16 13:32:22,671 INFO - (MainThread) - core.py:__init__:174 - Done loading processors!
+[30825 139848811898688] 2021-07-16 13:47:43,048 INFO - (MainThread) - core.py:__init__:107 - Loading these models for language: en (English):
+========================
+| Processor | Package  |
+------------------------
+| tokenize  | combined |
+========================
+
+[30825 139848811898688] 2021-07-16 13:47:43,048 INFO - (MainThread) - core.py:__init__:118 - Use device: cpu
+[30825 139848811898688] 2021-07-16 13:47:43,049 INFO - (MainThread) - core.py:__init__:124 - Loading: tokenize
+[30825 139848811898688] 2021-07-16 13:47:43,057 INFO - (MainThread) - core.py:__init__:174 - Done loading processors!
