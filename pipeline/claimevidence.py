@@ -69,14 +69,14 @@ class ClaimEvidenceExtractor():
 
     def get_claims(self):
         data = pd.read_csv(self.document)
-        paper_id = data.loc[:,'paper_id']
+        self.paper_id = data.loc[:,'paper_id']
         try:
-            index= [i for i in range(len(paper_id)) if paper_id[i]==self.id]
+            index= [i for i in range(len(self.paper_id)) if self.paper_id[i]==self.id]
             #print(self.id,index)
             row = data.iloc[index[0], :]
         except:
             self.id = self.s[4]
-            index= [i for i in range(len(paper_id)) if paper_id[i]==self.id]
+            index= [i for i in range(len(self.paper_id)) if self.paper_id[i]==self.id]
             #print(self.id,index)
             row = data.iloc[index[0], :]
         self.doi = row['DOI_CR']
@@ -170,11 +170,20 @@ class ClaimEvidenceExtractor():
         
     def getclaim(self, claim_id):
         final = []
+        claim_map = []
         for k in range(1,5):
-            if k == 1: c = self.claim2
-            if k == 2: c = self.claim3a
-            if k == 3: c = self.claim3b
-            if k == 4: c = self.claim4
+            if k == 1:
+                c = self.claim2
+                type = "claim2"
+            if k == 2:
+                c = self.claim3a
+                type = "claim3a"
+            if k == 3:
+                c = self.claim3b
+                type = "claim3b"
+            if k == 4:
+                c = self.claim4
+                type = "claim4"
             #e  = [{"label": "enum(\"SUPPORT|CONTRADICT\")","sentences": "number[]"}]
             #evidence  = {"<doc_id>":e}
             #final = {"id":claim_id ,"claim": c ,"evidence":evidence ,"cited_doc_ids": "number[]"}
@@ -182,13 +191,17 @@ class ClaimEvidenceExtractor():
             if len(c)==1:
                 claim_id = claim_id+1
                 row = {"id":claim_id,"claim":c[0]}
+                map = {"id":claim_id, "claim_type": type }
                 final.append(row)
+                claim_map.append(map)
             else:
                 for i in c:
                     claim_id = claim_id+1
                     out = {"id":claim_id,"claim":i}
-                    final.append(out)
-        return final,claim_id
+                    map = {"id":claim_id, "claim_type": type }
+                    final.append(row)
+                    claim_map.append(map)
+        return final,claim_id, claim_map
     
     def make_corpus(self):
         doc_ids = pd.DataFrame(columns = ['pdf', 'doc_id_start', 'doc_id_end', 'claims'])
@@ -204,7 +217,7 @@ class ClaimEvidenceExtractor():
             k=k+1
 
         self.get_claims()
-        final,self.claims_end = self.getclaim(self.claims_start)
+        final,self.claims_end, self.claim_map = self.getclaim(self.claims_start)
 
         os.chdir(r"/home/rfn5089/pipeline-claimextraction/score_psu/pipeline/scifact/data/")
         f=open('corpus.jsonl','a',)
@@ -249,11 +262,25 @@ class ClaimEvidenceExtractor():
         else:
             return []
 
+    def get_claimobject(self, label, claim_id, doc_id):
+        para = self.get_evidence(doc_id)
+        os.chdir(r'/home/rfn5089/pipeline-claimextraction/score_psu/pipeline/scifact/data/')
+        with open('claims_test.jsonl') as f:
+            for item in f:
+                data = json.loads(item)
+                if data['id']==claim_id:
+                    claim_text = data['claim']
+        f.close()
+        for item in self.claim_map:
+            if item["id"]==claim_id:
+                type = item["claim_type"]
+        os.chdir(r'/home/rfn5089/pipeline-claimextraction/score_psu/pipeline/scifact/prediction/')
+
+        return {"claimid":claim_id, "claim_type":type, "claim_text":claim_text, "paragraphid":doc_id, "paragraphtext": para, "label":label}
+
     def get_results(self):
         dataset = []
-        support_para = []
-        contradict_para = []
-        not_enough_info_para = []
+        claimlist = []
         os.chdir(r'/home/rfn5089/pipeline-claimextraction/score_psu/pipeline/scifact/prediction/')
         with open('label_prediction.jsonl') as f:
             for item in f:
@@ -261,9 +288,10 @@ class ClaimEvidenceExtractor():
                 dataset.append(data)
         f.close()
 
+        claimcount = 0
         count = 0
-        support = 0
-        refute = 0
+        self.support = 0
+        self.refute = 0
         for i in range(len(dataset)):
             entry = dataset[i]
             label_list = entry["labels"]
@@ -271,6 +299,7 @@ class ClaimEvidenceExtractor():
                 claim_id = entry["claim_id"]
                 doc_id = item
                 doc_id = int(doc_id)
+                claimcount+=1
                 if claim_id>=self.claims_start and claim_id<=self.claims_end:
                     if doc_id>=int(self.doc_start) and doc_id<=int(self.doc_end):
                         l = label_list[item]
@@ -278,18 +307,24 @@ class ClaimEvidenceExtractor():
                     confidence = l["confidence"]
                     if confidence >=0.9:
                         if label=="SUPPORT":
-                            support = support+1
-                            support_para.append(self.get_evidence(doc_id))
+                            self.support = self.support+1
                         if label=="CONTRADICT":
-                            refute = refute+1
-                            contradict_para.append(self.get_evidence(doc_id))
-                        else:
-                            not_enough_info_para.append(self.get_evidence(doc_id))
+                            self.refute = self.refute+1
+                        claimobj = self.get_claimobject(label, claim_id, doc_id)
                 count=count+1
+                claimlist.append(claimobj)
         if self.sentences!=0:
-            ratio = support/self.sentences
+            ratio = self.support/self.sentences
         else: 
             ratio = 0
 
+        output = {"paper_id":self.id, "doi": self.doi, "title":self.title, "#claims":claimcount, "claims":claimlist, "#supporting": self.support, "#refuting":self.refute, "#sentences":self.sentences, "ratio": ratio}
+        #print(output)
+        os.chdir(r"/home/rfn5089/pipeline-claimextraction/score_psu/pipeline/")
+        f=open('claimevidence.jsonl','a')
+        json.dump(output,f, separators = (',',':'))
+        f.write('\n')
+        f.close()
+
         #print(' Support: ', support, ' Refute: ', refute, ' Ratio: ', ratio)
-        return support, refute, ratio, support_para, contradict_para, not_enough_info_para
+        return self.support, self.refute, ratio

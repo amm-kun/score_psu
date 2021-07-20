@@ -230,7 +230,7 @@ class TEIExtractor:
         response =  requests.get('http://0.0.0.0:8000/getclaimevidence')
         print(response)
 
-        self.support, self.refute, self.ratio, self.support_para, self.contradict_para, self.not_enough_info_para = extractor.get_results()
+        self.support, self.refute, self.ratio = extractor.get_results()
         print('support:',self.support,'refute:',self.refute,'ratio:',self.ratio)
 
         os.chdir(r"/home/rfn5089/pipeline-claimextraction/score_psu/pipeline/")
