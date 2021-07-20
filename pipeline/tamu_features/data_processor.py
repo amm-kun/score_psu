@@ -10,7 +10,7 @@ import warnings
 import json
 import ast
 import pdb
-#from tamu_features.sentiment_model import Sentiment
+from tamu_features.sentiment_model import Sentiment
 from collections import defaultdict
 
 class DataProcessor:
@@ -21,7 +21,7 @@ class DataProcessor:
         self.TRAINING_DIR = training_dir
         self.imputed_list = []
         self.training_data = pd.read_csv(self.TRAINING_DIR + r"/processed_gold_data.csv")
-        #self.classify = Sentiment()
+        self.classify = Sentiment()
 
     def accumulate_author_stats(self, author_data, authors):
         author_ids = [s for s in ast.literal_eval(str(authors)) if s is not None]
@@ -197,13 +197,11 @@ class DataProcessor:
             for i,row in downstream.iterrows():
                 try:
                     if isinstance(row.abstract,str):
-                        """
                         label=self.classify.classify(row.abstract)
                         if label in di.keys():
                             di[label]+=1
                         else:
                             di[label]=1
-                        """
                 except:
                     continue
             #pdb.set_trace()

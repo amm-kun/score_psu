@@ -32,7 +32,7 @@ if __name__ == "__main__":
     parser.add_argument("-lr", "--label_range", help="Assign y value within range for training set | Ex: 0.7-1")
 
     #python process_docs.py -out ../../tei10 -in ../../pdf10 -m generate-train" -csv ../
-    database_path = path.expanduser(r'/home/rfn5089/pipeline-claimextraction/score_psu/pipeline/data/')
+    database_path = path.expanduser('~/data/database')
     database = Database(database_path)
   
     args = parser.parse_args()
@@ -42,11 +42,11 @@ if __name__ == "__main__":
     logcontrol.set_log_file(args.csv_out + '/main_log.txt')
 
     # Debug parameters config
-    args.mode = "generate-train"
-    args.grobid_out = r"/home/rfn5089/tei10/"
-    args.pdf_input = r"/home/rfn5089/pdf10/"
-    args.data_file = r"/home/rfn5089/pipeline-claimextraction/score_psu/pipeline/data/data.csv"
-    args.csv_out = r"/home/rfn5089/pipeline-claimextraction/score_psu/pipeline/"
+    #args.mode = "extract-test"
+    #args.grobid_out = r"C:\Users\arjun\dev\GROBID_processed\test"
+    #args.pdf_input = r"C:\Users\arjun\dev\test\pdfs"
+    args.data_file = r"~/data/2400set/data.csv"
+    #args.csv_out = r"C:\Users\arjun\dev"
 
     # Process PDFS -> Generate XMLs and txt files
     if args.mode == "process-pdfs":
@@ -73,19 +73,19 @@ if __name__ == "__main__":
                   'influentialCitationCount','references_count','openaccessflag','normalized_citations',
                   'influentialReferencesCount','reference_background','reference_result','reference_methodology',
                   'citations_background','citations_result','citations_methodology','citations_next','coCite2',
-                  'coCite3', 'num_hypo_tested','real_p', 'real_p_sign', 'p_val_range', 'num_significant', 'sample_size',
+                  'coCite3', 'reading_score', 'subjectivity', 'sentiment',
+                  'num_hypo_tested','real_p', 'real_p_sign', 'p_val_range', 'num_significant', 'sample_size',
                   "extend_p", "funded", "Venue_Citation_Count", "Venue_Scholarly_Output",
                   "Venue_Percent_Cited", "Venue_CiteScore", "Venue_SNIP", "Venue_SJR", "avg_pub", "avg_hidx",
-                  "avg_auth_cites", "avg_high_inf_cites","sentiment_agg", "age","supporting_sentences", "refuting_sentences", "ratio_support")
+                  "avg_auth_cites", "avg_high_inf_cites","sentiment_agg", "age", "supporting_sentences", "refuting_sentences", "ratio_support", "y")
 
-        os.chdir(r"/home/rfn5089/pipeline-claimextraction/score_psu/pipeline/scifact/")
-        shutil.rmtree(r'/home/rfn5089/pipeline-claimextraction/score_psu/pipeline/scifact/data')
-        shellscript = subprocess.Popen(["./script/download-data.sh"], stdin=subprocess.PIPE)
+        os.chdir("/scifact/")
+        shutil.rmtree('/data')  #delete the data folder in scifact 
+        shellscript = subprocess.Popen(["./script/download-data.sh"], stdin=subprocess.PIPE)#delete the data folder in scifact 
         shellscript.stdin.close()
         returncode = shellscript.wait()   # blocks until shellscript is done
 
-        os.chdir(r"/home/rfn5089/pipeline-claimextraction/score_psu/pipeline/")
-
+        os.chdir("../")
         record = namedtuple('record', fields)
         record.__new__.__defaults__ = (None,) * len(record._fields)
         # CSV output file (Delete the file manually if you wish to generate fresh output, default appends
@@ -110,10 +110,6 @@ if __name__ == "__main__":
                 del extraction_stage['ISSN']
                 del extraction_stage['authors']
                 del extraction_stage['citations']
-
-                #put('http://localhost:5000/todo1', data={'data': 'Remember the milk'}).json()
-                #get('http://localhost:5000/getclaimevidence').json()
-
                 p_val_stage = extract_p_values(args.pdf_input + '/' + xml.replace('.tei.xml', '.txt'))
                 features = dict(**extraction_stage, **p_val_stage)
                 #pdb.set_trace()
@@ -123,13 +119,11 @@ if __name__ == "__main__":
                 select_tamu_features = select_keys(tamu_features, tamu_select_features)
                 features.update(select_tamu_features)
                 print(features)
-                """
                 if args.label_range:
                     label_range = args.label_range.split('-')
                     features['y'] = random.uniform(float(label_range[0]), float(label_range[1]))
                 else:
                     features['y'] = float(args.label)
-                """
                 try:
                     csv_write_record(writer, features, header)
                 except UnicodeDecodeError:
@@ -144,24 +138,16 @@ if __name__ == "__main__":
     elif args.mode == "extract-test":
         start = time.time()
         
-        fields = ('doi', 'title', 'num_citations', 'author_count', 'sjr', 'u_rank','self_citations',
+        fields = ('ta3_pid', 'doi', 'title', 'num_citations', 'author_count', 'sjr', 'u_rank', 'self_citations',
                   'upstream_influential_methodology_count', 'subject','subject_code','citationVelocity',
-                  'influentialCitationCount','references_count','openaccessflag','normalized_citations',
-                  'influentialReferencesCount','reference_background','reference_result','reference_methodology',
+                  'influentialCitationCount','references_count','openaccessflag', 'normalized_citations',
+                  'influentialReferencesCount','reference_background','reference_result', 'reference_methodology',
                   'citations_background','citations_result','citations_methodology','citations_next','coCite2',
-                  'coCite3', 'reading_score', 'subjectivity', 'sentiment',
-                  'num_hypo_tested','real_p', 'real_p_sign', 'p_val_range', 'num_significant', 'sample_size',
-                  "extend_p", "funded", "Venue_Citation_Count", "Venue_Scholarly_Output",
+                  'coCite3','reading_score', 'subjectivity', 'sentiment',
+                  'num_hypo_tested', 'real_p', 'real_p_sign', 'p_val_range', 'num_significant',
+                  'sample_size',"extend_p", "funded", "Venue_Citation_Count", "Venue_Scholarly_Output",
                   "Venue_Percent_Cited", "Venue_CiteScore", "Venue_SNIP", "Venue_SJR", "avg_pub", "avg_hidx",
-                  "avg_auth_cites", "avg_high_inf_cites","sentiment_agg", "age","supporting_sentences", "refuting_sentences", "ratio_support")
-
-        os.chdir(r"/home/rfn5089/pipeline-claimextraction/score_psu/pipeline/scifact/")
-        shutil.rmtree(r'/home/rfn5089/pipeline-claimextraction/score_psu/pipeline/scifact/data')
-        shellscript = subprocess.Popen(["./script/download-data.sh"], stdin=subprocess.PIPE)
-        shellscript.stdin.close()
-        returncode = shellscript.wait()   # blocks until shellscript is done
-
-        os.chdir(r"/home/rfn5089/pipeline-claimextraction/score_psu/pipeline/")
+                  "avg_auth_cites", "avg_high_inf_cites","sentiment_agg", "age")
 
         record = namedtuple('record', fields)
         record.__new__.__defaults__ = (None,) * len(record._fields)

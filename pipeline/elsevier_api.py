@@ -489,6 +489,6 @@ class getsemantic(getelsevier):
 
             return row
         except Exception as e:
-            #print(traceback.format_exc())
+            print(traceback.format_exc())
             row = {"upstream_influential_methodology_count": self.upstream_influential_methodology_count, "normalized_citations":self.normalized, 'doi': self.doi, 'title':self.title, 'citationVelocity':self.velocity, 'influentialCitationCount':self.incite,'is_open_access':self.openaccess,'references_count':self.refcount,'influentialReferencesCount':self.inref,'reference_background':self.refback,'reference_result':self.refresult,'reference_methodology':self.refmeth,'citations_background':self.cback,'citations_result':self.cresult,'citations_methodology':self.cmeth}
             return row

@@ -9,13 +9,11 @@ from elsevier_api import getsemantic
 import pickle
 import pdb
 from requests import put, get
-"""
 import textstat
 from textblob import TextBlob
 from allennlp.predictors.predictor import Predictor
 import allennlp_models.tagging
-"""
-from coCitation import coCite
+from scripts.coCitation import coCite
 import time
 import subprocess
 import os
@@ -35,7 +33,7 @@ _license_ = ""
 _version_ = "1.0"
 _maintainer_ = "Arjun Menon"
 _email_ = "amm8987@psu.edu"
-"""
+
 predictor=None
 try:
     predictor = Predictor.from_path("https://storage.googleapis.com/allennlp-public-models/sst-roberta-large-2020.06.08.tar.gz")
@@ -43,14 +41,13 @@ try:
 except Exception as e:
     print(e)
 
-"""
 #Flask instance
 app = Flask(__name__)
 #Flask URL trigger
 @app.route("/getclaimevidence")
 def get():
     #print('API called')
-    os.chdir(r"/home/rfn5089/pipeline-claimextraction/score_psu/pipeline/scifact/")
+    os.chdir("/scifact/")
     shellscript = subprocess.Popen(["./script/pipeline.sh", "open", "verisci", "test"], stdin=subprocess.PIPE) 
     shellscript.stdin.close()
     returncode = shellscript.wait()   # blocks until shellscript is done
@@ -75,11 +72,11 @@ class ReadPickle:
 
 
 class TEIExtractor:
-    def __init__(self, file, db, xml, data_file, test_tsv=None,):
+    def __init__(self, file, db, xml, data_file, test_tsv=None):
         self.file = file
         self.xml = xml
-        self.uni_rank = ReadPickle(r'/home/rfn5089/pipeline-claimextraction/score_psu/pipeline/uni_rank.pickle')
-        self.sjr = ReadPickle(r'/home/rfn5089/pipeline-claimextraction/score_psu/pipeline/journal_dictionary.pkl')
+        self.uni_rank = ReadPickle('uni_rank.pickle')
+        self.sjr = ReadPickle('journal_dictionary.pkl')
         self.document = test_tsv
         self.test_csv = data_file
         self.paper = Paper()
@@ -127,7 +124,7 @@ class TEIExtractor:
         self.paper.set_self_citations()
         return {'doi': self.paper.doi, 'title': self.paper.title, 'total_citations': len(self.paper.citations),
                 'self_citations': self.paper.self_citations, 'abstract': self.paper.abstract}
-    """
+    
     def get_reading_score(self, abstract):
         if isinstance(abstract,str):
             if not abstract: return 0
@@ -147,7 +144,7 @@ class TEIExtractor:
             label = predictor.predict(abstract)['label']
             return int(label)
         return -1
-    """
+    
     
     def extract_paper_info(self):
         # DOI
@@ -223,7 +220,7 @@ class TEIExtractor:
 
         # Adding the paragraphs from the paper to the corpus
         extractor = ClaimEvidenceExtractor(self.xml, self.soup,self.test_csv) 
-        os.chdir(r"/home/rfn5089/pipeline-claimextraction/score_psu/pipeline/scifact/")
+        os.chdir("/scifact/")
         extractor.make_corpus()
 
         # Get response for claim evidence using request to API
@@ -233,7 +230,7 @@ class TEIExtractor:
         self.support, self.refute, self.ratio = extractor.get_results()
         print('support:',self.support,'refute:',self.refute,'ratio:',self.ratio)
 
-        os.chdir(r"/home/rfn5089/pipeline-claimextraction/score_psu/pipeline/")
+        os.chdir("../")
 
         if api_resp:
             self.paper.cited_by_count = api_resp["num_citations"]
@@ -264,12 +261,12 @@ class TEIExtractor:
         # return paper
         #calculate coCitations
         t2,t3 = coCite(self.paper.doi, self.db)
-        """
+        
         #calculate NLP features
         reading_score = self.get_reading_score(self.paper.abstract)
         subjectivity = self.get_subjectivity(self.paper.abstract)
         sentiment = self.get_sentiment(self.paper.abstract)
-        """
+        
         return {"doi": self.paper.doi, "title": self.paper.title, "num_citations": self.paper.cited_by_count,
                 "author_count": len(self.paper.authors),"sjr": self.paper.sjr, "u_rank": self.paper.uni_rank,
                 "funded": self.paper.funded,"self_citations": self.paper.self_citations, "subject": self.paper.subject,
@@ -282,8 +279,8 @@ class TEIExtractor:
                 "citations_methodology": self.paper.cite_method, "citations_next": self.paper.cite_next,
                 "upstream_influential_methodology_count": self.paper.influential_references_methodology,
                 "coCite2":t2, "coCite3":t3, "ISSN":self.paper.issn, "authors":self.paper.auth,"citations":api_resp["citations"],"age":self.paper.age,
-                "supporting_sentences":self.support, "refuting_sentences":self.refute, "ratio_support":self.ratio}
-     #           "reading_score":reading_score, "subjectivity":subjectivity, "sentiment":sentiment, 
+                "reading_score":reading_score, "subjectivity":subjectivity, "sentiment":sentiment, "supporting_sentences":self.support, "refuting_sentences":self.refute, "ratio_support":self.ratio}
+
 
     @staticmethod
     def get_authors(authors):

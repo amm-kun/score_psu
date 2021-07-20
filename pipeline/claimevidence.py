@@ -67,6 +67,7 @@ class ClaimEvidenceExtractor():
         text = re.sub('[Ñ]', 'N', text)
         return text
 
+    # Extract claims from the data.csv file
     def get_claims(self):
         data = pd.read_csv(self.document)
         self.paper_id = data.loc[:,'paper_id']
@@ -110,7 +111,7 @@ class ClaimEvidenceExtractor():
         self.claim4_start = row['claim4_start']
 
         return
-    
+    # Extract doc_id from Semantic Scholar and abstract
     def get_corpus(self):
         query = self.doi
         self.docid = 0
@@ -151,7 +152,7 @@ class ClaimEvidenceExtractor():
         row = {"doc_id": int(self.docid), 'title':self.title, 'abstract':self.abstract, 'structured':'false'}
         
         return row
-        
+    # Extract all paragraphs from the paper with segmented sentences    
     def getpara(self):
         self.para = self.soup.find_all('p')
         i=0
@@ -167,7 +168,7 @@ class ClaimEvidenceExtractor():
             output = {"doc_id": int(docid), 'title':self.title, 'abstract':p, 'structured':'false'}
             all_output.append(output)
         return all_output, sentences
-        
+    # Create claim_test schema
     def getclaim(self, claim_id):
         final = []
         claim_map = []
@@ -219,7 +220,7 @@ class ClaimEvidenceExtractor():
         self.get_claims()
         final,self.claims_end, self.claim_map = self.getclaim(self.claims_start)
 
-        os.chdir(r"/home/rfn5089/pipeline-claimextraction/score_psu/pipeline/scifact/data/")
+        os.chdir("/data/")
         f=open('corpus.jsonl','a',)
         for item in output:
             #print(item)
@@ -227,7 +228,6 @@ class ClaimEvidenceExtractor():
             f.write('\n')
         f.close()
 
-        os.chdir(r"/home/rfn5089/pipeline-claimextraction/score_psu/pipeline/scifact/data")
         f=open('claims_test.jsonl','w',)
         for item in final:
             #print(item)
@@ -242,7 +242,7 @@ class ClaimEvidenceExtractor():
 
     def get_evidence(self,doc_id):
         dataset = []
-        os.chdir(r'/home/rfn5089/pipeline-claimextraction/score_psu/pipeline/scifact/data/')
+        os.chdir('../data/')
         with open('corpus.jsonl') as f:
             for item in f:
                 data = json.loads(item)
@@ -264,7 +264,6 @@ class ClaimEvidenceExtractor():
 
     def get_claimobject(self, label, claim_id, doc_id):
         para = self.get_evidence(doc_id)
-        os.chdir(r'/home/rfn5089/pipeline-claimextraction/score_psu/pipeline/scifact/data/')
         with open('claims_test.jsonl') as f:
             for item in f:
                 data = json.loads(item)
@@ -274,14 +273,14 @@ class ClaimEvidenceExtractor():
         for item in self.claim_map:
             if item["id"]==claim_id:
                 type = item["claim_type"]
-        os.chdir(r'/home/rfn5089/pipeline-claimextraction/score_psu/pipeline/scifact/prediction/')
+        os.chdir('../prediction/')
 
         return {"claimid":claim_id, "claim_type":type, "claim_text":claim_text, "paragraphid":doc_id, "paragraphtext": para, "label":label}
 
     def get_results(self):
         dataset = []
         claimlist = []
-        os.chdir(r'/home/rfn5089/pipeline-claimextraction/score_psu/pipeline/scifact/prediction/')
+        os.chdir('/prediction/')
         with open('label_prediction.jsonl') as f:
             for item in f:
                 data = json.loads(item)
@@ -320,7 +319,7 @@ class ClaimEvidenceExtractor():
 
         output = {"paper_id":self.id, "doi": self.doi, "title":self.title, "#claims":claimcount, "claims":claimlist, "#supporting": self.support, "#refuting":self.refute, "#sentences":self.sentences, "ratio": ratio}
         #print(output)
-        os.chdir(r"/home/rfn5089/pipeline-claimextraction/score_psu/pipeline/")
+        os.chdir(r"../")
         f=open('claimevidence.jsonl','a')
         json.dump(output,f, separators = (',',':'))
         f.write('\n')
