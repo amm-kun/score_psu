@@ -89,6 +89,9 @@ class DataProcessor:
         return df
 
     def process_auth_data_google_scholar(self, df, author_data):
+        if df.empty:
+            defaults = {k: 0 for k in df.columns}
+            df = df.append(defaults, ignore_index=True)
         if len(author_data) == 0:
             return self.impute_author_data(df)
         df['avg_pub'], df['avg_hidx'], df['avg_auth_cites'] = '', '', ''
@@ -201,7 +204,8 @@ class DataProcessor:
                             di[label]=1
                 except:
                     continue
-            pdb.set_trace()
+            #pdb.set_trace()
+            print(di)
             if 'Target Sentiment Not Found' in di.keys():
                 del di['Target Sentiment Not Found']
             key = max(di, key=di.get)
@@ -210,10 +214,10 @@ class DataProcessor:
             if key in toKey.keys():
                 base_df['sentiment_agg'] = int(toKey[key])
             else:
-                base_df['sentiment_agg'] = -1
+                base_df['sentiment_agg'] = 0
         except Exception as e:
             print(str(e))
-            base_df['sentiment_agg'] = -1
+            base_df['sentiment_agg'] = 0
             return base_df
         return base_df
         

@@ -6,6 +6,7 @@ from p_value import extract_p_values
 from tamu_features.adapter import get_tamu_features
 from collections import namedtuple
 from os import listdir, rename, system, name, path, getcwd
+from databases import Database
 import time
 import argparse
 import random
@@ -14,6 +15,9 @@ import pandas as pd
 import logcontrol
 import timelogger
 import pdb
+import subprocess
+import os
+import shutil
 
 if __name__ == "__main__":
 
@@ -26,8 +30,11 @@ if __name__ == "__main__":
     parser.add_argument("-csv", "--csv_out", default=getcwd(), help="CSV output path")
     parser.add_argument("-l", "--label", help="Assign y value | label for training set")
     parser.add_argument("-lr", "--label_range", help="Assign y value within range for training set | Ex: 0.7-1")
+
     #python process_docs.py -out ../../tei10 -in ../../pdf10 -m generate-train" -csv ../
-    database = '~/data/database'
+    database_path = path.expanduser('~/data/database')
+    database = Database(database_path)
+  
     args = parser.parse_args()
     logcontrol.register_logger(timelogger.logger, "timelogger")
     logcontrol.set_level(logcontrol.DEBUG, group="timelogger")
@@ -66,11 +73,19 @@ if __name__ == "__main__":
                   'influentialCitationCount','references_count','openaccessflag','normalized_citations',
                   'influentialReferencesCount','reference_background','reference_result','reference_methodology',
                   'citations_background','citations_result','citations_methodology','citations_next','coCite2',
-                  'coCite3','num_hypo_tested','real_p', 'real_p_sign', 'p_val_range', 'num_significant', 'sample_size',
+                  'coCite3', 'reading_score', 'subjectivity', 'sentiment',
+                  'num_hypo_tested','real_p', 'real_p_sign', 'p_val_range', 'num_significant', 'sample_size',
                   "extend_p", "funded", "Venue_Citation_Count", "Venue_Scholarly_Output",
                   "Venue_Percent_Cited", "Venue_CiteScore", "Venue_SNIP", "Venue_SJR", "avg_pub", "avg_hidx",
-                  "avg_auth_cites", "avg_high_inf_cites","sentiment_agg", "paper_age", "y")
+                  "avg_auth_cites", "avg_high_inf_cites","sentiment_agg", "age", "supporting_sentences", "refuting_sentences", "ratio_support", "y")
 
+        os.chdir("/scifact/")
+        shutil.rmtree('/data')  #delete the data folder in scifact 
+        shellscript = subprocess.Popen(["./script/download-data.sh"], stdin=subprocess.PIPE)#delete the data folder in scifact 
+        shellscript.stdin.close()
+        returncode = shellscript.wait()   # blocks until shellscript is done
+
+        os.chdir("../")
         record = namedtuple('record', fields)
         record.__new__.__defaults__ = (None,) * len(record._fields)
         # CSV output file (Delete the file manually if you wish to generate fresh output, default appends
@@ -87,7 +102,7 @@ if __name__ == "__main__":
         for xml in xmls:
             try:
                 print("Processing ", xml)
-                extractor = TEIExtractor(args.grobid_out + '/' + xml,database)
+                extractor = TEIExtractor(args.grobid_out + '/' + xml,database, xml, args.data_file)
                 extraction_stage = extractor.extract_paper_info()
                 issn = extraction_stage['ISSN']
                 auth = extraction_stage['authors']
@@ -128,10 +143,11 @@ if __name__ == "__main__":
                   'influentialCitationCount','references_count','openaccessflag', 'normalized_citations',
                   'influentialReferencesCount','reference_background','reference_result', 'reference_methodology',
                   'citations_background','citations_result','citations_methodology','citations_next','coCite2',
-                  'coCite3','num_hypo_tested', 'real_p', 'real_p_sign', 'p_val_range', 'num_significant',
+                  'coCite3','reading_score', 'subjectivity', 'sentiment',
+                  'num_hypo_tested', 'real_p', 'real_p_sign', 'p_val_range', 'num_significant',
                   'sample_size',"extend_p", "funded", "Venue_Citation_Count", "Venue_Scholarly_Output",
                   "Venue_Percent_Cited", "Venue_CiteScore", "Venue_SNIP", "Venue_SJR", "avg_pub", "avg_hidx",
-                  "avg_auth_cites", "avg_high_inf_cites","sentiment_agg", "paper_age")
+                  "avg_auth_cites", "avg_high_inf_cites","sentiment_agg", "age")
 
         record = namedtuple('record', fields)
         record.__new__.__defaults__ = (None,) * len(record._fields)
@@ -139,6 +155,7 @@ if __name__ == "__main__":
         writer = csv_writer(r"{0}/{1}".format(args.csv_out, "test.csv"))
         header = list(fields)
         csv_write_field_header(writer, header)
+        args.data_file = args.file
         for document in read_darpa_tsv(args.file):
             try:
                 print("Processing ", document['pdf_filename'])
@@ -146,12 +163,21 @@ if __name__ == "__main__":
                 extraction_stage = extractor.extract_paper_info()
                 p_val_stage = extract_p_values(args.pdf_input + '/' + document['pdf_filename'] + '.txt', document['claim4'])
                 features = dict(**extraction_stage, **p_val_stage)
-                
+                issn = extraction_stage['ISSN']
+                auth = extraction_stage['authors']
+                citations = extraction_stage['citations']
+                del extraction_stage['ISSN']
+                del extraction_stage['authors']
+                del extraction_stage['citations']
                 # Get TAMU features
                 paper_id = document['pdf_filename'].split('_')[-1].replace('.pdf', '')
-                tamu_features, imputed_list = get_tamu_features(args.file, paper_id, extraction_stage[''])
-
+                #TAMU
+                tamu_features = get_tamu_features(args.data_file, paper_id, issn, auth, citations,database)
                 select_tamu_features = select_keys(tamu_features, tamu_select_features)
+                
+                #tamu_features, imputed_list = get_tamu_features(args.file, paper_id, extraction_stage[''])
+
+                #select_tamu_features = select_keys(tamu_features, tamu_select_features)
                 features.update(select_tamu_features)
 
                 features['ta3_pid'] = document['ta3_pid']
@@ -168,16 +194,17 @@ if __name__ == "__main__":
         print("Execution time: ", end-start)
     elif args.mode == "2400set":
         csv = pd.read_csv(args.file)
-        want = [ 'kw_cs_m5', 'kw_cs_m3', 'kw_cs_m10', 'um_cs_m1', 'um_cs_m2', 'um_cs_m3', 'um_cs_m4']
+        want = [ 'kw_cs_m5', 'kw_cs_m3', 'kw_cs_m10', 'um_cs_m1', 'um_cs_m2', 'um_cs_m3', 'um_cs_m4','paper_id']
         fields = ('doi', 'title', 'num_citations', 'author_count', 'sjr', 'u_rank', 'self_citations',
                   'upstream_influential_methodology_count', 'subject','subject_code','citationVelocity',
                   'influentialCitationCount','references_count','openaccessflag', 'normalized_citations',
                   'influentialReferencesCount','reference_background','reference_result', 'reference_methodology',
                   'citations_background','citations_result','citations_methodology','citations_next','coCite2',
-                  'coCite3','num_hypo_tested', 'real_p', 'real_p_sign', 'p_val_range', 'num_significant',
+                  'coCite3','reading_score', 'subjectivity', 'sentiment',
+                  'num_hypo_tested', 'real_p', 'real_p_sign', 'p_val_range', 'num_significant',
                   'sample_size',"extend_p", "funded", "Venue_Citation_Count", "Venue_Scholarly_Output",
                   "Venue_Percent_Cited", "Venue_CiteScore", "Venue_SNIP", "Venue_SJR", "avg_pub", "avg_hidx",
-                  "avg_auth_cites", "avg_high_inf_cites","sentiment_agg", "paper_age")
+                  "avg_auth_cites", "avg_high_inf_cites","sentiment_agg", "age")
         fields = fields + tuple(want)
         record = namedtuple('record', fields)
         record.__new__.__defaults__ = (None,) * len(record._fields)
@@ -196,6 +223,7 @@ if __name__ == "__main__":
             try:
                 timelogger.start("overall")
                 print("Processing ", xml)
+                #pdb.set_trace()
                 timelogger.start("metadata_apis")
                 extractor = TEIExtractor(args.grobid_out + '/' + xml,database)
                 extraction_stage = extractor.extract_paper_info()
@@ -224,6 +252,7 @@ if __name__ == "__main__":
                     label_range = args.label_range.split('-')
                     features['y'] = random.uniform(float(label_range[0]), float(label_range[1]))
                 else:
+                    #pdb.set_trace()
                     for i in want:
                         features[i] = csv[csv['pdf_filename']==xml.replace('.tei.xml', '').strip()][i].values[0]
                  

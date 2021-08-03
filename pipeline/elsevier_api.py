@@ -1,5 +1,4 @@
 # %%
-# importing library 
 import requests 
 import pandas as pd
 from fuzzywuzzy import fuzz
@@ -7,7 +6,7 @@ import os
 import math
 from datetime import datetime
 from collections import Counter
-import pickledb
+import pdb
 
 
 # %%
@@ -16,9 +15,10 @@ class getcrossref:
     def __init__(self,doi,title):
         self.doi = doi
         self.title =title
-        self.refcount = -1
-        self.citedby = -1
-        self.coverdate = -1
+        self.refcount = 0
+        self.citedby = 0
+        self.coverdate = 0
+        self.ab = ''
 
     def get_row(self):
         query = self.doi
@@ -107,24 +107,26 @@ class getcrossref:
         if 'reference-count' in data.columns:
             select = data.loc[index,'reference-count']
             self.refcount = select
+        if 'abstract' in data.columns:
+            self.ab = data.loc[index,'abstract']
       
-        return {'doi':self.doi,'title':self.title,'citedby':self.citedby,'coverdate':self.coverdate,'references-count':self.refcount}
+        return {'doi':self.doi,'title':self.title,'citedby':self.citedby,'coverdate':self.coverdate,'references-count':self.refcount,'abstract':self.ab}
 
 # %%
 class getelsevier(getcrossref):
 
     def __init__(self,doi,title):
         super().__init__(doi,title)
-        self.issn = '-1'
-        self.source = -1
-        self.openaccess = -1
+        self.issn = '0'
+        self.source = 0
+        self.openaccess = 0
         self.affilname = float('NaN')
         self.affilcountry = float('NaN')
-        self.sjr = -1
-        self.subject = -1
+        self.sjr = 0
+        self.subject = 0
         self.subject_code = 900
-        self.normalized = -1
-        self.next = -1
+        self.normalized = 0
+        self.next = 0
 
     def getaff(self,aff):
         try:
@@ -345,16 +347,6 @@ class getsemantic(getelsevier):
     
     def __init__(self,doi,title,db):
         super().__init__(doi,title)
-        
-        currentYear = datetime.now().year
-        if self.coverdate == 0:
-            self.normalized = 0
-        elif self.coverdate == currentYear:
-            self.normalized = self.citedby
-        else:
-            years = currentYear - int(self.coverdate)
-            self.normalized = int(self.citedby)/years
-
         self.velocity = -1
         self.incite = -1
         self.inref = -1
@@ -364,116 +356,139 @@ class getsemantic(getelsevier):
         self.cback = -1
         self.cresult = -1
         self.cmeth = -1
-        self.upstream_influential_methodology_count = -1
-        self.years = []
+        self.upstream_influential_methodology_count = 0
         self.auth = [] 
         self.citations = []
-        #self.paperid_database = pickledb.load(db + '/paperid.db',True)
-        self.paperid_database = None
-    def return_semantic(self):
-        query = self.doi
-        if False and self.paperid_database.get(query):
-            data = self.paperid_database.get(query)
-        else:
-            url = 'https://api.semanticscholar.org/v1/paper/'+str(query)
-            r = requests.get(url)
-            row = {"upstream_influential_methodology_count": self.upstream_influential_methodology_count, "normalized_citations":self.normalized, 'doi': self.doi, 'title':self.title, 'citationVelocity':self.velocity, 'influentialCitationCount':self.incite,'is_open_access':self.openaccess,'references_count':self.refcount,'influentialReferencesCount':self.inref,'reference_background':self.refback,'reference_result':self.refresult,'reference_methodology':self.refmeth,'citations_background':self.cback,'citations_result':self.cresult,'citations_methodology':self.cmeth}
+        self.years = []
+        self.ab = ''
+        self.db = db
+        self.age = 0
 
-            if r.status_code != 200:
+    def return_semantic(self):
+        try:
+            currentYear = datetime.now().year
+            if self.coverdate == 0:
+                self.normalized = 0
+                self.age = 0
+            elif self.coverdate == currentYear:
+                self.normalized = self.citedby
+                self.age = 1
+            else:
+                years = currentYear - int(self.coverdate)
+                self.age = years
+                self.normalized = int(self.citedby)/years
+
+            query = self.doi
+            if self.db.papers.get(query,False):
+                data = self.db.papers.get(query)
+            else:
+                url = 'https://api.semanticscholar.org/v1/paper/'+str(query)
+                r = requests.get(url)
+                row = {"upstream_influential_methodology_count": self.upstream_influential_methodology_count, "normalized_citations":self.normalized, 'doi': self.doi, 'title':self.title, 'citationVelocity':self.velocity, 'influentialCitationCount':self.incite,'is_open_access':self.openaccess,'references_count':self.refcount,'influentialReferencesCount':self.inref,'reference_background':self.refback,'reference_result':self.refresult,'reference_methodology':self.refmeth,'citations_background':self.cback,'citations_result':self.cresult,'citations_methodology':self.cmeth}
+
+                if r.status_code != 200:
+                    return row
+
+                data = r.json()
+                self.db.papers[query] = r.json()
+
+            # Get influential_methodology_references
+            if self.doi:
+                inf_meth_ref_count = 0
+                try:
+                    references = data['references']
+                    for reference in references:
+                        try:
+                            if 'methodology' in reference['intent'] and reference['isInfluential']:
+                                inf_meth_ref_count += 1
+                        except KeyError:
+                            continue
+                except KeyError:
+                    pass
+                self.upstream_influential_methodology_count = inf_meth_ref_count
+
+            data = pd.json_normalize(data)
+            doi_api = data['doi']
+            title_api = data['title']
+
+            for i in range(0,len(doi_api)):
+                doi_check = doi_api[i]
+                if str(doi_check.lower()) == str(query.lower()):
+                    flag=0
+                    index = i
+                    doi = doi_api[i]
+                    title = title_api[i]
+                    break
+                else:
+                    flag=1
+            if flag==1:
                 return row
 
-            data = r.json()
-            #self.paperid_database.set(query,r.json())
-            
-        # Get influential_methodology_references
-        if self.doi:
-            inf_meth_ref_count = 0
-            try:
-                references = data['references']
-                for reference in references:
-                    try:
-                        if 'methodology' in reference['intent'] and reference['isInfluential']:
-                            inf_meth_ref_count += 1
-                    except KeyError:
-                        continue
-            except KeyError:
-                pass
-            self.upstream_influential_methodology_count = inf_meth_ref_count
+            # Selecting only necessary features
+            #pdb.set_trace()
+            if 'abstract' in data.columns:
+                self.ab = data.loc[index,'abstract']
+            if 'references' in data.columns:
+                references = data.loc[index,'references']
+                ref = pd.json_normalize(references)
+                if 'isInfluential' in ref.columns:
+                    inf = ref['isInfluential']
+                    inf = inf.tolist()
+                    self.inref = sum(bool(x) for x in inf)
+                if 'intent' in ref.columns:
+                    intent = ref['intent']
+                    intent = intent.tolist()
+                    flat_list = [item for sublist in intent for item in sublist]
+                    self.refback = flat_list.count('background')
+                    self.refresult = flat_list.count('result')
+                    self.refmeth = flat_list.count('methodology')
+                references_count = len(references)
+                if references_count>int(self.refcount):
+                    self.refcount = references_count
+            if 'citationVelocity' in data.columns:
+                self.velocity = data.loc[index,'citationVelocity'] 
+            if 'influentialCitationCount' in data.columns:
+                self.incite = data.loc[index,'influentialCitationCount']
+            if 'is_open_access' in data.columns:
+                openaccess = data.loc[index,'is_open_access']
+                if openaccess>int(self.openaccess):
+                    self.openaccess = int(openaccess)
+            if 'citations' in data.columns:
+                self.citations = data.loc[index,'citations']
+                cit = pd.json_normalize(self.citations)
+                if 'intent' in cit.columns:
+                    cintent = cit['intent']
+                    cintent = cintent.tolist()
+                    cflat_list = [item for sublist in cintent for item in sublist]
+                    self.cback = cflat_list.count('background')
+                    self.cresult = cflat_list.count('result')
+                    self.cmeth = cflat_list.count('methodology')
+                if 'year' in cit.columns:
+                    year = cit['year']
+                    year = year.tolist()
+                    year = [num for num in year if num]
+                    c = [y for y in year if y-self.coverdate<=3]
+                    self.next = sum(Counter(c).values())
+            if 'authors' in data.columns:
+                author_list = data.loc[index,'authors']
+                id_list = list()
+                for data in author_list:
+                  id_list.append(data['authorId'])
+                author_id_list = id_list
+                self.auth = author_id_list
 
-        data = pd.json_normalize(data)
-        doi_api = data['doi']
-        title_api = data['title']
-        
-        for i in range(0,len(doi_api)):
-            doi_check = doi_api[i]
-            if str(doi_check.lower()) == str(query.lower()):
-                flag=0
-                index = i
-                doi = doi_api[i]
-                title = title_api[i]
-                break
-            else:
-                flag=1
-        if flag==1:
+
+            row = {'doi': self.doi, 'title': self.title, 'citationVelocity': self.velocity,
+                   'influentialCitationCount': self.incite,'openaccessFlag': self.openaccess,
+                   'references-count': self.refcount, 'influentialReferencesCount': self.inref,
+                   'reference_background': self.refback, 'reference_result': self.refresult,
+                   'reference_methodology': self.refmeth, 'citations_background': self.cback,
+                   'citations_result': self.cresult, 'citations_methodology': self.cmeth,
+                   "citation_next": self.next, "normalized_citations": self.normalized,
+                   "upstream_influential_methodology_count": self.upstream_influential_methodology_count, "authors":self.auth,"citations":self.citations,"age":self.age,"abstract":self.ab}
+
             return row
-
-        # Selecting only necessary features
-        if 'references' in data.columns:
-            references = data.loc[index,'references']
-            ref = pd.json_normalize(references)
-            if 'isInfluential' in ref.columns:
-                inf = ref['isInfluential']
-                inf = inf.tolist()
-                self.inref = sum(bool(x) for x in inf)
-            if 'intent' in ref.columns:
-                intent = ref['intent']
-                intent = intent.tolist()
-                flat_list = [item for sublist in intent for item in sublist]
-                self.refback = flat_list.count('background')
-                self.refresult = flat_list.count('result')
-                self.refmeth = flat_list.count('methodology')
-            references_count = len(references)
-            if references_count>int(self.refcount):
-                self.refcount = references_count
-        if 'citationVelocity' in data.columns:
-            self.velocity = data.loc[index,'citationVelocity'] 
-        if 'influentialCitationCount' in data.columns:
-            self.incite = data.loc[index,'influentialCitationCount']
-        if 'is_open_access' in data.columns:
-            openaccess = data.loc[index,'is_open_access']
-            if openaccess>int(self.openaccess):
-                self.openaccess = int(openaccess)
-        if 'citations' in data.columns:
-            self.citations = data.loc[index,'citations']
-            cit = pd.json_normalize(self.citations)
-            if 'intent' in cit.columns:
-                cintent = cit['intent']
-                cintent = cintent.tolist()
-                cflat_list = [item for sublist in cintent for item in sublist]
-                self.cback = cflat_list.count('background')
-                self.cresult = cflat_list.count('result')
-                self.cmeth = cflat_list.count('methodology')
-            if 'year' in cit.columns:
-                year = cit['year']
-                year = year.tolist()
-                year = [num for num in year if num]
-                c = [y for y in year if y-self.coverdate<=3]
-                self.next = sum(Counter(c).values())
-        if 'authors' in data.columns:
-            author_list = data.loc[index,'authors']
-            id_list = list()
-            for data in author_list:
-              id_list.append(data['authorId'])
-            author_id_list = id_list
-            self.auth = author_id_list
-        
-        row = {'doi': self.doi, 'title': self.title, 'citationVelocity': self.velocity,
-               'influentialCitationCount': self.incite,'openaccessFlag': self.openaccess,
-               'references-count': self.refcount, 'influentialReferencesCount': self.inref,
-               'reference_background': self.refback, 'reference_result': self.refresult,
-               'reference_methodology': self.refmeth, 'citations_background': self.cback,
-               'citations_result': self.cresult, 'citations_methodology': self.cmeth,
-               "citation_next": self.next, "normalized_citations": self.normalized,
-               "upstream_influential_methodology_count": self.upstream_influential_methodology_count, "authors":self.auth,"citations":self.citations}
-        
-        return row
+        except Exception as e:
+            print(traceback.format_exc())
+            row = {"upstream_influential_methodology_count": self.upstream_influential_methodology_count, "normalized_citations":self.normalized, 'doi': self.doi, 'title':self.title, 'citationVelocity':self.velocity, 'influentialCitationCount':self.incite,'is_open_access':self.openaccess,'references_count':self.refcount,'influentialReferencesCount':self.inref,'reference_background':self.refback,'reference_result':self.refresult,'reference_methodology':self.refmeth,'citations_background':self.cback,'citations_result':self.cresult,'citations_methodology':self.cmeth}
+            return row

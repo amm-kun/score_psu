@@ -40,6 +40,10 @@ You can run the pipeline using the below command:
 
 For more details, refer to process_docs.py file.
 
+## For claimevidence code
+
+Clone the scifact repository in /pipeline from https://github.com/allenai/scifact
+
 ### Project Structure
 Important files for reference:
 

@@ -8,7 +8,7 @@ def get_tamu_features(input_file, p_id, issn, auth, citations,db):
     crawler = PaperInfoCrawler(input_file, VENUE_METADATA_FILE,db)
     print("Crawling Info..\n")
     # Get paper id from API in addition to meta file venue,auth,not found
-    venue_df, auth_df, citations_df = crawler.simple_crawl(p_id, issn, auth,citations)
+    venue_df, auth_df, citations_df = crawler.simple_crawl(p_id, issn, auth,citations,db)
     # base_df, auth_df, downstream_df, notFoundList = crawler.crawl('gw38')
     print(" \nCrawling Finished. Processing data..\n")
     google_scholar_data = False
